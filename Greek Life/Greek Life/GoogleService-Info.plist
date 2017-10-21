@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>673492833051-4au1us5f13emir6k5cvr9hhugt2qchg7.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.673492833051-4au1us5f13emir6k5cvr9hhugt2qchg7</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA6kacH47q0A-WygcB8p6pmg8poQqpm-II</string>
+	<key>GCM_SENDER_ID</key>
+	<string>673492833051</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>GL.Greek-Life</string>
+	<key>PROJECT_ID</key>
+	<string>greek-life-ios</string>
+	<key>STORAGE_BUCKET</key>
+	<string>greek-life-ios.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:673492833051:ios:e60645099ef736ec</string>
+	<key>DATABASE_URL</key>
+	<string>https://greek-life-ios.firebaseio.com</string>
+</dict>
+</plist>
