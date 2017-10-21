@@ -13,6 +13,7 @@ class LoginController: UIViewController {
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var BackgroundPic: UIImageView!
     @IBOutlet weak var Letters_Pic: UIImageView!
+    @IBOutlet weak var LoginLabel: UIButton!
     @IBAction func Login(_ sender: Any) {
     }
 
@@ -38,6 +39,11 @@ class LoginController: UIViewController {
         Password.textColor = .white;
 
         Letters_Pic.image = UIImage(named: "AEPiDocs/Logos/AEPi_Letters_Blue.png");
+        
+        LoginLabel.layer.cornerRadius = LoginLabel.frame.height / 2;
+        let tempColor = LoginLabel.layer.backgroundColor?.copy(alpha: 0.5);
+        LoginLabel.layer.backgroundColor = tempColor;
+        
 
     }
     

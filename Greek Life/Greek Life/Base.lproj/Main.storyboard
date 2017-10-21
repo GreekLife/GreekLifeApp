@@ -113,7 +113,10 @@
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MqL-v4-zJs">
                                 <rect key="frame" x="125" y="449" width="125" height="30"/>
-                                <state key="normal" title="Login"/>
+                                <color key="backgroundColor" red="0.23137254901960785" green="0.32941176470588235" blue="0.65098039215686276" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Login">
+                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
                                 <connections>
                                     <action selector="Login:" destination="PPi-Xe-4VV" eventType="touchUpInside" id="OTJ-yc-d4e"/>
                                 </connections>
@@ -150,6 +153,7 @@
                     <connections>
                         <outlet property="BackgroundPic" destination="ro8-xc-w79" id="gt7-Kl-6Aw"/>
                         <outlet property="Letters_Pic" destination="ggX-JD-sdq" id="GZW-8Z-Hgc"/>
+                        <outlet property="LoginLabel" destination="MqL-v4-zJs" id="0zX-p8-vUA"/>
                         <outlet property="Password" destination="kJx-fe-x6g" id="r5N-V8-7Pn"/>
                         <outlet property="Username" destination="4XC-mS-fGH" id="SCQ-KN-FWe"/>
                     </connections>
