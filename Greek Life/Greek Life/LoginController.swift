@@ -8,11 +8,14 @@
 
 import UIKit
 
-class LoginController: UIViewController {
-    @IBOutlet weak var Username: UITextField!
-    @IBOutlet weak var Password: UITextField!
+class LoginController: UIViewController, UITextFieldDelegate {
+    @IBOutlet weak var Title_Label: UILabel!
     @IBOutlet weak var BackgroundPic: UIImageView!
-    @IBOutlet weak var Letters_Pic: UIImageView!
+    @IBOutlet weak var Username: UITextField!
+    @IBOutlet weak var Password_Icon: UIImageView!
+    @IBOutlet weak var User_Icon: UIImageView!
+    @IBOutlet weak var Title_Pic: UIImageView!
+    @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
     @IBAction func Login(_ sender: Any) {
     }
@@ -20,9 +23,15 @@ class LoginController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.Username.delegate = self;
+        self.Password.delegate = self;
+        
         let pic = BackgroundPic;
-        pic?.image = UIImage(named: "AEPiDocs/school");
+        pic?.image = UIImage(named: "AEPiDocs/School.png");
         pic?.alpha = 0.3;
+        
+//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "AEPiDocs/School.png")!);
+//        self.view.alpha = 0.3;
         
         Username.alpha = 0.4;
         Username.backgroundColor = .black;
@@ -37,14 +46,15 @@ class LoginController: UIViewController {
         let passwordplace = NSAttributedString(string: "Password", attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 1.0)]);
         Password.attributedPlaceholder = passwordplace;
         Password.textColor = .white;
-
-        Letters_Pic.image = UIImage(named: "AEPiDocs/Logos/AEPi_Letters_Blue.png");
         
         LoginLabel.layer.cornerRadius = LoginLabel.frame.height / 2;
-        let tempColor = LoginLabel.layer.backgroundColor?.copy(alpha: 0.5);
-        LoginLabel.layer.backgroundColor = tempColor;
+        LoginLabel.alpha = 0.7
         
 
+        Title_Pic.image = UIImage(named: "AEPiDocs/Logos/AEPi_Letters_Blue.png");
+
+        User_Icon.image = UIImage(named: "AEPiDocs/user_icon.png");
+        Password_Icon.image = UIImage(named: "AEPiDocs/password_icon.png");
     }
     
     override func didReceiveMemoryWarning() {
@@ -52,7 +62,10 @@ class LoginController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
     
     
     
