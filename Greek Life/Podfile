@@ -9,6 +9,7 @@ target 'Greek Life' do
   # Pods for Greek Life
 
   target 'Greek LifeTests' do
+	pod ‘Firebase’	
     inherit! :search_paths
     # Pods for testing
   end
