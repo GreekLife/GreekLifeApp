@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginController: UIViewController, UITextFieldDelegate {
-    @IBOutlet weak var Title_Label: UILabel!
     @IBOutlet weak var BackgroundPic: UIImageView!
     @IBOutlet weak var Username: UITextField!
     @IBOutlet weak var Password_Icon: UIImageView!
@@ -17,24 +17,23 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Title_Pic: UIImageView!
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
+    
+    var ref: DatabaseReference!
+    
     @IBAction func Login(_ sender: Any) {
-        
-        //if login success then do this: 
-        //performSegue(withIdentifier: "LoginSuccess", sender: nil)
-
+        let validUser = validate();
+        if(validUser){
+        performSegue(withIdentifier: "LoginSuccess", sender: nil)
+        }
         
     }
     
-//    override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
-//        if let ident = identifier {
-//            if ident == "YourIdentifier" {
-//                if loginSuccess != true {
-//                    return false
-//                }
-//            }
-//        }
-//        return true
-//    }
+    func validate()->Bool{
+        ref = Database.database().reference();
+        
+        
+        return true;
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
