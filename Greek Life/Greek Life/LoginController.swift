@@ -11,6 +11,10 @@ import Firebase
 import FirebaseDatabase
 import FirebaseAuth
 
+struct LoggedIn {
+    static var User: [String: Any] = [:]
+}
+
 class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var BackgroundPic: UIImageView!
     @IBOutlet weak var Username: UITextField!
@@ -22,7 +26,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     var ref: DatabaseReference!
     var email:String = ""
-    var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
+    //var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
 
     @IBAction func Login(_ sender: Any) {
         if(Username.text == ""){
@@ -49,6 +53,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
         if(problem == "Empty"){
         let alert = UIAlertController(title: "Empty", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            alert.view.tintColor = UIColor.yellow;
+        
         self.present(alert, animated: true, completion: nil)
         }
         if(problem == "Incorrect"){
@@ -68,7 +74,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:Any] {
                 print("email retrieved");
-                self.User = user;
+                LoggedIn.User = user;
                 userEmail = user["email"] as! String;
                 completion(true, userEmail, nil);
             }
@@ -85,7 +91,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
     func validateEmail(){
         Auth.auth().signIn(withEmail: email, password: Password.text!) { (user, Error) in
             if(user != nil){
-                self.performSegue(withIdentifier: "LoginSuccess", sender: nil);
+                print(LoggedIn.User)
+                self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
             }
             else {
                 if let myError = Error?.localizedDescription{
@@ -94,8 +101,17 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 else {
                     debugPrint("ERROR");
                 }
-                self.User = [:];
+                LoggedIn.User = [:];
                 self.LoginAlert(problem: "Invalid");
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.identifier == "LoginSuccess"){
+            
+            if let destination = segue.destination as? FirstViewController{
+                destination.User = (sender as? [String: Any?])!
             }
         }
     }

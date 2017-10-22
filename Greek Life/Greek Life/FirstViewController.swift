@@ -7,12 +7,16 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class FirstViewController: UIViewController {
-
+    var User: [String: Any?] = [:]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+       print(LoggedIn.User) //I can print it out just like this because the variable is stored in a structure rather than a class. I dont have to create a new instance of
+        //it, I can just access the existing one
     }
 
     override func didReceiveMemoryWarning() {
