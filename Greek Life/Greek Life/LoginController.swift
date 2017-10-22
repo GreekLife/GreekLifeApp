@@ -15,6 +15,8 @@ struct LoggedIn {
     static var User: [String: Any] = [:]
 }
 
+
+
 class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var BackgroundPic: UIImageView!
     @IBOutlet weak var Username: UITextField!
@@ -33,7 +35,21 @@ class LoginController: UIViewController, UITextFieldDelegate {
             self.LoginAlert(problem: "Empty");
         }
         else{
-            validateUsername();
+            if Reachability.isConnectedToNetwork(){
+                print("Internet Connection Available!")
+                validateUsername();
+            }else{
+                let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
+                internetError.textColor = .red
+                internetError.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+                internetError.textAlignment = .center
+                internetError.text = "You're not connected to the internet"
+                self.view.addSubview(internetError)
+                print("Internet Connection not Available!")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                internetError.isHidden = true
+                }
+            }
         }
     }
     
@@ -162,6 +178,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
         return false
     }
+    
+    
     
     
     
