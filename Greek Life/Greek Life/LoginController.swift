@@ -21,49 +21,69 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var LoginLabel: UIButton!
     
     var ref: DatabaseReference!
-    
+    var email:String = ""
+
     @IBAction func Login(_ sender: Any) {
-        validate();
+        if(Username.text == ""){
+            self.EmptyStringAlert(value: "empty");
+        }
+        else{
+            validateUsername();
+        }
     }
     
-    func EmptyStringAlert() {
-        let alert = UIAlertController(title: "Alert", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
+    func validateUsername(){
+        self.getEmail(name: Username.text!){(success, response, error) in
+            guard success, let tempEmail = response as? String else{
+                self.EmptyStringAlert(value: "incorrect");
+                return;
+            }
+            self.email = tempEmail
+            self.validateEmail(){ (success, response, error) in
+                guard success, let password = response as? String else {
+                            return
+                }
+        
+            }
+            self.performSegue(withIdentifier: "LoginSuccess", sender: nil);
+            return;
+        }
+        
+    }
+    
+    func EmptyStringAlert(value: String) {
+        if(value == "empty"){
+        let alert = UIAlertController(title: "Empty", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
+        }
+        if(value == "incorrect"){
+            let alert = UIAlertController(title: "Incorrect", message: "The username you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
-    
-    func getEmail(name: String) -> String{
-        var email = ""
+    func getEmail(name: String, completion: @escaping (Bool, Any?, Error?) -> Void){
+        var userEmail = ""
         ref = Database.database().reference()
         self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:Any] {
                 print("email retrieved");
-                email = user["email"] as! String;
-                print(email)
-                return;
+                userEmail = user["email"] as! String;
+                completion(true, userEmail, nil);
             }
             else{
-                print("email could not be retrieved from the user.");
-            
+                print("The username is incorrect.");
+                completion(false, nil, nil)
             }
         }){ (error) in
             print("Could not retrieve object from database because: ");
-            print((Any).self);
+            completion(false, nil, nil)
         }
-        return email;
     }
     
-    func validate(){
-        if(Username.text == ""){
-            EmptyStringAlert();
-        }
+    func validateEmail(completion: @escaping (Bool, Any?, Error?) -> Void){
         
-        let email = getEmail(name: Username.text!);
-        print(email)
-        if(email == ""){
-            return;
-        }
-        performSegue(withIdentifier: "LoginSuccess", sender: nil)
     }
 
     override func viewDidLoad() {
