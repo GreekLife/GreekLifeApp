@@ -115,6 +115,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             }
         }
     }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,8 +127,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         pic?.image = UIImage(named: "AEPiDocs/School.png");
         pic?.alpha = 0.3;
         
-//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "AEPiDocs/School.png")!);
-//        self.view.alpha = 0.3;
+        //self.addBackground(imageName: "AEPiDocs/School.png", contextMode: .scaleAspectFit);
         
         Username.alpha = 0.4;
         Username.backgroundColor = .black;
