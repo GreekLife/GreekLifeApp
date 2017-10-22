@@ -22,10 +22,11 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     var ref: DatabaseReference!
     var email:String = ""
+    var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
 
     @IBAction func Login(_ sender: Any) {
         if(Username.text == ""){
-            self.EmptyStringAlert(value: "empty");
+            self.LoginAlert(problem: "Empty");
         }
         else{
             validateUsername();
@@ -35,30 +36,28 @@ class LoginController: UIViewController, UITextFieldDelegate {
     func validateUsername(){
         self.getEmail(name: Username.text!){(success, response, error) in
             guard success, let tempEmail = response as? String else{
-                self.EmptyStringAlert(value: "incorrect");
+                self.LoginAlert(problem: "Incorrect");
                 return;
             }
             self.email = tempEmail
-            self.validateEmail(){ (success, response, error) in
-                guard success, let password = response as? String else {
-                            return
-                }
-        
-            }
-            self.performSegue(withIdentifier: "LoginSuccess", sender: nil);
-            return;
+            self.validateEmail();
         }
         
     }
     
-    func EmptyStringAlert(value: String) {
-        if(value == "empty"){
+    func LoginAlert(problem: String) {
+        if(problem == "Empty"){
         let alert = UIAlertController(title: "Empty", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
         }
-        if(value == "incorrect"){
+        if(problem == "Incorrect"){
             let alert = UIAlertController(title: "Incorrect", message: "The username you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        if(problem == "Invalid"){
+            let alert = UIAlertController(title: "Invalid", message: "The password you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
@@ -69,6 +68,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:Any] {
                 print("email retrieved");
+                self.User = user;
                 userEmail = user["email"] as! String;
                 completion(true, userEmail, nil);
             }
@@ -77,13 +77,27 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 completion(false, nil, nil)
             }
         }){ (error) in
-            print("Could not retrieve object from database because: ");
+            print("Could not retrieve object from database");
             completion(false, nil, nil)
         }
     }
     
-    func validateEmail(completion: @escaping (Bool, Any?, Error?) -> Void){
-        
+    func validateEmail(){
+        Auth.auth().signIn(withEmail: email, password: Password.text!) { (user, Error) in
+            if(user != nil){
+                self.performSegue(withIdentifier: "LoginSuccess", sender: nil);
+            }
+            else {
+                if let myError = Error?.localizedDescription{
+                    debugPrint(myError);
+                }
+                else {
+                    debugPrint("ERROR");
+                }
+                self.User = [:];
+                self.LoginAlert(problem: "Invalid");
+            }
+        }
     }
 
     override func viewDidLoad() {
