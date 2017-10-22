@@ -18,7 +18,23 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
     @IBAction func Login(_ sender: Any) {
+        
+        //if login success then do this: 
+        //performSegue(withIdentifier: "LoginSuccess", sender: nil)
+
+        
     }
+    
+//    override func shouldPerformSegue(withIdentifier identifier: String?, sender: Any?) -> Bool {
+//        if let ident = identifier {
+//            if ident == "YourIdentifier" {
+//                if loginSuccess != true {
+//                    return false
+//                }
+//            }
+//        }
+//        return true
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
