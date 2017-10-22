@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import FirebaseAuth
 
 class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var BackgroundPic: UIImageView!
@@ -22,27 +23,47 @@ class LoginController: UIViewController, UITextFieldDelegate {
     var ref: DatabaseReference!
     
     @IBAction func Login(_ sender: Any) {
-        let validUser = validate();
-        if(validUser){
-        performSegue(withIdentifier: "LoginSuccess", sender: nil)
-        }
-        
+        validate();
     }
     
-    func validate()->Bool{
-        if(Username.text == ""){
-            let alert = UIAlertController(title: "Alert", message: "Your username cannot be empty.", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-        ref = Database.database().reference();
-        self.ref.child("Users").child(Username.text!).observeSingleEvent(of: .value, with: {(snapshot) in
+    func EmptyStringAlert() {
+        let alert = UIAlertController(title: "Alert", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func getEmail(name: String) -> String{
+        var email = ""
+        ref = Database.database().reference()
+        self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
+            if let user = snapshot.value as? [String:Any] {
+                print("email retrieved");
+                email = user["email"] as! String;
+                print(email)
+                return;
+            }
+            else{
+                print("email could not be retrieved from the user.");
             
+            }
         }){ (error) in
-            
+            print("Could not retrieve object from database because: ");
+            print((Any).self);
+        }
+        return email;
+    }
+    
+    func validate(){
+        if(Username.text == ""){
+            EmptyStringAlert();
         }
         
-        return true;
+        let email = getEmail(name: Username.text!);
+        print(email)
+        if(email == ""){
+            return;
+        }
+        performSegue(withIdentifier: "LoginSuccess", sender: nil)
     }
 
     override func viewDidLoad() {
