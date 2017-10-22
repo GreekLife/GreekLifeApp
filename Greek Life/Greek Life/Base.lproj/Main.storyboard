@@ -200,6 +200,7 @@
                         <outlet property="Title_Pic" destination="1GH-Ku-w3H" id="ydl-Hd-vN5"/>
                         <outlet property="User_Icon" destination="MEP-Qy-pkx" id="j9r-sP-j9u"/>
                         <outlet property="Username" destination="4XC-mS-fGH" id="SCQ-KN-FWe"/>
+                        <segue destination="49e-Tb-3d3" kind="show" identifier="LoginSuccess" id="EoE-GZ-SjP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pzh-qH-SxA" userLabel="First Responder" sceneMemberID="firstResponder"/>
