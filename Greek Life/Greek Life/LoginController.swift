@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseDatabase
 
 class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var BackgroundPic: UIImageView!
@@ -29,8 +30,17 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     
     func validate()->Bool{
+        if(Username.text == ""){
+            let alert = UIAlertController(title: "Alert", message: "Your username cannot be empty.", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
         ref = Database.database().reference();
-        
+        self.ref.child("Users").child(Username.text!).observeSingleEvent(of: .value, with: {(snapshot) in
+            
+        }){ (error) in
+            
+        }
         
         return true;
     }
