@@ -11,6 +11,12 @@ import Firebase
 import FirebaseDatabase
 import FirebaseAuth
 
+struct LoggedIn {
+    static var User: [String: Any] = [:]
+}
+
+
+
 class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var BackgroundPic: UIImageView!
     @IBOutlet weak var Username: UITextField!
@@ -21,50 +27,111 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var LoginLabel: UIButton!
     
     var ref: DatabaseReference!
-    
+    var email:String = ""
+    //var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
+
     @IBAction func Login(_ sender: Any) {
-        validate();
+        if(Username.text == ""){
+            self.LoginAlert(problem: "Empty");
+        }
+        else{
+            if Reachability.isConnectedToNetwork(){
+                print("Internet Connection Available!")
+                validateUsername();
+            }else{
+                let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
+                internetError.textColor = .red
+                internetError.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+                internetError.textAlignment = .center
+                internetError.text = "You're not connected to the internet"
+                self.view.addSubview(internetError)
+                print("Internet Connection not Available!")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                internetError.isHidden = true
+                }
+            }
+        }
     }
     
-    func EmptyStringAlert() {
-        let alert = UIAlertController(title: "Alert", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
+    func validateUsername(){
+        self.getEmail(name: Username.text!){(success, response, error) in
+            guard success, let tempEmail = response as? String else{
+                self.LoginAlert(problem: "Incorrect");
+                return;
+            }
+            self.email = tempEmail
+            self.validateEmail();
+        }
+        
+    }
+    
+    func LoginAlert(problem: String) {
+        if(problem == "Empty"){
+        let alert = UIAlertController(title: "Empty", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            alert.view.tintColor = UIColor.yellow;
+        
         self.present(alert, animated: true, completion: nil)
+        }
+        if(problem == "Incorrect"){
+            let alert = UIAlertController(title: "Incorrect", message: "The username you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        if(problem == "Invalid"){
+            let alert = UIAlertController(title: "Invalid", message: "The password you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
-    
-    func getEmail(name: String) -> String{
-        var email = ""
+    func getEmail(name: String, completion: @escaping (Bool, Any?, Error?) -> Void){
+        var userEmail = ""
         ref = Database.database().reference()
         self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:Any] {
                 print("email retrieved");
-                email = user["email"] as! String;
-                print(email)
-                return;
+                LoggedIn.User = user;
+                userEmail = user["email"] as! String;
+                completion(true, userEmail, nil);
             }
             else{
-                print("email could not be retrieved from the user.");
-            
+                print("The username is incorrect.");
+                completion(false, nil, nil)
             }
         }){ (error) in
-            print("Could not retrieve object from database because: ");
-            print((Any).self);
+            print("Could not retrieve object from database");
+            completion(false, nil, nil)
         }
-        return email;
     }
     
-    func validate(){
-        if(Username.text == ""){
-            EmptyStringAlert();
+    func validateEmail(){
+        Auth.auth().signIn(withEmail: email, password: Password.text!) { (user, Error) in
+            if(user != nil){
+                print(LoggedIn.User)
+                self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
+            }
+            else {
+                if let myError = Error?.localizedDescription{
+                    debugPrint(myError);
+                }
+                else {
+                    debugPrint("ERROR");
+                }
+                LoggedIn.User = [:];
+                self.LoginAlert(problem: "Invalid");
+            }
         }
-        
-        let email = getEmail(name: Username.text!);
-        print(email)
-        if(email == ""){
-            return;
-        }
-        performSegue(withIdentifier: "LoginSuccess", sender: nil)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.identifier == "LoginSuccess"){
+            
+            if let destination = segue.destination as? FirstViewController{
+                destination.User = (sender as? [String: Any?])!
+            }
+        }
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,8 +143,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         pic?.image = UIImage(named: "AEPiDocs/School.png");
         pic?.alpha = 0.3;
         
-//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "AEPiDocs/School.png")!);
-//        self.view.alpha = 0.3;
+        //self.addBackground(imageName: "AEPiDocs/School.png", contextMode: .scaleAspectFit);
         
         Username.alpha = 0.4;
         Username.backgroundColor = .black;
@@ -112,6 +178,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
         return false
     }
+    
+    
     
     
     

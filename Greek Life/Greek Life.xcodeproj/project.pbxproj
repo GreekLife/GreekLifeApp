@@ -22,6 +22,7 @@
 		6DCAFF141F9AC46F00D1311E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6DCAFF121F9AC46F00D1311E /* LaunchScreen.storyboard */; };
 		6DCAFF1F1F9AC46F00D1311E /* Greek_LifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF1E1F9AC46F00D1311E /* Greek_LifeTests.swift */; };
 		6DCAFF2A1F9AC46F00D1311E /* Greek_LifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */; };
+		6DD95E6A1F9D306400894B0F /* InternetConnectivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD95E691F9D306400894B0F /* InternetConnectivity.swift */; };
 		DD2ACC8B36E3DAEC6AA5E24F /* Pods_Greek_LifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */; };
 		E46E9A7F5A892FE2BC73BB13 /* Pods_Greek_LifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28671ACEC86852828460720F /* Pods_Greek_LifeUITests.framework */; };
 		F8097DCECAAF0F3DE317CE9F /* Pods_Greek_Life.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CBFC2FC5943F408FDB76E4F /* Pods_Greek_Life.framework */; };
@@ -68,6 +69,7 @@
 		6DCAFF251F9AC46F00D1311E /* Greek LifeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Greek LifeUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Greek_LifeUITests.swift; sourceTree = "<group>"; };
 		6DCAFF2B1F9AC46F00D1311E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6DD95E691F9D306400894B0F /* InternetConnectivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnectivity.swift; sourceTree = "<group>"; };
 		A02B277DDDEBFA4F94517A05 /* Pods-Greek LifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeUITests/Pods-Greek LifeUITests.release.xcconfig"; sourceTree = "<group>"; };
 		ABC78943538C4DFF004622E8 /* Pods-Greek LifeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeTests/Pods-Greek LifeTests.release.xcconfig"; sourceTree = "<group>"; };
 		D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Greek_LifeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -146,6 +148,7 @@
 				6DCAFF121F9AC46F00D1311E /* LaunchScreen.storyboard */,
 				6DCAFF151F9AC46F00D1311E /* Info.plist */,
 				6D9A88801F9BCE820051B71F /* LoginController.swift */,
+				6DD95E691F9D306400894B0F /* InternetConnectivity.swift */,
 			);
 			path = "Greek Life";
 			sourceTree = "<group>";
@@ -495,6 +498,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6DCAFF0C1F9AC46F00D1311E /* SecondViewController.swift in Sources */,
+				6DD95E6A1F9D306400894B0F /* InternetConnectivity.swift in Sources */,
 				6D9A88811F9BCE820051B71F /* LoginController.swift in Sources */,
 				6DCAFF081F9AC46F00D1311E /* AppDelegate.swift in Sources */,
 				6DCAFF0A1F9AC46F00D1311E /* FirstViewController.swift in Sources */,
