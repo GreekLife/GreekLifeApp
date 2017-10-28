@@ -17,16 +17,40 @@ class HomepageViewController: UIViewController {
     @IBOutlet weak var InfoContainer: UILabel!
     @IBOutlet weak var ProfileContainer: UILabel!
     @IBOutlet weak var MasterContainer: UILabel!
-    @IBOutlet weak var Logo: UIImageView!
-    
-    @IBOutlet weak var BackgroundPic: UIImageView!
-    
-    @IBOutlet weak var instantMessaging: UIImageView!
     @IBOutlet weak var imContainer: UILabel!
     @IBOutlet weak var imLabel: UILabel!
-
+    
+    @IBOutlet weak var Logo: UIImageView!
+    @IBOutlet weak var BackgroundPic: UIImageView!
+    
+    @IBOutlet weak var InstantMessaging: UIImageView!
+    @IBOutlet weak var Forum: UIImageView!
+    @IBOutlet weak var Brothers: UIImageView!
+    @IBOutlet weak var Profile: UIImageView!
+    @IBOutlet weak var Master: UIImageView!
+    @IBOutlet weak var Info: UIImageView!
+    @IBOutlet weak var Poll: UIImageView!
+    @IBOutlet weak var Calendar: UIImageView!
+    
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Forum?.image = UIImage(named: "AEPiDocs/Icons/Forum.png")
+        InstantMessaging?.image = UIImage(named: "AEPiDocs/Icons/InstantMessaging.png")
+        Brothers?.image = UIImage(named: "AEPiDocs/Icons/Brothers.png")
+        Profile?.image = UIImage(named: "AEPiDocs/Icons/Profile.png")
+        Master?.image = UIImage(named: "AEPiDocs/Icons/Master.png")
+        Info?.image = UIImage(named: "AEPiDocs/Icons/Info.png")
+        Poll?.image = UIImage(named: "AEPiDocs/Icons/Poll.png")
+        Calendar?.image = UIImage(named: "AEPiDocs/Icons/Calendar.png")
+        BackgroundPic?.image = UIImage(named: "AEPiDocs/School.png");
+        BackgroundPic?.alpha = 0.9
+        Logo?.image = UIImage(named: "AEPiDocs/Logos/AEPi.png");
+        
         imContainer.layer.cornerRadius = imContainer.frame.width/2;
         imContainer.layer.borderWidth = 0.5;
         CalendarContainer.layer.cornerRadius = CalendarContainer.frame.width/2;
@@ -45,22 +69,26 @@ class HomepageViewController: UIViewController {
         MasterContainer.layer.cornerRadius = MasterContainer.frame.width/2;
         MasterContainer.layer.borderWidth = 1;
         
-        MasterContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        imContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        CalendarContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        ForumContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        PollContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        BrothersContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        InfoContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-        ProfileContainer.layer.backgroundColor = UIColor(colorLiteralRed: 0, green: 0, blue: 157, alpha: 0.2).cgColor
-
-        let background = BackgroundPic;
-        background?.image = UIImage(named: "AEPiDocs/School.png");
-        background?.alpha = 0.9
+        let blue = UIColor.blue.withAlphaComponent(0.3)
         
-        let logo = Logo;
-        logo?.image = UIImage(named: "AEPiDocs/Logos/AEPi.png");
+        MasterContainer.layer.backgroundColor = blue.cgColor
+        imContainer.layer.backgroundColor = blue.cgColor
+        CalendarContainer.layer.backgroundColor = blue.cgColor
+        ForumContainer.layer.backgroundColor = blue.cgColor
+        PollContainer.layer.backgroundColor = blue.cgColor
+        BrothersContainer.layer.backgroundColor = blue.cgColor
+        InfoContainer.layer.backgroundColor = blue.cgColor
+        ProfileContainer.layer.backgroundColor =  blue.cgColor
         
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(tapGestureRecognizer:)))
+        Info.isUserInteractionEnabled = true
+        Info.addGestureRecognizer(tapGestureRecognizer)
+        
+    }
+    
+    func imageTapped(tapGestureRecognizer: UITapGestureRecognizer){
+        //let tappedImage = tapGestureRecognizer.view as! UIImageView
+        print("hi");
     }
 
     override func didReceiveMemoryWarning() {
