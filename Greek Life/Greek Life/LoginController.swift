@@ -81,17 +81,23 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     func LoginAlert(problem: String) {
         if(problem == "Empty"){
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
         let alert = UIAlertController(title: "Empty", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
         }
         if(problem == "Incorrect"){
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
             let alert = UIAlertController(title: "Incorrect", message: "The username you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
         if(problem == "Invalid"){
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
             let alert = UIAlertController(title: "Invalid", message: "The password you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)

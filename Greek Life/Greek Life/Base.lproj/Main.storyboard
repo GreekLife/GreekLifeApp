@@ -349,6 +349,10 @@
                                     <constraint firstAttribute="width" constant="70" id="zcv-pW-XhZ"/>
                                 </constraints>
                                 <state key="normal" title="Log out"/>
+                                <connections>
+                                    <action selector="LogOut:" destination="ffX-If-XRi" eventType="touchUpInside" id="pc1-Y6-BYG"/>
+                                    <segue destination="PPi-Xe-4VV" kind="show" id="Srr-hR-6yi"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Master" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VLa-cz-fhT">
                                 <rect key="frame" x="167" y="468" width="40" height="9"/>

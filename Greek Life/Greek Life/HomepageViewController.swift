@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class HomepageViewController: UIViewController {
     
@@ -33,6 +34,16 @@ class HomepageViewController: UIViewController {
     @IBOutlet weak var Calendar: UIImageView!
     
     
+    @IBAction func LogOut(_ sender: Any) {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            print("Signed out");
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+        
+    }
     
     
     
