@@ -123,15 +123,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if(segue.identifier == "LoginSuccess"){
-            
-            if let destination = segue.destination as? FirstViewController{
-                destination.User = (sender as? [String: Any?])!
-            }
-        }
-    }
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
