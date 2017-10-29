@@ -23,6 +23,8 @@
 		6DCAFF1F1F9AC46F00D1311E /* Greek_LifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF1E1F9AC46F00D1311E /* Greek_LifeTests.swift */; };
 		6DCAFF2A1F9AC46F00D1311E /* Greek_LifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */; };
 		6DD95E6A1F9D306400894B0F /* InternetConnectivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD95E691F9D306400894B0F /* InternetConnectivity.swift */; };
+		6DF4D1311FA287EF00EA86E8 /* HomepageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF4D1301FA287EF00EA86E8 /* HomepageViewController.swift */; };
+		6DF4D1331FA28F5400EA86E8 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = 6DF4D1321FA28F5400EA86E8 /* Icons */; };
 		DD2ACC8B36E3DAEC6AA5E24F /* Pods_Greek_LifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */; };
 		E46E9A7F5A892FE2BC73BB13 /* Pods_Greek_LifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28671ACEC86852828460720F /* Pods_Greek_LifeUITests.framework */; };
 		F8097DCECAAF0F3DE317CE9F /* Pods_Greek_Life.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CBFC2FC5943F408FDB76E4F /* Pods_Greek_Life.framework */; };
@@ -70,6 +72,8 @@
 		6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Greek_LifeUITests.swift; sourceTree = "<group>"; };
 		6DCAFF2B1F9AC46F00D1311E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6DD95E691F9D306400894B0F /* InternetConnectivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnectivity.swift; sourceTree = "<group>"; };
+		6DF4D1301FA287EF00EA86E8 /* HomepageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomepageViewController.swift; sourceTree = "<group>"; };
+		6DF4D1321FA28F5400EA86E8 /* Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Icons; sourceTree = "<group>"; };
 		A02B277DDDEBFA4F94517A05 /* Pods-Greek LifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeUITests/Pods-Greek LifeUITests.release.xcconfig"; sourceTree = "<group>"; };
 		ABC78943538C4DFF004622E8 /* Pods-Greek LifeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeTests/Pods-Greek LifeTests.release.xcconfig"; sourceTree = "<group>"; };
 		D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Greek_LifeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +142,7 @@
 		6DCAFF061F9AC46F00D1311E /* Greek Life */ = {
 			isa = PBXGroup;
 			children = (
+				6DF4D1321FA28F5400EA86E8 /* Icons */,
 				6D95B7AB1F9AC72D004EC3A3 /* GoogleService-Info.plist */,
 				6DCAFF071F9AC46F00D1311E /* AppDelegate.swift */,
 				6DCAFF091F9AC46F00D1311E /* FirstViewController.swift */,
@@ -149,6 +154,7 @@
 				6DCAFF151F9AC46F00D1311E /* Info.plist */,
 				6D9A88801F9BCE820051B71F /* LoginController.swift */,
 				6DD95E691F9D306400894B0F /* InternetConnectivity.swift */,
+				6DF4D1301FA287EF00EA86E8 /* HomepageViewController.swift */,
 			);
 			path = "Greek Life";
 			sourceTree = "<group>";
@@ -256,7 +262,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = ConcordiaDev;
 				TargetAttributes = {
 					6DCAFF031F9AC46F00D1311E = {
@@ -306,6 +312,7 @@
 				6DCAFF141F9AC46F00D1311E /* LaunchScreen.storyboard in Resources */,
 				6D9A88831F9BD2760051B71F /* AEPiDocs in Resources */,
 				6D95B7AC1F9AC72D004EC3A3 /* GoogleService-Info.plist in Resources */,
+				6DF4D1331FA28F5400EA86E8 /* Icons in Resources */,
 				6DCAFF111F9AC46F00D1311E /* Assets.xcassets in Resources */,
 				6DCAFF0F1F9AC46F00D1311E /* Main.storyboard in Resources */,
 			);
@@ -499,6 +506,7 @@
 			files = (
 				6DCAFF0C1F9AC46F00D1311E /* SecondViewController.swift in Sources */,
 				6DD95E6A1F9D306400894B0F /* InternetConnectivity.swift in Sources */,
+				6DF4D1311FA287EF00EA86E8 /* HomepageViewController.swift in Sources */,
 				6D9A88811F9BCE820051B71F /* LoginController.swift in Sources */,
 				6DCAFF081F9AC46F00D1311E /* AppDelegate.swift in Sources */,
 				6DCAFF0A1F9AC46F00D1311E /* FirstViewController.swift in Sources */,
@@ -566,7 +574,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -574,7 +584,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -617,7 +631,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -625,7 +641,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
