@@ -38,13 +38,12 @@ class LoginController: UIViewController, UITextFieldDelegate {
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
         activityIndicator.color = UIColor.blue;
         view.addSubview(activityIndicator);
+        activityIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents();
     }
 
     @IBAction func Login(_ sender: Any) {
         CreateActivity();
-        activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents();
-        
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
         }
@@ -79,7 +78,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         
     }
     
-    func LoginAlert(problem: String) {
+    func LoginAlert(problem: String) { //Revisit what sends alerts.
         if(problem == "Empty"){
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
