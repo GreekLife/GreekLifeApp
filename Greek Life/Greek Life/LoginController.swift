@@ -26,17 +26,30 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
     
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
+    
     var ref: DatabaseReference!
     var email:String = ""
     //var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
+    
+    func CreateActivity() {
+        activityIndicator.center = self.view.center;
+        activityIndicator.hidesWhenStopped = true;
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
+        activityIndicator.color = UIColor.blue;
+        view.addSubview(activityIndicator);
+        activityIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents();
+    }
 
     @IBAction func Login(_ sender: Any) {
+        CreateActivity();
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
         }
         else{
             if Reachability.isConnectedToNetwork(){
-                print("Internet Connection Available!")
+                print("Internet Connection Succesful!")
                 validateUsername();
             }else{
                 let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
@@ -65,20 +78,25 @@ class LoginController: UIViewController, UITextFieldDelegate {
         
     }
     
-    func LoginAlert(problem: String) {
+    func LoginAlert(problem: String) { //Revisit what sends alerts.
         if(problem == "Empty"){
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
         let alert = UIAlertController(title: "Empty", message: "Please enter your username", preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
-            alert.view.tintColor = UIColor.yellow;
         
         self.present(alert, animated: true, completion: nil)
         }
         if(problem == "Incorrect"){
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
             let alert = UIAlertController(title: "Incorrect", message: "The username you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
         if(problem == "Invalid"){
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
             let alert = UIAlertController(title: "Invalid", message: "The password you entered is incorrect", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
@@ -89,7 +107,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         ref = Database.database().reference()
         self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:Any] {
-                print("email retrieved");
+                print("User found");
                 LoggedIn.User = user;
                 userEmail = user["email"] as! String;
                 completion(true, userEmail, nil);
@@ -107,7 +125,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
     func validateEmail(){
         Auth.auth().signIn(withEmail: email, password: Password.text!) { (user, Error) in
             if(user != nil){
-                print(LoggedIn.User)
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
                 self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
             }
             else {
