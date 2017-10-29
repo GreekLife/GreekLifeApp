@@ -46,48 +46,48 @@ class HomepageViewController: UIViewController {
         
         imContainer.layer.cornerRadius = imContainer.frame.width/2;
         imContainer.layer.borderWidth = 0.5;
-        imContainer.setImage(UIImage(named: "AEPiDocs/Icons/InstantMessaging.png"), for: UIControlState.normal)
+        imContainer.setImage(UIImage(named: "Icons/InstantMessaging.png"), for: UIControlState.normal)
         imContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
         //imContainer.layer.backgroundColor = blue.cgColor
         
         CalendarContainer.layer.cornerRadius = CalendarContainer.frame.width/2;
         CalendarContainer.layer.borderWidth = 1;
-        CalendarContainer.setImage(UIImage(named: "AEPiDocs/Icons/Calendar.png"), for: UIControlState.normal)
+        CalendarContainer.setImage(UIImage(named: "Icons/Calendar.png"), for: UIControlState.normal)
         CalendarContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
         //CalendarContainer.layer.backgroundColor = blue.cgColor
 
         ForumContainer.layer.cornerRadius = ForumContainer.frame.width/2;
         ForumContainer.layer.borderWidth = 1;
-        ForumContainer.setImage(UIImage(named: "AEPiDocs/Icons/Forum.png"), for: UIControlState.normal)
+        ForumContainer.setImage(UIImage(named: "Icons/Forum.png"), for: UIControlState.normal)
         ForumContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
         //ForumContainer.layer.backgroundColor = blue.cgColor
 
         PollContainer.layer.cornerRadius = PollContainer.frame.width/2;
         PollContainer.layer.borderWidth = 1;
-        PollContainer.setImage(UIImage(named: "AEPiDocs/Icons/Poll.png"), for: UIControlState.normal)
+        PollContainer.setImage(UIImage(named: "Icons/Poll.png"), for: UIControlState.normal)
         PollContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
        // PollContainer.layer.backgroundColor = blue.cgColor
 
         BrothersContainer.layer.cornerRadius = BrothersContainer.frame.width/2;
         BrothersContainer.layer.borderWidth = 1;
-        BrothersContainer.setImage(UIImage(named: "AEPiDocs/Icons/Brothers.png"), for: UIControlState.normal)
+        BrothersContainer.setImage(UIImage(named: "Icons/Brothers.png"), for: UIControlState.normal)
         BrothersContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
 
         InfoContainer.layer.cornerRadius = InfoContainer.frame.width/2;
         InfoContainer.layer.borderWidth = 1;
-        InfoContainer.setImage(UIImage(named: "AEPiDocs/Icons/Info.png"), for: UIControlState.normal)
+        InfoContainer.setImage(UIImage(named: "Icons/Info.png"), for: UIControlState.normal)
         InfoContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
        // InfoContainer.layer.backgroundColor = blue.cgColor
 
         ProfileContainer.layer.cornerRadius = ProfileContainer.frame.width/2;
         ProfileContainer.layer.borderWidth = 1;
-        ProfileContainer.setImage(UIImage(named: "AEPiDocs/Icons/Profile.png"), for: UIControlState.normal)
+        ProfileContainer.setImage(UIImage(named: "Icons/Profile.png"), for: UIControlState.normal)
         ProfileContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
         //ProfileContainer.layer.backgroundColor =  blue.cgColor
         
         MasterContainer.layer.cornerRadius = MasterContainer.frame.width/2;
         MasterContainer.layer.borderWidth = 1;
-        MasterContainer.setImage(UIImage(named: "AEPiDocs/Icons/Master.png"), for: UIControlState.normal)
+        MasterContainer.setImage(UIImage(named: "Icons/Master.png"), for: UIControlState.normal)
         MasterContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
        // MasterContainer.layer.backgroundColor = blue.cgColor
     }

@@ -161,8 +161,11 @@
                                 <state key="normal">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <segue destination="49e-Tb-3d3" kind="show" id="Aj7-Ns-0FV"/>
+                                </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="iM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xoo-FM-7Vr">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xoo-FM-7Vr">
                                 <rect key="frame" x="166" y="107" width="40" height="9"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="Vsq-W4-tMH"/>
@@ -184,7 +187,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Forum" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5xj-Kb-Hqf">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Forum" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5xj-Kb-Hqf">
                                 <rect key="frame" x="245" y="176" width="40" height="9"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="AJo-b9-wsk"/>
@@ -207,7 +210,7 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Calendar" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fvy-bz-e9V">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Calendar" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fvy-bz-e9V">
                                 <rect key="frame" x="79" y="176" width="40" height="9"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="6e4-lf-Yl5"/>
@@ -322,8 +325,8 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="k3j-sb-QOe" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="77.5" id="19y-dQ-t8a"/>
-                            <constraint firstItem="5xj-Kb-Hqf" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-151" id="5f6-xT-ipA"/>
                             <constraint firstItem="u2v-es-6hh" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="29.5" id="6IF-fs-zri"/>
+                            <constraint firstItem="Xoo-FM-7Vr" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-222" id="8Ci-uD-9sn"/>
                             <constraint firstItem="7mm-fC-Pgy" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="54" id="AFo-6k-Mar"/>
                             <constraint firstItem="AEs-K8-1Ve" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-179.5" id="DCD-5Z-fc3"/>
                             <constraint firstItem="K9Y-bu-XMP" firstAttribute="top" secondItem="CJH-SN-rxv" secondAttribute="top" id="FoZ-su-kqQ"/>
@@ -332,7 +335,6 @@
                             <constraint firstItem="Ojl-iH-Mbk" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-136.5" id="HEF-Wg-3DE"/>
                             <constraint firstItem="eqB-jQ-LpL" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="110.5" id="ITP-8O-JnB"/>
                             <constraint firstItem="Ojl-iH-Mbk" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-298.5" id="Jo1-rb-lUU"/>
-                            <constraint firstItem="fvy-bz-e9V" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-151" id="KIL-Ri-FZb"/>
                             <constraint firstItem="cVH-rd-tcd" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" id="KsV-4L-9KQ"/>
                             <constraint firstItem="Hlg-1Z-Lr7" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-51" id="LYT-37-bLs"/>
                             <constraint firstItem="0Ji-hQ-YbN" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-136.5" id="LnL-uX-F2W"/>
@@ -348,8 +350,10 @@
                             <constraint firstItem="5xj-Kb-Hqf" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="77.5" id="ZLk-KR-qhV"/>
                             <constraint firstItem="GiO-R8-TsY" firstAttribute="top" secondItem="K9Y-bu-XMP" secondAttribute="bottom" id="aXr-n9-Zg4"/>
                             <constraint firstItem="yNj-LL-2v2" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="110.5" id="bHi-4e-SCU"/>
+                            <constraint firstItem="fvy-bz-e9V" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-153" id="cWe-2e-IWk"/>
                             <constraint firstItem="0Ji-hQ-YbN" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-78.5" id="cXb-8M-fPu"/>
                             <constraint firstItem="zjX-24-55w" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" id="cd8-SJ-Mpr"/>
+                            <constraint firstItem="fvy-bz-e9V" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-88.5" id="cdr-ff-ad8"/>
                             <constraint firstItem="vji-KQ-80c" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="54" id="dn2-gD-BSR"/>
                             <constraint firstItem="zjX-24-55w" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-76" id="h7m-n4-BbI"/>
                             <constraint firstItem="cVH-rd-tcd" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-248.5" id="iXN-HD-99O"/>
@@ -360,7 +364,7 @@
                             <constraint firstItem="vji-KQ-80c" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-89.5" id="q8v-Rq-7D9"/>
                             <constraint firstItem="fvy-bz-e9V" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-88.5" id="qpz-XB-gLh"/>
                             <constraint firstItem="pCa-AE-kt8" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-88.5" id="rfl-k2-Me7"/>
-                            <constraint firstItem="Xoo-FM-7Vr" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-220" id="riR-qm-1K4"/>
+                            <constraint firstItem="5xj-Kb-Hqf" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-153" id="wOK-Fx-UD3"/>
                         </constraints>
                     </view>
                     <connections>
