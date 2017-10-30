@@ -7,10 +7,24 @@
 //
 
 import Foundation
+import UIKit
 
 //For Swift 3, Swift 4 :Working in cellular and Wi - Fi
 
 import SystemConfiguration
+
+public class ActivityWheel {
+    
+    class func CreateActivity(activityIndicator: UIActivityIndicatorView, view: UIView) {
+        activityIndicator.center = view.center;
+        activityIndicator.hidesWhenStopped = true;
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
+        activityIndicator.color = UIColor.blue;
+        view.addSubview(activityIndicator);
+        activityIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents();
+    }
+}
 
 public class Reachability {
     

@@ -30,20 +30,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     var ref: DatabaseReference!
     var email:String = ""
-    //var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
-    
-    func CreateActivity() {
-        activityIndicator.center = self.view.center;
-        activityIndicator.hidesWhenStopped = true;
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
-        activityIndicator.color = UIColor.blue;
-        view.addSubview(activityIndicator);
-        activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents();
-    }
 
     @IBAction func Login(_ sender: Any) {
-        CreateActivity();
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
         }
