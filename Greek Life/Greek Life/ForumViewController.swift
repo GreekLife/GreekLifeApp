@@ -8,7 +8,35 @@
 
 import UIKit
 
+class Comment {
+    var Poster:String
+    var PostDate:NSDate
+    var Post:String
+    
+    init(Poster:String, PostDate:NSDate, Post:String){
+        self.Poster = Poster;
+        self.PostDate = PostDate;
+        self.Post = Post;
+    }
+}
+
+class ForumPost {
+    var Post:String
+    var Poster:String
+    var PostDate:NSDate
+    var Comments = [Comment]()
+    
+    init(Post:String, Poster:String, PostDate:NSDate,Comments:[Comment]){
+        self.Post = Post;
+        self.Poster = Poster;
+        self.PostDate = PostDate;
+        self.Comments = Comments;
+    }
+}
+
 class ForumViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    var Posts:[ForumPost] = []
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return(5)//number of cells
