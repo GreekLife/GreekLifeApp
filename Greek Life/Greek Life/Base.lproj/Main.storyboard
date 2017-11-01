@@ -322,7 +322,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="426.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Latin Is A Cool Language" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ldz-19-mdg">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Latin Is A Cool Language" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ldz-19-mdg">
                                                     <rect key="frame" x="110" y="45" width="239" height="51"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="Ldz-19-mdg" secondAttribute="height" multiplier="239:51" id="8D5-7U-u0t"/>
@@ -333,29 +333,18 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bwC-7B-Akm">
-                                                    <rect key="frame" x="42" y="95" width="294" height="275"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bwC-7B-Akm">
+                                                    <rect key="frame" x="42" y="95" width="294" height="301"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="275" id="ci6-bn-mwa"/>
-                                                        <constraint firstAttribute="width" secondItem="bwC-7B-Akm" secondAttribute="height" multiplier="294:275" id="rL0-ca-H37"/>
-                                                        <constraint firstAttribute="width" constant="294" id="wpp-qI-O68"/>
+                                                        <constraint firstAttribute="width" constant="294" id="jgZ-ti-1CF"/>
+                                                        <constraint firstAttribute="width" secondItem="bwC-7B-Akm" secondAttribute="height" multiplier="42:43" id="jnR-9X-Zez"/>
+                                                        <constraint firstAttribute="height" constant="301" id="wR7-Ng-0yu"/>
                                                     </constraints>
-                                                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Excepteur sint occaecat cupidatat non proident. Nam liber te conscient to </string>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11.5"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jonah Elbaz" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G78-w7-Cuc">
-                                                    <rect key="frame" x="117" y="13" width="218" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" secondItem="G78-w7-Cuc" secondAttribute="height" multiplier="218:21" id="1HW-Zt-h7x"/>
-                                                        <constraint firstAttribute="height" constant="21" id="Unb-PC-P2p"/>
-                                                        <constraint firstAttribute="width" constant="218" id="oQB-xa-1rh"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Icons/Profile.png" translatesAutoresizingMaskIntoConstraints="NO" id="aeO-u4-rTZ">
                                                     <rect key="frame" x="21" y="9.5" width="80" height="80"/>
                                                     <constraints>
@@ -365,33 +354,58 @@
                                                     </constraints>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aey-pc-p7Q">
-                                                    <rect key="frame" x="55" y="378" width="201" height="21"/>
+                                                    <rect key="frame" x="42" y="397" width="139" height="21"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" secondItem="Aey-pc-p7Q" secondAttribute="height" multiplier="67:7" id="Jgh-oL-Adn"/>
-                                                        <constraint firstAttribute="width" constant="201" id="RPN-gq-iQc"/>
-                                                        <constraint firstAttribute="height" constant="21" id="wpi-qS-hXh"/>
+                                                        <constraint firstAttribute="width" secondItem="Aey-pc-p7Q" secondAttribute="height" multiplier="139:21" id="HlJ-uy-lxI"/>
+                                                        <constraint firstAttribute="height" constant="21" id="QzV-Hl-RNJ"/>
+                                                        <constraint firstAttribute="width" constant="139" id="xHP-ht-qjO"/>
                                                     </constraints>
                                                     <state key="normal" title="View 33 Comments">
                                                         <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                     </state>
                                                 </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="May 12, 2017" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SOr-AS-YA3">
+                                                    <rect key="frame" x="225" y="397" width="110" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="GE1-Bc-cYp"/>
+                                                        <constraint firstAttribute="width" constant="110" id="IBt-df-mwI"/>
+                                                        <constraint firstAttribute="width" secondItem="SOr-AS-YA3" secondAttribute="height" multiplier="110:21" id="MTJ-MX-lVA"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jonah Elbaz" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G78-w7-Cuc">
+                                                    <rect key="frame" x="110" y="16" width="151" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="5Uf-nK-UgF"/>
+                                                        <constraint firstAttribute="width" constant="151" id="AnN-yh-XKI"/>
+                                                        <constraint firstAttribute="width" secondItem="G78-w7-Cuc" secondAttribute="height" multiplier="151:21" id="Mn7-eF-P6D"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="G78-w7-Cuc" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="38.5" id="1Bn-rs-cao"/>
+                                                <constraint firstItem="Aey-pc-p7Q" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="-76" id="15E-rj-pGW"/>
                                                 <constraint firstItem="Ldz-19-mdg" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="-142.75" id="5EU-yd-PPD"/>
-                                                <constraint firstItem="G78-w7-Cuc" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="-189.75" id="6qh-Qf-sCT"/>
+                                                <constraint firstItem="SOr-AS-YA3" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="92.5" id="Db1-Zk-DXt"/>
                                                 <constraint firstItem="Ldz-19-mdg" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="42" id="G4W-mR-FCn"/>
-                                                <constraint firstItem="bwC-7B-Akm" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="19.25" id="Kex-R5-nKg"/>
+                                                <constraint firstItem="SOr-AS-YA3" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="194.25" id="HHM-HF-KIQ"/>
                                                 <constraint firstItem="aeO-u4-rTZ" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="-126.5" id="O24-5a-0or"/>
+                                                <constraint firstItem="G78-w7-Cuc" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="-2" id="UKk-EQ-rMt"/>
                                                 <constraint firstItem="aeO-u4-rTZ" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="-163.75" id="Xc6-u9-bJo"/>
-                                                <constraint firstItem="bwC-7B-Akm" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="1.5" id="oeO-fG-5Hy"/>
-                                                <constraint firstItem="Aey-pc-p7Q" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="175.25" id="qSz-Qr-ifl"/>
-                                                <constraint firstItem="Aey-pc-p7Q" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="-32" id="v2C-UK-RKF"/>
+                                                <constraint firstItem="G78-w7-Cuc" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="-186.75" id="b3U-Gx-tyf"/>
+                                                <constraint firstItem="bwC-7B-Akm" firstAttribute="centerX" secondItem="N9O-l7-UhY" secondAttribute="centerX" constant="1.5" id="iye-Xe-0Gl"/>
+                                                <constraint firstItem="Aey-pc-p7Q" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="194.25" id="ja4-Jd-zk4"/>
+                                                <constraint firstItem="bwC-7B-Akm" firstAttribute="centerY" secondItem="N9O-l7-UhY" secondAttribute="centerY" constant="32.25" id="xq0-LX-ddd"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="Post" destination="bwC-7B-Akm" id="62c-Cx-eYw"/>
+                                            <outlet property="Post" destination="bwC-7B-Akm" id="VKC-E7-kWl"/>
                                             <outlet property="PostCommentList" destination="Aey-pc-p7Q" id="ktA-vT-mQO"/>
+                                            <outlet property="PostDate" destination="SOr-AS-YA3" id="MEv-x3-btv"/>
                                             <outlet property="PostTitle" destination="Ldz-19-mdg" id="5QV-1n-5RV"/>
                                             <outlet property="PosterImage" destination="aeO-u4-rTZ" id="NsX-fl-FaK"/>
                                             <outlet property="PosterName" destination="G78-w7-Cuc" id="PHW-uv-ike"/>
@@ -527,6 +541,9 @@
                             <constraint firstItem="8UX-eY-3Gs" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="133.5" id="xYa-f9-YHc"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="TableView" destination="CFp-nx-dCu" id="vty-eW-1tt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rGt-SX-J0j" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

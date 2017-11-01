@@ -11,10 +11,12 @@ import UIKit
 class ForumCellTableViewCell: UITableViewCell {
     
     @IBOutlet weak var PostCommentList: UIButton!
-    @IBOutlet weak var Post: UITextView!
+
     @IBOutlet weak var PostTitle: UILabel!
+    @IBOutlet weak var Post: UITextView!
     @IBOutlet weak var PosterName: UILabel!
     @IBOutlet weak var PosterImage: UIImageView!
+    @IBOutlet weak var PostDate: UILabel!
     
 
     override func awakeFromNib() {
@@ -29,3 +31,4 @@ class ForumCellTableViewCell: UITableViewCell {
     }
 
 }
+
