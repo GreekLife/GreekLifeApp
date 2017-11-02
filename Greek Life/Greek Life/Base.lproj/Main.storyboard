@@ -58,9 +58,13 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Brothers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oTK-B1-mrE">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brothers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oTK-B1-mrE">
                                 <rect key="frame" x="291" y="277" width="40" height="9"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="9" id="6jG-I7-dg1"/>
+                                    <constraint firstAttribute="width" secondItem="oTK-B1-mrE" secondAttribute="height" multiplier="40:9" id="AOg-yc-lIn"/>
+                                    <constraint firstAttribute="width" constant="40" id="Q9w-XY-r08"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                 <color key="textColor" red="1" green="0.021145117799999998" blue="0.2444720108" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <nil key="highlightedColor"/>
@@ -244,6 +248,7 @@
                             <constraint firstItem="Xoo-FM-7Vr" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-222" id="8Ci-uD-9sn"/>
                             <constraint firstItem="7mm-fC-Pgy" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="54" id="AFo-6k-Mar"/>
                             <constraint firstItem="AEs-K8-1Ve" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-179.5" id="DCD-5Z-fc3"/>
+                            <constraint firstItem="oTK-B1-mrE" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-52" id="FL1-GY-vVL"/>
                             <constraint firstItem="K9Y-bu-XMP" firstAttribute="top" secondItem="CJH-SN-rxv" secondAttribute="top" id="FoZ-su-kqQ"/>
                             <constraint firstItem="VLa-cz-fhT" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" id="GAH-o7-5yY"/>
                             <constraint firstItem="VLa-cz-fhT" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="139" id="HDN-2w-wbh"/>
@@ -263,6 +268,7 @@
                             <constraint firstItem="pZg-0z-tBs" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="123.5" id="XG5-ee-xAc"/>
                             <constraint firstItem="Hlg-1Z-Lr7" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="-137.5" id="Xcv-Ap-YmI"/>
                             <constraint firstItem="5xj-Kb-Hqf" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="77.5" id="ZLk-KR-qhV"/>
+                            <constraint firstItem="oTK-B1-mrE" firstAttribute="centerX" secondItem="CJH-SN-rxv" secondAttribute="centerX" constant="123.5" id="ZZs-xD-CnJ"/>
                             <constraint firstItem="GiO-R8-TsY" firstAttribute="top" secondItem="K9Y-bu-XMP" secondAttribute="bottom" id="aXr-n9-Zg4"/>
                             <constraint firstItem="yNj-LL-2v2" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="110.5" id="bHi-4e-SCU"/>
                             <constraint firstItem="fvy-bz-e9V" firstAttribute="centerY" secondItem="CJH-SN-rxv" secondAttribute="centerY" constant="-153" id="cWe-2e-IWk"/>
@@ -284,12 +290,13 @@
                     </view>
                     <connections>
                         <outlet property="BackgroundPic" destination="K9Y-bu-XMP" id="ngp-0c-5WR"/>
-                        <outlet property="BrothersContainer" destination="pZg-0z-tBs" id="czv-o2-FEM"/>
                         <outlet property="CalendarContainer" destination="AEs-K8-1Ve" id="mKt-De-d1e"/>
                         <outlet property="ForumContainer" destination="k3j-sb-QOe" id="N5Y-gJ-QTW"/>
                         <outlet property="InfoContainer" destination="pCa-AE-kt8" id="sZQ-SP-AHz"/>
                         <outlet property="Logo" destination="zjX-24-55w" id="cMQ-oa-azO"/>
                         <outlet property="MasterContainer" destination="yNj-LL-2v2" id="Mni-yk-K3c"/>
+                        <outlet property="MemberContainer" destination="pZg-0z-tBs" id="Drx-dA-HHr"/>
+                        <outlet property="MemberTitle" destination="oTK-B1-mrE" id="dfd-gv-IIh"/>
                         <outlet property="PollContainer" destination="0Ji-hQ-YbN" id="rDN-99-Ggq"/>
                         <outlet property="ProfileContainer" destination="u2v-es-6hh" id="CG5-LP-tMW"/>
                         <outlet property="imContainer" destination="cVH-rd-tcd" id="WvD-De-Mm2"/>
@@ -685,6 +692,6 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="kFV-pn-yBU"/>
+        <segue reference="i9E-qc-436"/>
     </inferredMetricsTieBreakers>
 </document>

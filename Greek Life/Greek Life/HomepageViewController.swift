@@ -14,11 +14,12 @@ class HomepageViewController: UIViewController {
     @IBOutlet weak var ForumContainer: UIButton!
     @IBOutlet weak var CalendarContainer: UIButton!
     @IBOutlet weak var PollContainer: UIButton!
-    @IBOutlet weak var BrothersContainer: UIButton!
+    @IBOutlet weak var MemberContainer: UIButton!
     @IBOutlet weak var MasterContainer: UIButton!
     @IBOutlet weak var ProfileContainer: UIButton!
     @IBOutlet weak var imContainer: UIButton!
     @IBOutlet weak var InfoContainer: UIButton!
+    @IBOutlet weak var MemberTitle: UILabel!
     
     @IBOutlet weak var Logo: UIImageView!
     @IBOutlet weak var BackgroundPic: UIImageView!
@@ -40,9 +41,9 @@ class HomepageViewController: UIViewController {
         super.viewDidLoad()
        // let blue = UIColor.blue.withAlphaComponent(0.3)
         
-        BackgroundPic?.image = UIImage(named: "AEPiDocs/School.png")
+        BackgroundPic?.image = UIImage(named: "Docs/School.png")
         BackgroundPic?.alpha = 0.9
-        Logo?.image = UIImage(named: "AEPiDocs/Logos/AEPi.png");
+        Logo?.image = UIImage(named: "Docs/Logos/Logo3.png");
         
         imContainer.layer.cornerRadius = imContainer.frame.width/2;
         imContainer.layer.borderWidth = 0.5;
@@ -68,10 +69,11 @@ class HomepageViewController: UIViewController {
         PollContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
        // PollContainer.layer.backgroundColor = blue.cgColor
 
-        BrothersContainer.layer.cornerRadius = BrothersContainer.frame.width/2;
-        BrothersContainer.layer.borderWidth = 1;
-        BrothersContainer.setImage(UIImage(named: "Icons/Brothers.png"), for: UIControlState.normal)
-        BrothersContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
+        MemberContainer.layer.cornerRadius = MemberContainer.frame.width/2;
+        MemberContainer.layer.borderWidth = 1;
+        MemberContainer.setImage(UIImage(named: "Icons/Members.png"), for: UIControlState.normal)
+        MemberContainer.imageEdgeInsets = UIEdgeInsetsMake(55,55,55,55)
+        MemberTitle.text = Configuration.Config?["MemberType"] as? String
 
         InfoContainer.layer.cornerRadius = InfoContainer.frame.width/2;
         InfoContainer.layer.borderWidth = 1;

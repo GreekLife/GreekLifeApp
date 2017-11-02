@@ -140,7 +140,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         self.Password.delegate = self;
         
         let pic = BackgroundPic;
-        pic?.image = UIImage(named: "AEPiDocs/School.png");
+        pic?.image = UIImage(named: "Docs/School.png");
         pic?.alpha = 0.3;
         
         //self.addBackground(imageName: "AEPiDocs/School.png", contextMode: .scaleAspectFit);
@@ -163,10 +163,10 @@ class LoginController: UIViewController, UITextFieldDelegate {
         LoginLabel.alpha = 0.7
         
 
-        Title_Pic.image = UIImage(named: "AEPiDocs/Logos/AEPi_Letters_Blue.png");
+        Title_Pic.image = UIImage(named: "Docs/Logos/Letters1.png");
 
-        User_Icon.image = UIImage(named: "AEPiDocs/user_icon.png");
-        Password_Icon.image = UIImage(named: "AEPiDocs/password_icon.png");
+        User_Icon.image = UIImage(named: "Docs/User_Icon.png");
+        Password_Icon.image = UIImage(named: "Docs/Password_Icon.png");
     }
     
     override func didReceiveMemoryWarning() {
