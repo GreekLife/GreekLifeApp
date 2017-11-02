@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="b3r-Ks-YnZ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="PPi-Xe-4VV">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -447,64 +447,65 @@
                                 <state key="normal" image="Icons/DeleteF.png"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qzs-Gy-NdE">
-                                <rect key="frame" x="30" y="65" width="46" height="21"/>
+                                <rect key="frame" x="23" y="65" width="56" height="31"/>
+                                <color key="backgroundColor" red="0.2343418714647274" green="0.57219181274948983" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="qzs-Gy-NdE" secondAttribute="height" multiplier="46:21" id="CzM-XO-I9J"/>
-                                    <constraint firstAttribute="width" constant="46" id="bdv-Ka-Aeb"/>
-                                    <constraint firstAttribute="height" constant="21" id="vGH-nA-Znn"/>
+                                    <constraint firstAttribute="width" constant="56" id="2wk-pT-HWF"/>
+                                    <constraint firstAttribute="height" constant="31" id="QCq-4N-4ur"/>
+                                    <constraint firstAttribute="width" secondItem="qzs-Gy-NdE" secondAttribute="height" multiplier="56:31" id="uMg-pz-6Fv"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="13"/>
                                 <state key="normal" title="Oldest">
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
+                                <connections>
+                                    <action selector="Oldest:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="spi-ZK-NyG"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlu-AZ-Ja2">
-                                <rect key="frame" x="87" y="65" width="46" height="21"/>
+                                <rect key="frame" x="87" y="65" width="56" height="31"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="46" id="JF8-le-ZY8"/>
-                                    <constraint firstAttribute="width" secondItem="Tlu-AZ-Ja2" secondAttribute="height" multiplier="46:21" id="W0c-6p-OKP"/>
-                                    <constraint firstAttribute="height" constant="21" id="he3-Tb-22m"/>
+                                    <constraint firstAttribute="width" secondItem="Tlu-AZ-Ja2" secondAttribute="height" multiplier="56:31" id="nsz-WX-1ie"/>
+                                    <constraint firstAttribute="width" constant="56" id="peA-Vp-8Fz"/>
+                                    <constraint firstAttribute="height" constant="31" id="rq9-fY-fFF"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <state key="normal" title="Newest">
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
+                                <connections>
+                                    <action selector="Newest:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="qoy-Ik-nbR"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zV-7a-WqU">
-                                <rect key="frame" x="144" y="65" width="72" height="21"/>
+                                <rect key="frame" x="151" y="65" width="87" height="31"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="1zV-7a-WqU" secondAttribute="height" multiplier="24:7" id="20N-8q-wWd"/>
-                                    <constraint firstAttribute="width" constant="72" id="3Iv-ld-4qp"/>
-                                    <constraint firstAttribute="height" constant="21" id="ixO-Pz-fER"/>
+                                    <constraint firstAttribute="width" constant="87" id="9NB-c8-Oia"/>
+                                    <constraint firstAttribute="width" secondItem="1zV-7a-WqU" secondAttribute="height" multiplier="87:31" id="DyF-c1-6Nc"/>
+                                    <constraint firstAttribute="height" constant="31" id="r4Z-yN-iYm"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <state key="normal" title="This Month">
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
+                                <connections>
+                                    <action selector="ThisMonth:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="bSa-EA-Ell"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e8r-he-NBa">
-                                <rect key="frame" x="231" y="65" width="59" height="21"/>
+                                <rect key="frame" x="246" y="65" width="69" height="31"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="59" id="Rlz-kl-aMC"/>
-                                    <constraint firstAttribute="width" secondItem="e8r-he-NBa" secondAttribute="height" multiplier="59:21" id="Z5L-hv-xDj"/>
-                                    <constraint firstAttribute="height" constant="21" id="fbB-aX-v2K"/>
+                                    <constraint firstAttribute="height" constant="31" id="Vri-gd-6gT"/>
+                                    <constraint firstAttribute="width" secondItem="e8r-he-NBa" secondAttribute="height" multiplier="69:31" id="eHe-f2-D9q"/>
+                                    <constraint firstAttribute="width" constant="69" id="f7D-85-6vW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <state key="normal" title="This Year">
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8UX-eY-3Gs">
-                                <rect key="frame" x="298" y="65" width="46" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="46" id="4Sz-Fw-byO"/>
-                                    <constraint firstAttribute="height" constant="21" id="hOV-91-jNX"/>
-                                    <constraint firstAttribute="width" secondItem="8UX-eY-3Gs" secondAttribute="height" multiplier="46:21" id="obm-2e-qhm"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <state key="normal" title="Type">
-                                    <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                </state>
+                                <connections>
+                                    <action selector="ThisYear:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="fzs-wb-nak"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4km-pg-giE">
                                 <rect key="frame" x="16" y="20" width="64" height="18"/>
@@ -520,29 +521,31 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Ci0-Gd-WSe" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-294.5" id="2ba-UG-HUo"/>
-                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="73" id="4ej-wZ-Raf"/>
-                            <constraint firstItem="ekw-iY-rTH" firstAttribute="top" secondItem="CFp-nx-dCu" secondAttribute="bottom" id="6ug-7i-gNv"/>
-                            <constraint firstItem="CFp-nx-dCu" firstAttribute="leading" secondItem="Fsx-fa-udQ" secondAttribute="leading" id="9cz-sZ-L6A"/>
-                            <constraint firstAttribute="trailing" secondItem="CFp-nx-dCu" secondAttribute="trailing" id="ASG-IO-n7y"/>
-                            <constraint firstItem="Tlu-AZ-Ja2" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-258" id="BTC-Fd-beA"/>
-                            <constraint firstItem="qzs-Gy-NdE" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-258" id="FoO-GF-env"/>
-                            <constraint firstItem="qzs-Gy-NdE" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-134.5" id="IOU-pl-GoY"/>
+                            <constraint firstItem="ekw-iY-rTH" firstAttribute="top" secondItem="CFp-nx-dCu" secondAttribute="bottom" id="IRa-lI-fh9"/>
+                            <constraint firstItem="CFp-nx-dCu" firstAttribute="leading" secondItem="Fsx-fa-udQ" secondAttribute="leading" id="IxQ-Ld-Jqc"/>
                             <constraint firstItem="SAm-UJ-31h" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-294.5" id="J8Q-BV-Fin"/>
+                            <constraint firstAttribute="trailing" secondItem="CFp-nx-dCu" secondAttribute="trailing" id="NdB-i4-js1"/>
+                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="7" id="NdF-mP-0eP"/>
+                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="93" id="O9M-Gg-DYE"/>
+                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-253" id="REA-xs-xLl"/>
                             <constraint firstItem="SAm-UJ-31h" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="66.5" id="Shk-yp-Ese"/>
-                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-258" id="TUr-Nb-kZ2"/>
                             <constraint firstItem="xcV-hw-LDd" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-66" id="Uxs-qm-chf"/>
-                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-7.5" id="WGx-8N-IWk"/>
-                            <constraint firstItem="CFp-nx-dCu" firstAttribute="top" secondItem="qzs-Gy-NdE" secondAttribute="bottom" constant="18" id="aPg-zt-inK"/>
+                            <constraint firstItem="Tlu-AZ-Ja2" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-72.5" id="eyy-sk-PDx"/>
+                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-253" id="fZy-7c-6zP"/>
                             <constraint firstItem="Ci0-Gd-WSe" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" id="gbq-sh-gm5"/>
-                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-258" id="hLN-kk-wca"/>
                             <constraint firstItem="xcV-hw-LDd" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-294.5" id="iiT-Qq-NCd"/>
-                            <constraint firstItem="8UX-eY-3Gs" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-258" id="oYU-gy-Oja"/>
-                            <constraint firstItem="Tlu-AZ-Ja2" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-77.5" id="xVY-Zc-fsF"/>
-                            <constraint firstItem="8UX-eY-3Gs" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="133.5" id="xYa-f9-YHc"/>
+                            <constraint firstItem="qzs-Gy-NdE" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-253" id="lNY-SS-5j7"/>
+                            <constraint firstItem="CFp-nx-dCu" firstAttribute="top" secondItem="qzs-Gy-NdE" secondAttribute="bottom" constant="8" id="ri4-FQ-zcL"/>
+                            <constraint firstItem="qzs-Gy-NdE" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-136.5" id="yD7-LN-4wZ"/>
+                            <constraint firstItem="Tlu-AZ-Ja2" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-253" id="zHG-nY-utk"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="Newest" destination="Tlu-AZ-Ja2" id="J6m-e8-4C8"/>
+                        <outlet property="Oldest" destination="qzs-Gy-NdE" id="w0j-Xx-IIv"/>
                         <outlet property="TableView" destination="CFp-nx-dCu" id="vty-eW-1tt"/>
+                        <outlet property="ThisMonth" destination="1zV-7a-WqU" id="zvd-rc-32b"/>
+                        <outlet property="ThisYear" destination="e8r-he-NBa" id="h7n-uc-7Wm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rGt-SX-J0j" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -682,6 +685,6 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="i9E-qc-436"/>
+        <segue reference="kFV-pn-yBU"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -22,9 +22,13 @@ class Comment {
     }
 }
 
-class ForumPost: Hashable {
+class ForumPost: Hashable, Comparable {
+    
     static func ==(lhs: ForumPost, rhs: ForumPost) -> Bool {
         return lhs.uid == rhs.uid
+    }
+    static func < (lhs: ForumPost, rhs: ForumPost) -> Bool {
+        return lhs.PostDate > rhs.PostDate
     }
     
     var uid: Int
@@ -49,11 +53,31 @@ class ForumPost: Hashable {
 
 class ForumViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     var ref: DatabaseReference!
-    var NumberOfCells:Int = 1;
+    var NumberOfCells:Int = 0;
     var AllPosts:[ForumPost]? = nil
     @IBOutlet weak var TableView: UITableView!
     
+    //List order button properties
+    @IBOutlet weak var Oldest: UIButton!
+    @IBOutlet weak var Newest: UIButton!
+    @IBOutlet weak var ThisMonth: UIButton!
+    @IBOutlet weak var ThisYear: UIButton!
     
+    //List order button actions
+    @IBAction func Oldest(_ sender: Any) {
+    }
+    @IBAction func Newest(_ sender: Any) {
+    }
+    @IBAction func ThisMonth(_ sender: Any) {
+    }
+    @IBAction func ThisYear(_ sender: Any) {
+    }
+    //List order button clicked properties
+    var OldestClicked = true;
+    var NewestClicked = false;
+    var ThisMonthClicked = false;
+    var ThisYearClicked = false;
+    //
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return(NumberOfCells)//number of cells
     }
@@ -61,27 +85,31 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
         if(self.AllPosts != nil){
+            SortByDate(Posts: AllPosts!)
             cell.PosterName.text = self.AllPosts![indexPath.row].Poster
             cell.PostTitle.text = self.AllPosts![indexPath.row].PostTitle
             cell.Post.text = self.AllPosts![indexPath.row].Post
             let date = getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
             cell.PostDate.text = date
+            cell.PostCommentList.setTitle("View \(AllPosts![indexPath.row].Comments.count) Comments", for: .normal)
         }
         return(cell)
     }
     
+    func SortByDate(Posts:[ForumPost]){
+        let post : [ForumPost] = mergeSorting.mergeSort(Posts)
+        AllPosts = post
+    }
+    
     func getCurrentDate(epoch:Double)->String{
         let date = NSDate(timeIntervalSince1970: epoch)
-        print(epoch)
         let formattedDate = self.formatDate(date: date)
         return formattedDate
     }
     func formatDate(date:NSDate)->String{
         let formater = DateFormatter()
-        //formater.timeZone = TimeZone(abbreviation: "GMT")
         formater.dateFormat = "MMM dd YYYY, hh:mm"
         let dateString = formater.string(from: date as Date)
-        print(dateString)
         return dateString
     }
     
@@ -97,21 +125,26 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                         if let post = postDictionary["Post"] as? String {
                             if let poster = postDictionary["Poster"] as? String{
                                 if let postTitle = postDictionary["PostTitle"] as? String {
-                                if let postDate = postDictionary["PostDate"] as? String {
-                                    if let _ = postDictionary["Comments"] as? [AnyObject] {
+                                    if let comment = postDictionary["Comments"] as? [AnyObject] {
                                         if let date = postDictionary["Epoch"] as? Double {
-                                       let newComment:[Comment] = []
-//                                        for comm in comment{
-//                                          let createComment = Comment(Poster: , PostDate: "comm['PostDate']", Post: "comm['Post']")
-//                                          newComment.append(createComment);
-//                                        }
+                                       var newComment:[Comment] = []
+                                        for comm in comment{
+                                         let dic = comm as? [String:String] //0 can't stay
+                                            if let ComPoster = dic!["Poster"] {
+                                                if let ComPost = dic!["Post"] {
+                                                    if let ComDate = dic!["Epoch"] {
+                                                            let createComment = Comment(Poster: ComPoster, PostDate: ComDate, Post: ComPost)
+                                                        newComment.append(createComment);
+                                                    }
+                                                }
+                                            }
+                                        }
                                         let newPost = ForumPost(uId: count, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, Comments: newComment)
                                         Posts.append(newPost);
                                         count = count + 1
                                        }
                                     }
                                 }
-                              }
                             }
                         }
                     }
@@ -136,6 +169,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             self.NumberOfCells = PostList.count
             self.TableView.reloadData();
     }
+        
     }
 
     override func didReceiveMemoryWarning() {

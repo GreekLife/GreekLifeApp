@@ -134,7 +134,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
+
         self.Username.delegate = self;
         self.Password.delegate = self;
         
