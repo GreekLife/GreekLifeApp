@@ -10,7 +10,6 @@ import UIKit
 
 class ForumCellTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var PostCommentList: UIButton!
     @IBOutlet weak var PostTitle: UILabel!
     @IBOutlet weak var Post: UITextView!
     @IBOutlet weak var PosterName: UILabel!
