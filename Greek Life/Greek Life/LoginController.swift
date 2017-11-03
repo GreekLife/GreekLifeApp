@@ -51,6 +51,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 internetError.isHidden = true
                 }
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
             }
         }
     }
