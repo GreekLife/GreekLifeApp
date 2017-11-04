@@ -77,17 +77,33 @@ public class ActivityWheel {
     }
 }
 
+public class CreateDate {
+    class func getCurrentDate(epoch:Double)->String{
+        let date = NSDate(timeIntervalSince1970: epoch)
+        let formattedDate = formatDate(date: date)
+        return formattedDate
+    }
+    class func formatDate(date:NSDate)->String{
+        let formater = DateFormatter()
+        formater.dateFormat = "MMM dd YYYY, hh:mm"
+        let dateString = formater.string(from: date as Date)
+        return dateString
+    }
+}
+
+public class Banner {
+    class func ErrorBanner(errorTitle:String)->UILabel{
+        let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
+        internetError.textColor = .red
+        internetError.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        internetError.textAlignment = .center
+        internetError.text = errorTitle
+        print("Internet Connection not Available!")
+        return internetError
+    }
+}
+
 public class Reachability {
-    //not working but should be implemented
-//    class func createInternetError()->UILabel{
-//    let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
-//    internetError.textColor = .red
-//    internetError.backgroundColor = UIColor.black.withAlphaComponent(0.2)
-//    internetError.textAlignment = .center
-//    internetError.text = "You're not connected to the internet"
-//    print("Internet Connection not Available!")
-//        return internetError
-//    }
     
     class func isConnectedToNetwork() -> Bool {
         
