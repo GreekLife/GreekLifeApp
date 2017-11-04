@@ -13,6 +13,17 @@ import UIKit
 
 import SystemConfiguration
 
+public class GenericTools {
+    class func FrameToFitTextView(View: UITextView){
+        let fixedWidth = View.frame.size.width
+        View.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        let newSize = View.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        var newFrame = View.frame
+        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+        View.frame = newFrame
+    }
+}
+
 public class mergeSorting {
     
 class func mergeSort<T: Comparable>(_ array: [T]) -> [T] {
