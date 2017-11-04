@@ -81,36 +81,62 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         view.removeGestureRecognizer(tap)
     }
     
+    func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    func validate(words:Int)->Bool{
+        if(words < 20) {
+            self.PostError.textColor = .red
+            PostError.text = "Post must be at least 20 words"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.PostError.text = ""
+            }
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            return false
+        }
+        else if(words > 150){
+            self.PostError.textColor = .red
+            PostError.text = "Post must be no more than 150 words"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.PostError.text = ""
+            }
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            return false
+        }
+        
+        else if(PostTitle.text?.count == 0 || PostTitle.text == nil){
+            self.PostError.textColor = .red
+            PostError.text = "Post must have a title"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.PostError.text = ""
+            }
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            return false
+        }
+        else{
+            return true
+        }
+        
+        
+    }
+    
     @IBAction func Post(_ sender: Any) {
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: NewPostView); //loading wheel is not showing
         let components = NewPost.text.components(separatedBy: .whitespacesAndNewlines)
         let PostWords = components.filter { !$0.isEmpty }
         
-        if(PostWords.count < 20) {
-            self.PostError.textColor = .red
-            PostError.text = "Post must be at least than 20 words"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                self.PostError.text = ""
-            }
-            return;
-        }
-        if(PostWords.count > 150){
-            self.PostError.textColor = .red
-            PostError.text = "Post must be no more than 150 words"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                 self.PostError.text = ""
-            }
-            return;
-        }
-        if(PostTitle.text?.count == 0 || PostTitle.text == nil){
-            self.PostError.textColor = .red
-            PostError.text = "Post must have a title"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                self.PostError.text = ""
-            }
-            return;
-        }
+        let valid = validate(words: PostWords.count)
         
-        //Write post to database
+        if(valid == true)
+        {
+            UploadPost()
+        }
+}
+    func UploadPost(){
         let Username = LoggedIn.User["Username"] as! String
         let FirstName = LoggedIn.User["First Name"] as! String
         let LastName = LoggedIn.User["Last Name"] as! String
@@ -122,25 +148,27 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         let Title = PostTitle.text
         let Post = NewPost.text
         //let Picture = LoggedIn.User["Picture"]
-        if(Title != nil && Post != nil && LastName != nil && FirstName != nil){
-        let Post3 = [
-            "Post": Post!,
-            "PostTitle": Title!,
-            "Poster": Name,
-            "Epoch": Epoch
-            ] as [String : Any]
-            PostData(newPostData: Post3){(success, error) in
+        if(Title != nil && Post != nil){
+            let Post = [
+                "Post": Post!,
+                "PostTitle": Title!,
+                "Poster": Name,
+                "Epoch": Epoch
+                ] as [String : Any]
+            PostData(newPostData: Post){(success, error) in
                 if(success == true){
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { //Queue is not dispatching here
                         self.PostError.text = "Post Succesfully added"
                         self.PostError.textColor = .blue
                         self.PostTitle.text = ""
                         self.NewPost.text = ""
-                    }                }
+                    }
+                    self.activityIndicator.stopAnimating();
+                    UIApplication.shared.endIgnoringInteractionEvents();
+                }
+            }
         }
     }
-}
-    
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
         let postId = UUID().uuidString
@@ -280,7 +308,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                     cell.PosterName.text = self.AllPosts![indexPath.row].Poster
                     cell.PostTitle.text = self.AllPosts![indexPath.row].PostTitle
                     cell.Post.text = self.AllPosts![indexPath.row].Post
-                    let date = getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
+                    let date = CreateDate.getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
                     cell.PostDate.text = date
                 }
                 else {
@@ -293,7 +321,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                     cell.PosterName.text = self.AllPosts![indexPath.row].Poster
                     cell.PostTitle.text = self.AllPosts![indexPath.row].PostTitle
                     cell.Post.text = self.AllPosts![indexPath.row].Post
-                    let date = getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
+                    let date = CreateDate.getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
                     cell.PostDate.text = date
                 }
                 else {
@@ -304,7 +332,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.PosterName.text = self.AllPosts![indexPath.row].Poster
             cell.PostTitle.text = self.AllPosts![indexPath.row].PostTitle
             cell.Post.text = self.AllPosts![indexPath.row].Post
-            let date = getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
+            let date = CreateDate.getCurrentDate(epoch: self.AllPosts![indexPath.row].PostDate)
             cell.PostDate.text = date
             }
         }
@@ -312,7 +340,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("cell at #\(indexPath.row) is selected!")
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let popVC = storyboard.instantiateViewController(withIdentifier: "CommentPop") // your viewcontroller's id
         popVC.preferredContentSize = CGSize(width: 500, height: 600)
@@ -327,21 +354,9 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         AllPosts = post
     }
     
-    func getCurrentDate(epoch:Double)->String{
-        let date = NSDate(timeIntervalSince1970: epoch)
-        let formattedDate = self.formatDate(date: date)
-        return formattedDate
-    }
-    func formatDate(date:NSDate)->String{
-        let formater = DateFormatter()
-        formater.dateFormat = "MMM dd YYYY, hh:mm"
-        let dateString = formater.string(from: date as Date)
-        return dateString
-    }
-    
-    func getPosts(completion: @escaping (Bool, Any?, Error?) -> Void){
+    func getPosts(completion: @escaping (Bool, Any?) -> Void){
         ref = Database.database().reference()
-        self.ref.child("Forum").observeSingleEvent(of: .value, with: { (snapshot) in
+        self.ref.child("Forum").observe(.value, with: { (snapshot) in
             var count = 1;
             var Posts:[ForumPost] = []
             for snap in snapshot.children{
@@ -351,7 +366,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                         if let post = postDictionary["Post"] as? String {
                             if let poster = postDictionary["Poster"] as? String{
                                 if let postTitle = postDictionary["PostTitle"] as? String {
-                                    if let comment = postDictionary["Comments"] as? Dictionary<String, AnyObject> {
+                                    if let _ = postDictionary["Comments"] as? Dictionary<String, AnyObject> {
                                         if let date = postDictionary["Epoch"] as? Double {
                                             let newComment:[Comment] = []
                                       //  for comm in comment{
@@ -363,7 +378,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
 //                                                        newComment.append(createComment);
 //                                                    }
 //                                                }
-//                                            }
+//                                            } //observe new event
  //                                       }
                                         let newPost = ForumPost(uId: count, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, Comments: newComment)
                                         Posts.append(newPost);
@@ -376,10 +391,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                     }
                 }
             }
-                completion(true, Posts, nil);
+                completion(true, Posts);
         }){ (error) in
             print("Could not retrieve object from database");
-            completion(false, nil, error)
+            completion(false, error)
         }
     }
 
@@ -390,8 +405,15 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.view.backgroundColor = UIColor.lightGray
         self.view.backgroundColor?.withAlphaComponent(0.2)
         if Reachability.isConnectedToNetwork(){
-        self.getPosts(){(success, response, error) in
+        self.getPosts(){(success, response) in
             guard success, let PostList = response as? [ForumPost] else{
+                let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not get posts from database.")
+                BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                self.view.addSubview(BadPostRequest)
+                print("Internet Connection not Available!")
+                if(response != nil){
+                    print(response!)
+                }
                 return
             }
             self.AllPosts = PostList
@@ -402,11 +424,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
         }
         else {
-            let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
-            internetError.textColor = .red
-            internetError.backgroundColor = UIColor.black.withAlphaComponent(0.2)
-            internetError.textAlignment = .center
-            internetError.text = "You're not connected to the internet"
+            let internetError =  Banner.ErrorBanner(errorTitle:"You're not connected to the Internet")
             self.view.addSubview(internetError)
             print("Internet Connection not Available!")
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -419,10 +437,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         tap = UITapGestureRecognizer(target: self, action: #selector(ForumViewController.dismissKeyboard))
     }
     
-    func dismissKeyboard() {
-        view.endEditing(true)
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
