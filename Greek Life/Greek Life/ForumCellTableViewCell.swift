@@ -15,6 +15,7 @@ class ForumCellTableViewCell: UITableViewCell {
     @IBOutlet weak var PosterName: UILabel!
     @IBOutlet weak var PosterImage: UIImageView!
     @IBOutlet weak var PostDate: UILabel!
+    @IBOutlet weak var NumberOfComments: UILabel!
     
 
     override func awakeFromNib() {
