@@ -10,7 +10,15 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 
-class Comment {
+class Comment: Comparable {
+    static func <(lhs: Comment, rhs: Comment) -> Bool {
+        return lhs.PostEpoch > rhs.PostEpoch
+    }
+    
+    static func ==(lhs: Comment, rhs: Comment) -> Bool {
+        return lhs.PostEpoch == rhs.PostEpoch
+    }
+    
     var Poster:String
     var PostDate:String
     var Post:String
@@ -34,6 +42,7 @@ class ForumPost: Hashable, Comparable {
     }
     
     var uid: Int
+    var PostId:String
     var Post:String
     var Poster:String
     var PostDate:Double
@@ -45,7 +54,7 @@ class ForumPost: Hashable, Comparable {
     }
     var Epoch:Double
     
-    init(uId: Int, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Comment]){
+    init(uId: Int, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Comment]){
         self.uid = uId;
         self.Post = Post;
         self.Poster = Poster;
@@ -54,12 +63,14 @@ class ForumPost: Hashable, Comparable {
         self.PostTitle = PostTitle;
         self.User = User;
         self.Epoch = Epoch;
+        self.PostId = PostId;
     }
 }
 
 struct Postings {
     static var AllPosts:[ForumPost]? = nil
     static var myIndex = 0
+    static let containerView = UIView()
 }
 
 class ForumViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, UITextFieldDelegate {
@@ -180,6 +191,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         let Epoch = Date().timeIntervalSince1970
         let Title = PostTitle.text
         let Posting = NewPost.text
+        let postId = UUID().uuidString
+
         //let Picture = LoggedIn.User["Picture"]
         if(Title != nil && Posting != nil){
             let Post = [
@@ -187,7 +200,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 "PostTitle": Title!,
                 "Poster": Name,
                 "Epoch": Epoch,
-                "Username": Username
+                "Username": Username,
+                "PostId": postId
                 ] as [String : Any]
             PostData(newPostData: Post){(success, error) in
                 if(success == true){
@@ -206,15 +220,15 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        let postId = UUID().uuidString
         let commentID = UUID().uuidString
-        self.ref.child("Forum").child(postId).setValue(newPostData)
+        let pID = newPostData["PostId"] as! String
+        self.ref.child("Forum").child(pID).setValue(newPostData)
         let comments = [
             "Post": "",
             "Poster": "",
             "Epoch": 0
             ] as [String : Any]
-        self.ref.child("Forum").child(postId).child("Comments").child(commentID).setValue(comments)
+        self.ref.child("Forum").child(pID).child("Comments").child(commentID).setValue(comments)
         completion(true, nil)
     }
     
@@ -433,15 +447,41 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         cell.NumberOfComments.text = "\(Postings.AllPosts![indexPath.row].Comments.count) Comments"
         return(cell)
     }
+
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Postings.myIndex = indexPath.row
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let popVC = storyboard.instantiateViewController(withIdentifier: "CommentPop") // your viewcontroller's id
-        popVC.preferredContentSize = CGSize(width: 500, height: 600)
-        popVC.modalPresentationStyle = .popover
-        let popover =  popVC.popoverPresentationController
-        popover?.delegate = self as? UIPopoverPresentationControllerDelegate
-        self.present(popVC, animated: true, completion: nil)
+        Postings.containerView.layer.shadowColor = UIColor.black.cgColor
+        Postings.containerView.layer.shadowOffset = CGSize.zero
+        Postings.containerView.layer.shadowOpacity = 0.5
+        Postings.containerView.layer.shadowRadius = 5
+        Postings.containerView.translatesAutoresizingMaskIntoConstraints = false
+        Postings.containerView.layer.cornerRadius = 10.0
+        Postings.containerView.layer.borderColor = UIColor.gray.cgColor
+        Postings.containerView.layer.borderWidth = 0.5
+        Postings.containerView.clipsToBounds = true
+        view.addSubview(Postings.containerView)
+        NSLayoutConstraint.activate([
+            Postings.containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
+            Postings.containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            Postings.containerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
+            Postings.containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -90),
+            ])
+        
+        // add child view controller view to container
+        
+        let controller = storyboard!.instantiateViewController(withIdentifier: "CommentPop")
+        addChildViewController(controller)
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        Postings.containerView.addSubview(controller.view)
+        
+        NSLayoutConstraint.activate([
+            controller.view.leadingAnchor.constraint(equalTo: Postings.containerView.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: Postings.containerView.trailingAnchor),
+            controller.view.topAnchor.constraint(equalTo: Postings.containerView.topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: Postings.containerView.bottomAnchor)
+            ])
+        
+        controller.didMove(toParentViewController: self)
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -466,6 +506,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                         if let post = postDictionary["Post"] as? String {
                             if let poster = postDictionary["Poster"] as? String{
                                 if let postTitle = postDictionary["PostTitle"] as? String {
+                                    if let postId = postDictionary["PostId"] as? String {
                                         if let date = postDictionary["Epoch"] as? Double {
                                             if let user = postDictionary["Username"] as? String {
                                                 if let comments = postDictionary["Comments"] as? [String : [String:AnyObject]] {
@@ -486,12 +527,13 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                         let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost)
                                                         newComment.append(newComm)
                                                     }
-                                                let newPost = ForumPost(uId: count, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
+                                                    let newPost = ForumPost(uId: count, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
                                         Posts.append(newPost);
                                         count = count + 1
                                                 }
                                         }
                                        }
+                                }
                                 }
                             }
                         }

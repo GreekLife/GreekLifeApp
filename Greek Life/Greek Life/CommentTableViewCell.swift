@@ -10,6 +10,7 @@ import UIKit
 
 class CommentTableViewCell: UITableViewCell {
 
+    
     @IBOutlet weak var CommentDate: UILabel!
     @IBOutlet weak var CommenterName: UILabel!
     @IBOutlet weak var Comment: UITextView!
