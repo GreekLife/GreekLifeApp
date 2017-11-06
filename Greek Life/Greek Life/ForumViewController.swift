@@ -223,12 +223,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         let commentID = UUID().uuidString
         let pID = newPostData["PostId"] as! String
         self.ref.child("Forum").child(pID).setValue(newPostData)
-        let comments = [
-            "Post": "",
-            "Poster": "",
-            "Epoch": 0
-            ] as [String : Any]
-        self.ref.child("Forum").child(pID).child("Comments").child(commentID).setValue(comments)
+//        let comments = [
+//            "Post": "",
+//            "Poster": "",
+//            "Epoch": 0
+//            ] as [String : Any]
+//        self.ref.child("Forum").child(pID).child("Comments").child(commentID).setValue(comments)
         completion(true, nil)
     }
     
@@ -509,10 +509,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                     if let postId = postDictionary["PostId"] as? String {
                                         if let date = postDictionary["Epoch"] as? Double {
                                             if let user = postDictionary["Username"] as? String {
+                                                var newComment:[Comment] = []
+                                                var x = 0
                                                 if let comments = postDictionary["Comments"] as? [String : [String:AnyObject]] {
-                                            var newComment:[Comment] = []
-                                                    var x = 0
-                                                    for comm in comments {
+                                                for comm in comments {
                                                         x = x + 1
                                                         var commEpoch = comm.value["Epoch"] as? Double
                                                         if commEpoch == nil {
@@ -527,10 +527,11 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                         let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost)
                                                         newComment.append(newComm)
                                                     }
+                                                }
                                                     let newPost = ForumPost(uId: count, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
                                         Posts.append(newPost);
                                         count = count + 1
-                                                }
+                                                
                                         }
                                        }
                                 }

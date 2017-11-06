@@ -52,9 +52,10 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(displayP3Red: 2/255, green: 0/255, blue: 176/255, alpha: 0.95)
+        //self.view.backgroundColor = UIColor(displayP3Red: 2/255, green: 0/255, blue: 176/255, alpha: 0.95)
+        self.view.backgroundColor = UIColor.black
         self.CommentBox.layer.borderWidth = 1
-        self.CommentBox.layer.borderColor = UIColor.blue.cgColor
+        self.CommentBox.layer.borderColor = UIColor.black.cgColor
         self.CommentBox.text = "Add comment here..."
         self.CommentButton.layer.backgroundColor = UIColor.yellow.cgColor
         self.CommentButton.layer.cornerRadius = 10
@@ -86,7 +87,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         return postings!
     }
-    var commentIndex = 0
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentTableViewCell
         Postings.AllPosts![Postings.myIndex].Comments = mergeSorting.mergeSort(Postings.AllPosts![Postings.myIndex].Comments)
@@ -97,19 +97,16 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
 //        cell.Comment.layer.borderColor = UIColor.red.cgColor
         cell.layer.cornerRadius = 10
         cell.layer.borderWidth = 2
-        cell.layer.borderColor = UIColor.blue.cgColor
-        let oldWidth = cell.Comment.frame.size.width
+        cell.layer.borderColor = UIColor.black.cgColor
         GenericTools.FrameToFitTextView(View: cell.Comment)
-        cell.Comment.frame.size.width = oldWidth
         let newHeight = cell.Comment.frame.size.height
         let cellHeight = newHeight
         self.rowHeight = 45 + cellHeight
         
         //content
-        cell.Comment.text = Postings.AllPosts![Postings.myIndex].Comments[commentIndex].Post //comment index out of bounds???
-        cell.CommenterName.text = Postings.AllPosts![Postings.myIndex].Comments[commentIndex].Poster
-        cell.CommentDate.text = Postings.AllPosts![Postings.myIndex].Comments[commentIndex].PostDate
-        commentIndex += 1
+        cell.Comment.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Post //comment index out of bounds???
+        cell.CommenterName.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Poster
+        cell.CommentDate.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].PostDate
         return(cell)
     }
 
