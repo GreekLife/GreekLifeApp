@@ -9,13 +9,14 @@
 import UIKit
 import FirebaseDatabase
 
+
   //*******************//
  //  Calendar Struct  //
 //*******************//
 struct Calendar {
     //Calendar Fields
-    var eventList:Dictionary<Double, Dictionary<String,Any>>
-    var settings:Dictionary<String, Any>
+    var eventList:[String:[String:Any]]
+    var settings:[String:Any]
     
     //General Gregorian Rules and Tools
     func isLeapYear(_ year:Int) -> Bool{
@@ -60,8 +61,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //-------------------//
 
     //Database References
-    let calendarRef:DatabaseReference = Database.database().reference().child("Calendar")
-    let calendarSettingsRef:DatabaseReference = Database.database().reference().child("CalendarControls")
+    let dataRef:DatabaseReference = Database.database().reference()
     //Handles for Database Sync
     var calendarDataHandle:DatabaseHandle?
     var calendarSettingsDataHandle:DatabaseHandle?
@@ -69,29 +69,40 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     var calendarSnapshot:DataSnapshot?
     var calendarSettingsSnapshot:DataSnapshot?
     //Local Calendar Instace
-    var calendar:Calendar = Calendar(eventList: <#Dictionary<String, Any>#>, settings: <#Dictionary<String, Any>#>)
+    var calendar:Calendar = Calendar(eventList: [:], settings: [:])
     
-    func initDBSnapshots()
+    func initCalendar()
     {
-        calendarRef.observeSingleEvent(of: .value, with: {(snapshot) in
-            self.calendarSnapshot = snapshot
-        })
-        calendarDataHandle = calendarRef.observe(.value, with: {(snapshot) in
-            self.calendarSnapshot = snapshot
-        })
-        calendarSettingsRef.observeSingleEvent(of: .value, with: {(snapshot) in
-            self.calendarSettingsSnapshot = snapshot
-        })
-        calendarSettingsDataHandle = calendarSettingsRef.observe(.value, with: {(snapshot) in
-            self.calendarSettingsSnapshot = snapshot
-        })
+        if Reachability.isConnectedToNetwork(){
+            
+            self.dataRef.child("Calendar").observeSingleEvent(of: .value, with: {(snapshot) in
+                if let eventList = snapshot.value as? [String:[String:Any]]
+                {
+                    self.calendar.eventList = eventList
+                    print("we got the calendar boyyz")
+                    self.calendarTable.reloadData()
+                }
+                else{print("Can't find the calendar")}
+            }){ (error) in
+                print("Could not retrieve object from database");
+            }
+            self.dataRef.child("CalendarControls").observeSingleEvent(of: .value, with: {(snapshot) in
+                if let settings = snapshot.value as? [String:Any]
+                {
+                    self.calendar.settings = settings
+                    print("we got the settings boyyz")
+                }
+                else{print("Can't find the calendar")}
+            }){ (error) in
+                print("Could not retrieve object from database");
+            }
+        
+        }
+        else{print ("Not connected to network!")}
     }
     func openCalendar()
     {
-        calendar.settings = (calendarSettingsSnapshot?.dictionaryWithValues(forKeys: [
-            "start", "end"
-            ]))!
-        calendar.eventList = calendarSnapshot?.value as! Dictionary<Double,Dictionary<String,Any>>
+        
     }
     func closeCalendar()
     {
@@ -103,9 +114,15 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //  Calendar Controller  //
     //-----------------------//
     
+    
+    @IBOutlet weak var calendarTable: UITableView!
+    @IBAction func createEventBTN(_ sender: Any) {
+    }
+    
     override func viewDidLoad() {
-        initDBSnapshots()
-        openCalendar()
+        super.viewDidLoad()
+        initCalendar()
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -113,7 +130,18 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return calendar.eventList.enumerated(). [indexPath.row]. ["title"]
+        
+        let eventCell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "eventCell")
+        
+        eventCell.textLabel?.text = Array(calendar.eventList.values)[indexPath.row]["title"] as! String
+        
+        return eventCell
+        /*let cell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
+        
+        let text = Array(calendar.eventList.values)[indexPath.row]["title"] as! String
+        
+        cell.textLabel?.text = text*/
+        
     }
     
     

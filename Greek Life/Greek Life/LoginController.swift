@@ -109,7 +109,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             if let user = snapshot.value as? [String:Any] {
                 print("User found");
                 LoggedIn.User = user;
-                userEmail = user["email"] as! String;
+                userEmail = user["Email"] as! String;
                 completion(true, userEmail, nil);
             }
             else{
