@@ -571,6 +571,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             self.SortByDate(Posts: Postings.AllPosts!)
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+
     }
         }
         else {
