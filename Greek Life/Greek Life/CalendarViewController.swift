@@ -7,64 +7,115 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
-
-
-
-class EventEditor: UIViewController
-{
-
-    @IBOutlet weak var titleField: UITextField!
-    @IBOutlet weak var startTimeField: UITextField!
-    @IBOutlet weak var endTimeField: UITextField!
-    @IBOutlet weak var dateField: UITextField!
-    @IBOutlet weak var monthField: UITextField!
-    @IBOutlet weak var yearField: UITextField!
-    @IBOutlet weak var localField: UITextField!
-    @IBOutlet weak var descriptionField: UITextField!
+  //*******************//
+ //  Calendar Struct  //
+//*******************//
+struct Calendar {
+    //Calendar Fields
+    var eventList:Dictionary<Double, Dictionary<String,Any>>
+    var settings:Dictionary<String, Any>
     
-    var cal:Calendar = Calendar()
-    
-    @IBAction func submitBTN() {
-        cal.createEvent(title: titleField.text!, startTime: startTimeField.text!, endTime: endTimeField.text!, date: dateField.text!, month: monthField.text!, year: yearField.text!, local: localField.text!, description: descriptionField.text!)
+    //General Gregorian Rules and Tools
+    func isLeapYear(_ year:Int) -> Bool{
+        if year % 4 == 0{
+            if year % 100 == 0{
+                if year % 400 == 0{
+                    return true
+                }else{
+                    return false
+                }
+            }else{
+                return true
+            }
+        }else{
+            return false
+        }
     }
-    
+    func daysIn(month:Int, year:Int) -> Int{
+        if month == 2 {
+            if isLeapYear(year){
+                return 29
+            }else{
+                return 28
+            }
+        }else if month == 4 || month == 6 || month == 9 || month == 11{
+            return 30
+        }else{
+            return 31
+        }
+    }
 }
 
 
+  //**********************************//
+ //  Calendar View Controller Class  //
+//**********************************//
 
+class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
+{
+    //-------------------//
+    //  Calendar Model   //
+    //-------------------//
 
-
-
-
-class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    //Database References
+    let calendarRef:DatabaseReference = Database.database().reference().child("Calendar")
+    let calendarSettingsRef:DatabaseReference = Database.database().reference().child("CalendarControls")
+    //Handles for Database Sync
+    var calendarDataHandle:DatabaseHandle?
+    var calendarSettingsDataHandle:DatabaseHandle?
+    //Current Snapshots of Database
+    var calendarSnapshot:DataSnapshot?
+    var calendarSettingsSnapshot:DataSnapshot?
+    //Local Calendar Instace
+    var calendar:Calendar = Calendar(eventList: <#Dictionary<String, Any>#>, settings: <#Dictionary<String, Any>#>)
     
-    let dayList = ["day1", "day2", "day3"]
-    let eventList = ["first event", "second event", "third event"]
+    func initDBSnapshots()
+    {
+        calendarRef.observeSingleEvent(of: .value, with: {(snapshot) in
+            self.calendarSnapshot = snapshot
+        })
+        calendarDataHandle = calendarRef.observe(.value, with: {(snapshot) in
+            self.calendarSnapshot = snapshot
+        })
+        calendarSettingsRef.observeSingleEvent(of: .value, with: {(snapshot) in
+            self.calendarSettingsSnapshot = snapshot
+        })
+        calendarSettingsDataHandle = calendarSettingsRef.observe(.value, with: {(snapshot) in
+            self.calendarSettingsSnapshot = snapshot
+        })
+    }
+    func openCalendar()
+    {
+        calendar.settings = (calendarSettingsSnapshot?.dictionaryWithValues(forKeys: [
+            "start", "end"
+            ]))!
+        calendar.eventList = calendarSnapshot?.value as! Dictionary<Double,Dictionary<String,Any>>
+    }
+    func closeCalendar()
+    {
+        
+    }
+    
+    
+    //-----------------------//
+    //  Calendar Controller  //
+    //-----------------------//
+    
+    override func viewDidLoad() {
+        initDBSnapshots()
+        openCalendar()
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return eventList.count
+        return calendar.eventList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let dayCell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "dayCell")
-        dayCell.textLabel?.text = eventList[indexPath.row]
-        
-        return dayCell
+        return calendar.eventList.enumerated(). [indexPath.row]. ["title"]
     }
     
-
-    @IBOutlet weak var calendarTable: UITableView!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+    
 }

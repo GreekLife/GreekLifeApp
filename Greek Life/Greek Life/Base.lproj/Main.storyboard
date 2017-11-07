@@ -126,7 +126,7 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="OWr-c4-QcE" kind="show" id="7Gq-4N-Klo"/>
+                                    <segue destination="ukU-ox-igm" kind="show" id="Y9D-DI-QFY"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Calendar" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fvy-bz-e9V">
@@ -466,10 +466,10 @@
             </objects>
             <point key="canvasLocation" x="-1508" y="0.0"/>
         </scene>
-        <!--Calendar View Controller-->
+        <!--CalendarViewController-->
         <scene sceneID="qhq-yk-6OS">
             <objects>
-                <viewController id="ukU-ox-igm" customClass="CalendarViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="CalendarViewController" id="ukU-ox-igm" customClass="CalendarViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bF5-XT-dgh"/>
                         <viewControllerLayoutGuide type="bottom" id="mCs-Vl-Pyt"/>
@@ -494,32 +494,12 @@
                                         <rect key="frame" x="0.0" y="45" width="343" height="557"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="dayCell" id="vpD-tg-DYi">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="eventCell" id="vpD-tg-DYi">
                                                 <rect key="frame" x="0.0" y="28" width="343" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vpD-tg-DYi" id="rPR-kt-9YZ">
                                                     <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <subviews>
-                                                        <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="kZT-wM-xbi">
-                                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
-                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                            <prototypes>
-                                                                <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="eventCell" id="QgJ-60-MVx">
-                                                                    <rect key="frame" x="0.0" y="28" width="343" height="44"/>
-                                                                    <autoresizingMask key="autoresizingMask"/>
-                                                                    <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="QgJ-60-MVx" id="G1t-cx-IJo">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="343" height="43.5"/>
-                                                                        <autoresizingMask key="autoresizingMask"/>
-                                                                    </tableViewCellContentView>
-                                                                </tableViewCell>
-                                                            </prototypes>
-                                                        </tableView>
-                                                    </subviews>
-                                                    <constraints>
-                                                        <constraint firstAttribute="trailing" secondItem="kZT-wM-xbi" secondAttribute="trailing" id="LTB-pq-B6N"/>
-                                                        <constraint firstItem="kZT-wM-xbi" firstAttribute="leading" secondItem="rPR-kt-9YZ" secondAttribute="leading" id="NTs-VM-zW7"/>
-                                                    </constraints>
                                                 </tableViewCellContentView>
                                             </tableViewCell>
                                         </prototypes>
@@ -534,7 +514,11 @@
                                             <constraint firstAttribute="height" constant="45" id="FWe-yo-5f6"/>
                                         </constraints>
                                         <items>
-                                            <barButtonItem title="Item" id="r2c-6c-cqT"/>
+                                            <barButtonItem systemItem="add" id="r2c-6c-cqT">
+                                                <connections>
+                                                    <action selector="createEventBTN:" destination="ukU-ox-igm" id="0vt-he-QTk"/>
+                                                </connections>
+                                            </barButtonItem>
                                         </items>
                                     </toolbar>
                                 </subviews>
@@ -550,6 +534,7 @@
                     </view>
                     <connections>
                         <outlet property="calendarTable" destination="yam-MZ-lYQ" id="HRw-vT-Ii1"/>
+                        <segue destination="OWr-c4-QcE" kind="presentation" identifier="eventEditorSegue" id="p0h-Ta-aWS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="toh-1d-j0s" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -559,7 +544,7 @@
         <!--eventEditor-->
         <scene sceneID="lsH-iX-etS">
             <objects>
-                <viewController title="eventEditor" modalTransitionStyle="flipHorizontal" id="OWr-c4-QcE" customClass="EventEditor" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="eventEditor" modalTransitionStyle="flipHorizontal" id="OWr-c4-QcE" customClass="EventEditorViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="w18-kr-hZl"/>
                         <viewControllerLayoutGuide type="bottom" id="W6J-hc-wnc"/>
@@ -630,6 +615,7 @@
                                 <state key="normal" title="Submit"/>
                                 <connections>
                                     <action selector="submitBTN" destination="OWr-c4-QcE" eventType="touchUpInside" id="FIc-kg-sV7"/>
+                                    <segue destination="zdJ-Xw-re4" kind="unwind" unwindAction="unwindEventEditorWithSegue:" id="EFt-pn-RFJ"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -647,8 +633,9 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Pd-pN-LPi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="zdJ-Xw-re4" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-2207.1999999999998" y="1680.8095952023989"/>
+            <point key="canvasLocation" x="-2085.5999999999999" y="1758.1709145427287"/>
         </scene>
     </scenes>
 </document>
