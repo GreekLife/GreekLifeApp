@@ -10,7 +10,7 @@ import UIKit
 
 class BrotherView: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource{
    
-    let brothers: [String] = ["Bradley Hier", "Hershey Bl", "Jonah Elbaz", "Jordan Fefer", "Mike Nashen", "Nate Polachek", "Stevie Conscister", "Swann Sauves"]
+    let brothers:[String] = ["Bradley Hier", "Hershey Bl", "Jonah Elbaz", "Jordan Fefer", "Mike Nashen", "Nate Polachek", "Stevie Conscister", "Swann Sauves"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,14 +21,16 @@ class BrotherView: UIViewController, UICollectionViewDelegate, UICollectionViewD
         // Dispose of any resources that can be recreated.
     }
     
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return brothers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let brotherPic = collectionView.dequeueReusableCell(withReuseIdentifier: "brotherPic", for: indexPath) as! brotherImg
-        brotherPic.brotherImage.image = UIImage(named: brothers[indexPath.row] + ".png")
-        return brotherPic
+        let brother = collectionView.dequeueReusableCell(withReuseIdentifier: "BrotherCell", for: indexPath) as! BrotherCell
+        brother.brotherImage.image = UIImage(named: "AEPiDocs/user_icon.png")
+        brother.BrotherName.text = brothers[indexPath.row]
+        return brother
     }
     
     

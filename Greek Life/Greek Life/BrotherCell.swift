@@ -8,7 +8,9 @@
 
 import UIKit
 
-class brotherImg: UICollectionViewCell {
+class BrotherCell: UICollectionViewCell {
     @IBOutlet weak var brotherImage: UIImageView!
+    @IBOutlet weak var BrotherName: UILabel!
+    @IBOutlet weak var BrotherMajor: UILabel!
     
 }
