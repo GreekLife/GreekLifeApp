@@ -30,20 +30,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     var ref: DatabaseReference!
     var email:String = ""
-    //var User: [String: Any] = [:] //This value stores the entire user object as long as the user exists
-    
-    func CreateActivity() {
-        activityIndicator.center = self.view.center;
-        activityIndicator.hidesWhenStopped = true;
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
-        activityIndicator.color = UIColor.blue;
-        view.addSubview(activityIndicator);
-        activityIndicator.startAnimating()
-        UIApplication.shared.beginIgnoringInteractionEvents();
-    }
 
     @IBAction func Login(_ sender: Any) {
-        CreateActivity();
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
         }
@@ -62,6 +51,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 internetError.isHidden = true
                 }
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
             }
         }
     }
@@ -145,12 +136,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
+
         self.Username.delegate = self;
         self.Password.delegate = self;
         
         let pic = BackgroundPic;
-        pic?.image = UIImage(named: "AEPiDocs/School.png");
+        pic?.image = UIImage(named: "Docs/School.png");
         pic?.alpha = 0.3;
         
         //self.addBackground(imageName: "AEPiDocs/School.png", contextMode: .scaleAspectFit);
@@ -173,10 +165,10 @@ class LoginController: UIViewController, UITextFieldDelegate {
         LoginLabel.alpha = 0.7
         
 
-        Title_Pic.image = UIImage(named: "AEPiDocs/Logos/AEPi_Letters_Blue.png");
+        Title_Pic.image = UIImage(named: "Docs/Logos/Letters1.png");
 
-        User_Icon.image = UIImage(named: "AEPiDocs/user_icon.png");
-        Password_Icon.image = UIImage(named: "AEPiDocs/password_icon.png");
+        User_Icon.image = UIImage(named: "Docs/User_Icon.png");
+        Password_Icon.image = UIImage(named: "Docs/Password_Icon.png");
     }
     
     override func didReceiveMemoryWarning() {
