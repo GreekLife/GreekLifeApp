@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="PPi-Xe-4VV">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="PPi-Xe-4VV">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -77,9 +77,6 @@
                                 <state key="normal">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <segue destination="n4s-IN-aG1" kind="show" id="wGv-b5-8yj"/>
-                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xoo-FM-7Vr">
                                 <rect key="frame" x="166" y="107" width="40" height="9"/>
@@ -302,43 +299,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jji-Tz-IZc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-754.39999999999998" y="-0.44977511244377816"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="et2-bc-a5t">
-            <objects>
-                <viewController id="n4s-IN-aG1" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="mxI-DR-Vk0"/>
-                        <viewControllerLayoutGuide type="bottom" id="INC-rr-y9m"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="ntC-fo-YeK">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Instant Messaging View" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5J7-5w-AIR">
-                                <rect key="frame" x="73" y="233" width="219" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="IVd-WU-qGx"/>
-                                    <constraint firstAttribute="height" constant="21" id="M4J-UV-Gsf"/>
-                                    <constraint firstAttribute="width" secondItem="5J7-5w-AIR" secondAttribute="height" multiplier="73:7" id="O2T-nb-PSg"/>
-                                    <constraint firstAttribute="width" constant="219" id="co5-e1-r8c"/>
-                                    <constraint firstAttribute="width" secondItem="5J7-5w-AIR" secondAttribute="height" multiplier="73:7" id="t6H-yf-Ldq"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="5J7-5w-AIR" firstAttribute="centerX" secondItem="ntC-fo-YeK" secondAttribute="centerX" constant="-5" id="hKS-tt-6Uk"/>
-                            <constraint firstItem="5J7-5w-AIR" firstAttribute="centerY" secondItem="ntC-fo-YeK" secondAttribute="centerY" constant="-90" id="oau-QI-f2K"/>
-                        </constraints>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="hxE-tL-cz6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="300" y="8.5457271364317844"/>
         </scene>
         <!--Login Controller-->
         <scene sceneID="dly-8v-GYg">
