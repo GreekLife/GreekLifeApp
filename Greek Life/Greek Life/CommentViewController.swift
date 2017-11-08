@@ -15,6 +15,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     @IBOutlet weak var CommentBox: UITextView!
     @IBOutlet weak var CommentButton: UIButton!
+    @IBOutlet weak var OriginalPost: UITextView!
+    @IBOutlet weak var OriginalPoster: UILabel!
+    @IBOutlet weak var OriginalPostDate: UILabel!
     
     @IBAction func LeaveComment(_ sender: Any) {
         let user = LoggedIn.User["Username"] as! String
@@ -37,7 +40,8 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @IBAction func Exit(_ sender: Any) {
-        Postings.containerView.removeFromSuperview()
+        performSegue(withIdentifier: "EndCommentView", sender: self)
+        
     }
     
     @IBAction func AddComment(_ sender: Any) {
@@ -52,18 +56,15 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //self.view.backgroundColor = UIColor(displayP3Red: 2/255, green: 0/255, blue: 176/255, alpha: 0.95)
-        self.view.backgroundColor = UIColor.black
         self.CommentBox.layer.borderWidth = 1
         self.CommentBox.layer.borderColor = UIColor.black.cgColor
         self.CommentBox.text = "Add comment here..."
-        self.CommentButton.layer.backgroundColor = UIColor.yellow.cgColor
         self.CommentButton.layer.cornerRadius = 10
         self.CommentButton.layer.shadowColor = UIColor.black.cgColor
         self.CommentButton.layer.shadowOpacity = 1
         self.CommentButton.layer.shadowOffset = CGSize.zero
         self.CommentButton.layer.shadowRadius = 10
-        
+
         self.CommentBox.layer.cornerRadius = 10
         self.CommentBox.layer.shadowColor = UIColor.black.cgColor
         self.CommentBox.layer.shadowOpacity = 1
@@ -91,13 +92,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentTableViewCell
         Postings.AllPosts![Postings.myIndex].Comments = mergeSorting.mergeSort(Postings.AllPosts![Postings.myIndex].Comments)
         //style
-//        cell.Comment.layer.borderWidth = 1
-//        cell.CommentDate.layer.borderWidth = 1
-//        cell.CommentDate.layer.borderColor = UIColor.red.cgColor
-//        cell.Comment.layer.borderColor = UIColor.red.cgColor
-        cell.layer.cornerRadius = 10
-        cell.layer.borderWidth = 2
-        cell.layer.borderColor = UIColor.black.cgColor
+        cell.layer.borderWidth = 1
         GenericTools.FrameToFitTextView(View: cell.Comment)
         let newHeight = cell.Comment.frame.size.height
         let cellHeight = newHeight

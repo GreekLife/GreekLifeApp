@@ -70,7 +70,6 @@ class ForumPost: Hashable, Comparable {
 struct Postings {
     static var AllPosts:[ForumPost]? = nil
     static var myIndex = 0
-    static let containerView = UIView()
 }
 
 class ForumViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, UITextFieldDelegate {
@@ -450,38 +449,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Postings.myIndex = indexPath.row
-        Postings.containerView.layer.shadowColor = UIColor.black.cgColor
-        Postings.containerView.layer.shadowOffset = CGSize.zero
-        Postings.containerView.layer.shadowOpacity = 0.5
-        Postings.containerView.layer.shadowRadius = 5
-        Postings.containerView.translatesAutoresizingMaskIntoConstraints = false
-        Postings.containerView.layer.cornerRadius = 10.0
-        Postings.containerView.layer.borderColor = UIColor.gray.cgColor
-        Postings.containerView.layer.borderWidth = 0.5
-        Postings.containerView.clipsToBounds = true
-        view.addSubview(Postings.containerView)
-        NSLayoutConstraint.activate([
-            Postings.containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-            Postings.containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            Postings.containerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
-            Postings.containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -90),
-            ])
-        
-        // add child view controller view to container
-        
-        let controller = storyboard!.instantiateViewController(withIdentifier: "CommentPop")
-        addChildViewController(controller)
-        controller.view.translatesAutoresizingMaskIntoConstraints = false
-        Postings.containerView.addSubview(controller.view)
-        
-        NSLayoutConstraint.activate([
-            controller.view.leadingAnchor.constraint(equalTo: Postings.containerView.leadingAnchor),
-            controller.view.trailingAnchor.constraint(equalTo: Postings.containerView.trailingAnchor),
-            controller.view.topAnchor.constraint(equalTo: Postings.containerView.topAnchor),
-            controller.view.bottomAnchor.constraint(equalTo: Postings.containerView.bottomAnchor)
-            ])
-        
-        controller.didMove(toParentViewController: self)
+        self.performSegue(withIdentifier: "ViewComments", sender: self)
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
