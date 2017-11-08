@@ -310,10 +310,10 @@
             </objects>
             <point key="canvasLocation" x="-754.39999999999998" y="-0.44977511244377816"/>
         </scene>
-        <!--View Controller-->
+        <!--Members View Controller-->
         <scene sceneID="PzK-7A-yl8">
             <objects>
-                <viewController id="DFt-iE-ymE" sceneMemberID="viewController">
+                <viewController id="DFt-iE-ymE" customClass="MembersViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="tuz-ul-8Z0"/>
                         <viewControllerLayoutGuide type="bottom" id="yhC-wU-0dP"/>
@@ -332,7 +332,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="t1j-Gz-kl2">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MemberCell" id="t1j-Gz-kl2" customClass="MemberCollectionViewCell" customModule="Greek_Life" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="174" height="195"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -370,6 +370,11 @@
                                             <constraint firstAttribute="trailingMargin" secondItem="cZg-KP-xiq" secondAttribute="trailing" constant="12" id="wId-3X-B57"/>
                                             <constraint firstAttribute="trailingMargin" secondItem="oBP-QV-i0c" secondAttribute="trailing" constant="20" id="zAH-wn-xfU"/>
                                         </constraints>
+                                        <connections>
+                                            <outlet property="MemberImage" destination="Acp-0T-qiO" id="V8V-3m-KbA"/>
+                                            <outlet property="MemberName" destination="cZg-KP-xiq" id="6Ah-Sf-Gxe"/>
+                                            <outlet property="MemberSpecialty" destination="oBP-QV-i0c" id="ROh-gu-2bG"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <connections>
@@ -389,7 +394,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KFa-e1-BKa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-735.20000000000005" y="988.15592203898063"/>
+            <point key="canvasLocation" x="-754" y="875"/>
         </scene>
         <!--Forum View Controller-->
         <scene sceneID="gQv-qq-f6e">
@@ -972,7 +977,6 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Qyn-Tv-ClQ"/>
         <segue reference="i9E-qc-436"/>
     </inferredMetricsTieBreakers>
 </document>
