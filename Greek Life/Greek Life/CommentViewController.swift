@@ -12,8 +12,7 @@ import FirebaseDatabase
 class CommentViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var rowHeight:CGFloat = 0
     var ref: DatabaseReference!
-    var CellIndex = 1;
-        
+    
     //---Prototype cell component declarations---//
     @IBOutlet weak var CommentBox: UITextView!
     @IBOutlet weak var CommentButton: UIButton!
@@ -85,20 +84,19 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentTableViewCell
-        if(self.CellIndex == 1){
+        if(indexPath.row == 0){
             cell.layer.borderWidth = 1
             cell.Comment.text = Postings.AllPosts![Postings.myIndex].Post
             cell.CommenterName.text = Postings.AllPosts![Postings.myIndex].Poster
             cell.CommenterName.textColor = UIColor.purple
-            let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![Postings.myIndex].PostDate)
-            cell.CommentDate.text = date
+            let timeSince = CreateDate.getTimeSince(epoch: Postings.AllPosts![Postings.myIndex].PostDate) //4 days
+            cell.CommentDate.text = timeSince
             
             GenericTools.FrameToFitTextView(View: cell.Comment)
             let newHeight = cell.Comment.frame.size.height
             let cellHeight = newHeight + 17 + 12
             self.rowHeight = cellHeight
             
-            self.CellIndex += 1
             return cell
         }
         //--Sort--//
@@ -110,12 +108,16 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.Comment.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Post
         cell.CommenterName.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Poster
         cell.CommenterName.textColor = UIColor.blue
-        cell.CommentDate.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].PostDate
+        let timeSince = CreateDate.getTimeSince(epoch: Postings.AllPosts![Postings.myIndex].PostDate) //4 days
+        cell.CommentDate.text = timeSince
         
         //--Change cell height--//
+        let oldHeight = cell.Comment.frame.size.height
         GenericTools.FrameToFitTextView(View: cell.Comment)
         let newHeight = cell.Comment.frame.size.height
-        let cellHeight = newHeight + 17 + 12
+        let cellHeight = newHeight + 20 + 12
+        let heightDifference = oldHeight - newHeight
+        cell.CommentDate.frame.size.height -= heightDifference
         self.rowHeight = cellHeight
         return(cell)
     }
