@@ -219,15 +219,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        let commentID = UUID().uuidString
         let pID = newPostData["PostId"] as! String
         self.ref.child("Forum").child(pID).setValue(newPostData)
-//        let comments = [
-//            "Post": "",
-//            "Poster": "",
-//            "Epoch": 0
-//            ] as [String : Any]
-//        self.ref.child("Forum").child(pID).child("Comments").child(commentID).setValue(comments)
         completion(true, nil)
     }
     

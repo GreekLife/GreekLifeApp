@@ -22,8 +22,15 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         let user = LoggedIn.User["Username"] as! String
         let date = Date().timeIntervalSince1970
         let comment = CommentBox.text
-        if comment == "" {
-            
+        let components = comment!.components(separatedBy: .whitespacesAndNewlines)
+        let PostWords = components.filter { !$0.isEmpty }
+        if comment == "" || comment == "Add comment here..."{
+            let emptyError = UIAlertController(title: "Empty Comment", message: "Your Comment cannot be empty", preferredStyle: UIAlertControllerStyle.alert)
+            self.present(emptyError, animated: true, completion: nil)
+        }
+        else if PostWords.count > 150 {
+            let emptyError = UIAlertController(title: "Too Larger", message: "Your Comment cannot be larger than 150 words!", preferredStyle: UIAlertControllerStyle.alert)
+            self.present(emptyError, animated: true, completion: nil)
         }
         else {
         let NewComment = [
@@ -108,7 +115,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.Comment.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Post
         cell.CommenterName.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Poster
         cell.CommenterName.textColor = UIColor.blue
-        let timeSince = CreateDate.getTimeSince(epoch: Postings.AllPosts![Postings.myIndex].PostDate) //4 days
+        let timeSince = CreateDate.getTimeSince(epoch: Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].PostEpoch) //<4 days
         cell.CommentDate.text = timeSince
         
         //--Change cell height--//
