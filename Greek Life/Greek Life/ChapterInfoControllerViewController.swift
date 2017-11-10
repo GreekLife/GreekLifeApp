@@ -37,7 +37,7 @@ class ChapterInfoControllerViewController: UIViewController {
     }
     
     func readFoundingFathers(){
-        if let foundingfather =  Bundle.main.path(forResource: "Docs/Founding_Fathers", ofType: "txt"){
+        if let foundingfather =  Bundle.main.path(forResource: "Docs/Founding Fathers", ofType: "txt"){
             do{
                 let contents = try String(contentsOfFile: foundingfather)
                 let brother = contents.components(separatedBy: "\n")
