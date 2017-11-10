@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Founding Date</key>
-	<string>October 14 2017</string>
-	<key>Chapter</key>
-	<string>Gamma Lambda</string>
 	<key>MemberType</key>
 	<string>Brothers</string>
 	<key>Name</key>
