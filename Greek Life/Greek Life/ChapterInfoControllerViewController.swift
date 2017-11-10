@@ -8,19 +8,12 @@
 
 import UIKit
 
-struct Founding {
-    static var foundingFatherList = [String]()
-}
-
 class ChapterInfoControllerViewController: UIViewController {
     //Jordan added this
     let pdfTitle = "Docs/GL - Official Consitution (Amended Sept_04_2017)"
     
     @IBOutlet weak var MasterName: UILabel!
     @IBOutlet weak var ConstitutionButton: UIButton!
-    @IBAction func FoundingFather(_ sender: Any) {
-        readFoundingFathers();
-    }
     
     @IBOutlet weak var FoundingFather: UIButton!
 
@@ -36,27 +29,6 @@ class ChapterInfoControllerViewController: UIViewController {
         }
     }
     
-    func readFoundingFathers(){
-        if let foundingfather =  Bundle.main.path(forResource: "Docs/Founding Fathers", ofType: "txt"){
-            do{
-                let contents = try String(contentsOfFile: foundingfather)
-                let brother = contents.components(separatedBy: "\n")
-                for line in brother {
-                    let name = line.components(separatedBy: "\n")
-                    Founding.foundingFatherList.append(name[0])
-                    print(line)
-                }
-            }
-            catch {
-                print("Could not read from file!")
-            }
-        }
-        else {
-            print("fuck")
-        }
-    
-    }
-    
     func ReadMaster() {
         
         let fullName = "";
@@ -67,9 +39,6 @@ class ChapterInfoControllerViewController: UIViewController {
     override func viewDidLoad() {
       super.viewDidLoad()
       
-        for father in Founding.foundingFatherList {
-            print(father)
-        }
         ReadMaster()
         // Do any additional setup after loading the view.
     }

@@ -901,7 +901,6 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Founding Fathers"/>
                                 <connections>
-                                    <action selector="FoundingFather:" destination="Q3W-Ve-J2E" eventType="touchUpInside" id="45v-WP-JR7"/>
                                     <segue destination="aLh-28-2bP" kind="show" id="DiK-xc-H4f"/>
                                 </connections>
                             </button>
@@ -1337,6 +1336,7 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="DiK-xc-H4f"/>
         <segue reference="QT9-Ff-KDd"/>
         <segue reference="5Bl-aU-cbc"/>
     </inferredMetricsTieBreakers>
