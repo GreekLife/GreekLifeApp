@@ -14,31 +14,30 @@ struct Founding {
 
 class ChapterInfoControllerViewController: UIViewController {
     //Jordan added this
-    let pdfTitle = "AEPiDocs/GL - Official Consitution (Amended Sept_04_2017)"
+    let pdfTitle = "Docs/GL - Official Consitution (Amended Sept_04_2017)"
     
     @IBOutlet weak var MasterName: UILabel!
+    @IBOutlet weak var ConstitutionButton: UIButton!
     @IBAction func FoundingFather(_ sender: Any) {
         readFoundingFathers();
     }
+    
     @IBOutlet weak var FoundingFather: UIButton!
-    @IBOutlet weak var Constitution: UIButton!
-    @IBAction func ConstitutionAction(_ sender: Any) {
-        
-    }
+
    //Jordan added this
-    @IBAction func openConstitutionAction(_ sender: Any) {
-    
+    @IBOutlet weak var OpenConstitution: UIButton!
+    @IBAction func OpenConsitution(_ sender: Any) {
         if let url = Bundle.main.url(forResource: pdfTitle, withExtension: "pdf")
-        {
-            let webview = UIWebView(frame: self.view.frame)
-            let urlRequest = URLRequest(url: url)
-            webview.loadRequest(urlRequest as URLRequest)
-            self.view.addSubview(webview)
-            }
-    
+    {
+        let webview = UIWebView(frame: self.view.frame)
+        let urlRequest = URLRequest(url: url)
+        webview.loadRequest(urlRequest as URLRequest)
+        self.view.addSubview(webview)
+        }
     }
+    
     func readFoundingFathers(){
-        if let foundingfather =  Bundle.main.path(forResource: "AEPiDocs/Founding_Fathers", ofType: "txt"){
+        if let foundingfather =  Bundle.main.path(forResource: "Docs/Founding_Fathers", ofType: "txt"){
             do{
                 let contents = try String(contentsOfFile: foundingfather)
                 let brother = contents.components(separatedBy: "\n")
