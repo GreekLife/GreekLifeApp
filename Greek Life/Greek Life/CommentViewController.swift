@@ -12,10 +12,12 @@ import FirebaseDatabase
 class CommentViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var rowHeight:CGFloat = 0
     var ref: DatabaseReference!
+    var CommentList:[Comment] = []
     
     //---Prototype cell component declarations---//
     @IBOutlet weak var CommentBox: UITextView!
     @IBOutlet weak var CommentButton: UIButton!
+    @IBOutlet weak var TableView: UITableView!
     
     //---Function to add a comment to a post---//
     @IBAction func LeaveComment(_ sender: Any) {
@@ -62,6 +64,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         self.CommentBox.delegate = self as? UITextViewDelegate
+        ReadCommentsForPost()
         //---Add styles---//
         self.CommentBox.layer.borderWidth = 1
         self.CommentBox.layer.borderColor = UIColor.black.cgColor
@@ -83,11 +86,37 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var postings = Postings.AllPosts?[Postings.myIndex].Comments.count
-        if postings == nil{
+        var postings = CommentList.count
+        if postings == 0 {
             postings = 1
         }
-        return postings!
+        return postings
+    }
+    
+    public func ReadCommentsForPost() {
+        ref = Database.database().reference()
+        ref.child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").observe(.value, with: { (snapshot) in
+            self.CommentList.removeAll();
+            for snap in snapshot.children{
+                if let childSnapshot = snap as? DataSnapshot
+                {
+                   if let postDictionary = childSnapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                     if let comment = postDictionary["Post"] as? String {
+                        if let commenter = postDictionary["Poster"] as? String {
+                            if let commentDate = postDictionary["Epoch"] as? Double {
+                            let pDate = CreateDate.getCurrentDate(epoch: commentDate)
+                              let aComment = Comment(Poster: commenter, PostDate: pDate, PostEpoch: commentDate, Post: comment)
+                                self.CommentList.append(aComment)
+                      }
+                    }
+                  }
+                }
+            }
+        }
+            self.TableView.reloadData();
+        }){ (error) in
+            print("Could not retrieve object from database");
+        }
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentTableViewCell
@@ -106,16 +135,17 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             return cell
         }
+        
         //--Sort--//
         Postings.AllPosts![Postings.myIndex].Comments = mergeSorting.mergeSort(Postings.AllPosts![Postings.myIndex].Comments)
         //Postings.AllPosts?.reverse();
 
         //--Set Content--//
         cell.layer.borderWidth = 0.1
-        cell.Comment.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Post
-        cell.CommenterName.text = Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].Poster
+        cell.Comment.text = CommentList[indexPath.row].Post
+        cell.CommenterName.text = CommentList[indexPath.row].Poster
         cell.CommenterName.textColor = UIColor.blue
-        let timeSince = CreateDate.getTimeSince(epoch: Postings.AllPosts![Postings.myIndex].Comments[indexPath.row].PostEpoch) //<4 days
+        let timeSince = CreateDate.getTimeSince(epoch: CommentList[indexPath.row].PostEpoch) //<4 days
         cell.CommentDate.text = timeSince
         
         //--Change cell height--//
