@@ -14,6 +14,7 @@ import UIKit
 import SystemConfiguration
 
 public class GenericTools {
+    //--Directly applies edit to passed view--//
     class func FrameToFitTextView(View: UITextView){
         let fixedWidth = View.frame.size.width
         View.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
@@ -89,6 +90,20 @@ public class ActivityWheel {
 }
 
 public class CreateDate {
+    class func getTimeSince(epoch:Double)->String{
+        let currentTime = NSDate().timeIntervalSince1970
+        let secondsSince = currentTime - epoch
+        let minutesSince = Int(secondsSince/60)
+        let hoursSince = Int(secondsSince/3600)
+        if minutesSince < 60 {
+            return String(minutesSince) + "m"
+        }
+        else if hoursSince > 24 {
+            let daysSince = Int(hoursSince / 24)
+            return String(daysSince) + "d"
+        }
+        return String(hoursSince) + "h"
+    }
     class func getCurrentDate(epoch:Double)->String{
         let date = NSDate(timeIntervalSince1970: epoch)
         let formattedDate = formatDate(date: date)
