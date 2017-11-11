@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D1896661FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */; };
+		6D1896671FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896651FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift */; };
+		6D18966A1FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896681FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift */; };
+		6D18966B1FB6C5080087C3EC /* FoundingFatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */; };
 		6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E2E3C1FA67B0D001BF8D0 /* ForumViewController.swift */; };
 		6D2E2E3F1FA68045001BF8D0 /* ForumCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E2E3E1FA68045001BF8D0 /* ForumCellTableViewCell.swift */; };
 		6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */; };
@@ -59,6 +63,10 @@
 		38B7D48EC2D33636B0CD21CB /* Pods-Greek Life.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek Life.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek Life/Pods-Greek Life.release.xcconfig"; sourceTree = "<group>"; };
 		51E2CF9D00CB950F66234C9B /* Pods-Greek LifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeTests/Pods-Greek LifeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		54075C3988D567332DE403D0 /* Pods-Greek Life.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek Life.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Greek Life/Pods-Greek Life.debug.xcconfig"; sourceTree = "<group>"; };
+		6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstitutionWebViewViewController.swift; sourceTree = "<group>"; };
+		6D1896651FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChapterInfoControllerViewController.swift; sourceTree = "<group>"; };
+		6D1896681FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundingFatherPrototypeTableViewCell.swift; sourceTree = "<group>"; };
+		6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundingFatherViewController.swift; sourceTree = "<group>"; };
 		6D2E2E3C1FA67B0D001BF8D0 /* ForumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumViewController.swift; sourceTree = "<group>"; };
 		6D2E2E3E1FA68045001BF8D0 /* ForumCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumCellTableViewCell.swift; sourceTree = "<group>"; };
 		6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembersViewController.swift; sourceTree = "<group>"; };
@@ -158,7 +166,11 @@
 				6D95B7AB1F9AC72D004EC3A3 /* GoogleService-Info.plist */,
 				6D806DAF1FAABD2500D80CC2 /* Docs */,
 				6DCAFF071F9AC46F00D1311E /* AppDelegate.swift */,
+				6D1896681FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift */,
+				6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */,
 				6DCAFF0D1F9AC46F00D1311E /* Main.storyboard */,
+				6D1896651FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift */,
+				6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */,
 				6DCAFF101F9AC46F00D1311E /* Assets.xcassets */,
 				6DCAFF121F9AC46F00D1311E /* LaunchScreen.storyboard */,
 				6DCAFF151F9AC46F00D1311E /* Info.plist */,
@@ -528,17 +540,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D18966B1FB6C5080087C3EC /* FoundingFatherViewController.swift in Sources */,
+				6D1896671FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift in Sources */,
 				6DAC82A61FB2954F00D468B1 /* CalendarViewController.swift in Sources */,
 				6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */,
 				6DF4D1311FA287EF00EA86E8 /* HomepageViewController.swift in Sources */,
 				6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */,
 				6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */,
+				6D1896661FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift in Sources */,
 				6D39D94F1FB28093001CE6D8 /* MemberCollectionViewCell.swift in Sources */,
 				6D2E2E3F1FA68045001BF8D0 /* ForumCellTableViewCell.swift in Sources */,
 				6D9A88811F9BCE820051B71F /* LoginController.swift in Sources */,
 				6DCAFF081F9AC46F00D1311E /* AppDelegate.swift in Sources */,
 				6DF68DB11FACD87D006E0B76 /* CommentTableViewCell.swift in Sources */,
 				6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */,
+				6D18966A1FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift in Sources */,
 				6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
