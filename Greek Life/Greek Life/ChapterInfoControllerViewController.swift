@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ChapterInfoControllerViewController: UIViewController {
     //Jordan added this
@@ -28,18 +29,39 @@ class ChapterInfoControllerViewController: UIViewController {
         self.view.addSubview(webview)
         }
     }
+    @IBOutlet weak var aepiChapterDetails: UILabel!
+    @IBOutlet weak var chapterName: UILabel!
+    @IBOutlet weak var foundingDate: UILabel!
+    @IBOutlet weak var activeMaster: UILabel!
+    
+    var ref: DatabaseReference!
     
     func ReadMaster() {
         
-        let fullName = "";
-        self.MasterName.text = fullName;
+        ref =  Database.database().reference()
+        ref.child("Users").child("Master").observeSingleEvent(of: .value, with:{(snapshot) in
+            let snap = snapshot.value as? NSDictionary
+            let firstName = snap?["First Name"] as? String
+            let lastName = snap?["Last Name"] as? String
+            
+            let fullName = firstName! + " " + lastName!
+            self.MasterName.text = fullName;
+        })
     
     }
     
     override func viewDidLoad() {
       super.viewDidLoad()
-      
         ReadMaster()
+        
+        LoadConfiguration.loadConfig() //temporary - Jonah
+        aepiChapterDetails.text = Configuration.Config!["Name"] as! String + " Chapter Details"
+        chapterName.text = Configuration.Config!["ChapterName"] as! String + " Chapter"
+        foundingDate.text = Configuration.Config!["FoundingDate"] as! String
+        
+        
+        
+        
         // Do any additional setup after loading the view.
     }
 
