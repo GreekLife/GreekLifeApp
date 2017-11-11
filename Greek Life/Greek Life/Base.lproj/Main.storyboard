@@ -1014,6 +1014,9 @@
                                         <items>
                                             <barButtonItem title="Back" id="6MV-Jx-OYQ">
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <connections>
+                                                    <action selector="backBTN:" destination="ukU-ox-igm" id="dg9-Qy-BQj"/>
+                                                </connections>
                                             </barButtonItem>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="cpa-Kf-XlZ"/>
                                             <barButtonItem title="Search" id="cvo-Pi-XkT">
@@ -1188,16 +1191,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YOc-AO-Ha0">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Location" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YOc-AO-Ha0">
                                 <rect key="frame" x="115" y="122" width="244" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="Ruy-O6-Dh0">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="Ruy-O6-Dh0">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
                                     <barButtonItem title="Cancel" id="0eC-H0-VtO">
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1208,30 +1209,29 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Event title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Wv-MX-Cx2">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Event title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Wv-MX-Cx2">
                                 <rect key="frame" x="115" y="84" width="244" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="Mj7-VI-INw">
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="Mj7-VI-INw">
                                 <rect key="frame" x="0.0" y="297" width="375" height="134"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="134" id="reE-HN-rwY"/>
+                                </constraints>
                                 <date key="date" timeIntervalSinceReferenceDate="531983517.02671999">
                                     <!--2017-11-10 05:11:57 +0000-->
                                 </date>
                             </datePicker>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Title:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bdd-Qo-Mif">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bdd-Qo-Mif">
                                 <rect key="frame" x="16" y="89" width="42" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" indicatorStyle="black" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="i6g-a9-enb">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" indicatorStyle="black" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="i6g-a9-enb">
                                 <rect key="frame" x="16" y="468" width="343" height="179"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
@@ -1239,43 +1239,82 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Description: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BrV-VK-etB">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BrV-VK-etB">
                                 <rect key="frame" x="16" y="439" width="161" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Start date and time:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qjz-o9-4Ri">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start date and time:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qjz-o9-4Ri">
                                 <rect key="frame" x="16" y="268" width="161" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="161" id="JZt-hW-kT1"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Duration:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3x-u5-Nas">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3x-u5-Nas">
                                 <rect key="frame" x="16" y="198" width="96" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="At7-zJ-beE"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Location:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gjS-cI-Q8k">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gjS-cI-Q8k">
                                 <rect key="frame" x="16" y="127" width="103" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="103" id="hSu-nQ-HFj"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="bDO-s6-Vle">
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="bDO-s6-Vle">
                                 <rect key="frame" x="115" y="156" width="244" height="100"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <date key="date" timeIntervalSinceReferenceDate="532042308.90714902">
                                     <!--2017-11-10 21:31:48 +0000-->
                                 </date>
                             </datePicker>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="YOc-AO-Ha0" firstAttribute="leading" secondItem="bDO-s6-Vle" secondAttribute="leading" id="1sv-OE-N6l"/>
+                            <constraint firstItem="qjz-o9-4Ri" firstAttribute="leading" secondItem="BrV-VK-etB" secondAttribute="leading" id="2ie-bL-Isd"/>
+                            <constraint firstAttribute="trailing" secondItem="Ruy-O6-Dh0" secondAttribute="trailing" id="3LM-ZO-JgS"/>
+                            <constraint firstItem="Ruy-O6-Dh0" firstAttribute="leading" secondItem="Mj7-VI-INw" secondAttribute="leading" id="9sP-gY-U8D"/>
+                            <constraint firstItem="BrV-VK-etB" firstAttribute="top" secondItem="Mj7-VI-INw" secondAttribute="bottom" constant="8" symbolic="YES" id="DeO-Cv-i5e"/>
+                            <constraint firstItem="Ruy-O6-Dh0" firstAttribute="trailing" secondItem="Mj7-VI-INw" secondAttribute="trailing" id="EWF-LJ-C4S"/>
+                            <constraint firstItem="YOc-AO-Ha0" firstAttribute="trailing" secondItem="bDO-s6-Vle" secondAttribute="trailing" id="Jqb-yh-4X8"/>
+                            <constraint firstItem="gjS-cI-Q8k" firstAttribute="centerY" secondItem="YOc-AO-Ha0" secondAttribute="centerY" id="KA0-Cc-mrK"/>
+                            <constraint firstItem="2Wv-MX-Cx2" firstAttribute="top" secondItem="Ruy-O6-Dh0" secondAttribute="bottom" constant="40" id="Od7-Nc-09K"/>
+                            <constraint firstItem="Mj7-VI-INw" firstAttribute="centerX" secondItem="i6g-a9-enb" secondAttribute="centerX" id="PTT-bj-8T1"/>
+                            <constraint firstItem="bDO-s6-Vle" firstAttribute="leading" secondItem="C3x-u5-Nas" secondAttribute="trailing" constant="3" id="Q3c-rM-a7P"/>
+                            <constraint firstItem="C3x-u5-Nas" firstAttribute="leading" secondItem="qjz-o9-4Ri" secondAttribute="leading" id="SES-24-FXF"/>
+                            <constraint firstItem="bDO-s6-Vle" firstAttribute="top" secondItem="gjS-cI-Q8k" secondAttribute="bottom" constant="8" symbolic="YES" id="Sdl-Sw-CVW"/>
+                            <constraint firstItem="qjz-o9-4Ri" firstAttribute="top" secondItem="bDO-s6-Vle" secondAttribute="bottom" constant="12" id="TPv-If-q4r"/>
+                            <constraint firstItem="qjz-o9-4Ri" firstAttribute="top" secondItem="C3x-u5-Nas" secondAttribute="bottom" constant="49" id="WtH-7d-khd"/>
+                            <constraint firstItem="bdd-Qo-Mif" firstAttribute="leading" secondItem="xIS-fj-hMf" secondAttribute="leadingMargin" id="XPF-h2-Jc8"/>
+                            <constraint firstItem="2Wv-MX-Cx2" firstAttribute="trailing" secondItem="YOc-AO-Ha0" secondAttribute="trailing" id="Ydv-CA-Gf3"/>
+                            <constraint firstItem="YOc-AO-Ha0" firstAttribute="leading" secondItem="xIS-fj-hMf" secondAttribute="leadingMargin" constant="99" id="ZGI-tS-P3E"/>
+                            <constraint firstItem="2Wv-MX-Cx2" firstAttribute="leading" secondItem="YOc-AO-Ha0" secondAttribute="leading" id="bF5-LE-0TQ"/>
+                            <constraint firstItem="2Wv-MX-Cx2" firstAttribute="leading" secondItem="bdd-Qo-Mif" secondAttribute="trailing" constant="57" id="bjg-As-uwA"/>
+                            <constraint firstItem="Ruy-O6-Dh0" firstAttribute="top" secondItem="xIS-fj-hMf" secondAttribute="top" id="dmO-pK-aUO"/>
+                            <constraint firstItem="i6g-a9-enb" firstAttribute="top" secondItem="BrV-VK-etB" secondAttribute="bottom" constant="8" symbolic="YES" id="eyJ-fX-IX1"/>
+                            <constraint firstItem="bdd-Qo-Mif" firstAttribute="leading" secondItem="gjS-cI-Q8k" secondAttribute="leading" id="g6y-ra-rwZ"/>
+                            <constraint firstItem="bdd-Qo-Mif" firstAttribute="centerY" secondItem="2Wv-MX-Cx2" secondAttribute="centerY" id="gAX-jY-FUj"/>
+                            <constraint firstItem="gjS-cI-Q8k" firstAttribute="leading" secondItem="C3x-u5-Nas" secondAttribute="leading" id="hXi-Mx-Gro"/>
+                            <constraint firstAttribute="bottom" secondItem="i6g-a9-enb" secondAttribute="bottom" constant="20" symbolic="YES" id="k1e-Wu-1fQ"/>
+                            <constraint firstItem="C3x-u5-Nas" firstAttribute="top" secondItem="gjS-cI-Q8k" secondAttribute="bottom" constant="50" id="km5-sy-FjS"/>
+                            <constraint firstItem="YOc-AO-Ha0" firstAttribute="top" secondItem="2Wv-MX-Cx2" secondAttribute="bottom" constant="8" symbolic="YES" id="oGM-79-FOj"/>
+                            <constraint firstItem="bDO-s6-Vle" firstAttribute="trailing" secondItem="i6g-a9-enb" secondAttribute="trailing" id="s3L-t8-VB5"/>
+                            <constraint firstItem="Mj7-VI-INw" firstAttribute="top" secondItem="qjz-o9-4Ri" secondAttribute="bottom" constant="8" symbolic="YES" id="uen-q0-l6b"/>
+                            <constraint firstItem="qjz-o9-4Ri" firstAttribute="trailing" secondItem="BrV-VK-etB" secondAttribute="trailing" id="vdg-EL-237"/>
+                            <constraint firstItem="BrV-VK-etB" firstAttribute="leading" secondItem="i6g-a9-enb" secondAttribute="leading" id="wVS-ua-PWg"/>
+                            <constraint firstItem="Ruy-O6-Dh0" firstAttribute="leading" secondItem="xIS-fj-hMf" secondAttribute="leading" id="yXy-CP-Pw9"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="localField" destination="YOc-AO-Ha0" id="GLT-bp-a2Q"/>

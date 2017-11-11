@@ -111,32 +111,29 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var calendarTable: UITableView!
     @IBAction func createEventBTN(_ sender: Any) {
     }
+    @IBAction func backBTN(_ sender: Any)
+    {
+        self.presentingViewController?.dismiss(animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initCalendar()
         
     }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return calendar.eventList.count
     }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let eventCell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
-         
-        //let eventTitle = Array(calendar.eventList.values)[indexPath.row]["title"] as! String
-        //let doubleDate = Array(calendar.eventList.keys)[indexPath.row]
-        //let eventDateTime = doubleDate //CreateDate.getCurrentDate(epoch: doubleDate!)
-        //eventCell.
+        
+        if let eventCell = eventCell as? EventCell
+        {
+            eventCell.eventTitle.text = Array(calendar.eventList.values)[indexPath.row]["title"] as? String
+            eventCell.eventDateTime.text = CreateDate.getCurrentDate(epoch: Double(Array(calendar.eventList.keys)[indexPath.row])!)
+        }
         return eventCell
-        /*let cell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
-        
-        let text = Array(calendar.eventList.values)[indexPath.row]["title"] as! String
-        
-        cell.textLabel?.text = text*/
-        
     }
 }
   //********************//
