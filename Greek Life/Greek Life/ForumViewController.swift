@@ -70,7 +70,6 @@ class ForumPost: Hashable, Comparable {
 struct Postings {
     static var AllPosts:[ForumPost]? = nil
     static var myIndex = 0
-    static let containerView = UIView()
 }
 
 class ForumViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, UITextFieldDelegate {
@@ -89,7 +88,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var Newest: UIButton!
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisMonth: UIButton!
-    @IBOutlet weak var ThisYear: UIButton!
+    @IBOutlet weak var ThisWeek: UIButton!
     @IBOutlet weak var NewPost: UITextView!
     @IBOutlet weak var NewPostView: UIView!
     @IBOutlet weak var PostButton: UIButton!
@@ -220,15 +219,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        let commentID = UUID().uuidString
         let pID = newPostData["PostId"] as! String
         self.ref.child("Forum").child(pID).setValue(newPostData)
-//        let comments = [
-//            "Post": "",
-//            "Poster": "",
-//            "Epoch": 0
-//            ] as [String : Any]
-//        self.ref.child("Forum").child(pID).child("Comments").child(commentID).setValue(comments)
         completion(true, nil)
     }
     
@@ -268,8 +260,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Oldest.layer.backgroundColor = UIColor.clear.cgColor
             ThisMonthClicked = false;
             ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
-            ThisYearClicked = false;
-            ThisYear.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeekClicked = false;
+            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -290,14 +282,16 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Newest.layer.backgroundColor = UIColor.clear.cgColor
             ThisMonthClicked = false;
             ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
-            ThisYearClicked = false;
-            ThisYear.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeekClicked = false;
+            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
             return;
         }
     }
-    @IBAction func ThisMonth(_ sender: Any) {
+    
+    
+    @IBAction func ThisMonth(_ sender: Any) { //actually this week
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if ThisMonthClicked == true{
             return
@@ -310,23 +304,24 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Oldest.layer.backgroundColor = UIColor.clear.cgColor
             NewestClicked = false;
             Newest.layer.backgroundColor = UIColor.clear.cgColor
-            ThisYearClicked = false;
-            ThisYear.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeekClicked = false;
+            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
             return;
         }
     }
-    @IBAction func ThisYear(_ sender: Any) {
+    
+    @IBAction func ThisWeek(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
-        if ThisYearClicked == true{
+        if ThisWeekClicked == true{
             return
         }
         else {
             self.SortByDate(Posts: Postings.AllPosts!)
-            ThisYear.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-            ThisYearClicked = true;
+            ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            ThisWeekClicked = true;
             OldestClicked = false;
             Oldest.layer.backgroundColor = UIColor.clear.cgColor
             NewestClicked = false;
@@ -339,11 +334,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             return;
         }
     }
+    
     //List order button clicked properties
     var OldestClicked = false;
     var NewestClicked = true;
     var ThisMonthClicked = false;
-    var ThisYearClicked = false;
+    var ThisWeekClicked = false;
     //
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return(NumberOfCells)//number of cells
@@ -412,8 +408,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 }
 
             }
-            else if(ThisYearClicked == true){
-                if((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 31536000){
+            else if(ThisWeekClicked == true){
+                if((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 604800){
                     cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
                     cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
                     cell.Post.text = Postings.AllPosts![indexPath.row].Post
@@ -450,38 +446,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Postings.myIndex = indexPath.row
-        Postings.containerView.layer.shadowColor = UIColor.black.cgColor
-        Postings.containerView.layer.shadowOffset = CGSize.zero
-        Postings.containerView.layer.shadowOpacity = 0.5
-        Postings.containerView.layer.shadowRadius = 5
-        Postings.containerView.translatesAutoresizingMaskIntoConstraints = false
-        Postings.containerView.layer.cornerRadius = 10.0
-        Postings.containerView.layer.borderColor = UIColor.gray.cgColor
-        Postings.containerView.layer.borderWidth = 0.5
-        Postings.containerView.clipsToBounds = true
-        view.addSubview(Postings.containerView)
-        NSLayoutConstraint.activate([
-            Postings.containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-            Postings.containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            Postings.containerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
-            Postings.containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -90),
-            ])
-        
-        // add child view controller view to container
-        
-        let controller = storyboard!.instantiateViewController(withIdentifier: "CommentPop")
-        addChildViewController(controller)
-        controller.view.translatesAutoresizingMaskIntoConstraints = false
-        Postings.containerView.addSubview(controller.view)
-        
-        NSLayoutConstraint.activate([
-            controller.view.leadingAnchor.constraint(equalTo: Postings.containerView.leadingAnchor),
-            controller.view.trailingAnchor.constraint(equalTo: Postings.containerView.trailingAnchor),
-            controller.view.topAnchor.constraint(equalTo: Postings.containerView.topAnchor),
-            controller.view.bottomAnchor.constraint(equalTo: Postings.containerView.bottomAnchor)
-            ])
-        
-        controller.didMove(toParentViewController: self)
+        self.performSegue(withIdentifier: "ViewComments", sender: self)
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

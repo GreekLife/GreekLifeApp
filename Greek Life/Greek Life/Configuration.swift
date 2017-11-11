@@ -15,7 +15,6 @@ struct Configuration{
 public class LoadConfiguration {
     
     class func loadConfig(){
-
         if let path = Bundle.main.path(forResource: "MainConfig", ofType: "plist"){
             Configuration.Config = NSDictionary(contentsOfFile: path)
             }

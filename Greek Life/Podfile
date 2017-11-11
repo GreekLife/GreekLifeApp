@@ -6,12 +6,15 @@ target 'Greek Life' do
 	pod ‘Firebase’
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
+	pod 'IQKeyboardManagerSwift'
   use_frameworks!
 
   # Pods for Greek Life
 
   target 'Greek LifeTests' do
 	pod ‘Firebase’	
+	pod 'Firebase/Database'
+	pod 'Firebase/Auth'
     inherit! :search_paths
     # Pods for testing
   end
