@@ -182,7 +182,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Q3W-Ve-J2E" kind="show" id="szO-08-CBs"/>
+                                    <segue destination="JJj-kx-PlA" kind="show" id="seC-qJ-DHu"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Info" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vji-KQ-80c">
@@ -314,7 +314,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jji-Tz-IZc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1564" y="0.0"/>
+            <point key="canvasLocation" x="-1564" y="-0.44977511244377816"/>
         </scene>
         <!--Members View Controller-->
         <scene sceneID="PzK-7A-yl8">
@@ -976,11 +976,26 @@
                                     <constraint firstAttribute="width" constant="270" id="n86-HU-FWX"/>
                                 </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10o-MI-uSK">
+                                <rect key="frame" x="97" y="591" width="180" height="30"/>
+                                <color key="backgroundColor" red="0.73176113936278542" green="0.86128541113092816" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="SlI-lm-W3x"/>
+                                    <constraint firstAttribute="width" secondItem="10o-MI-uSK" secondAttribute="height" multiplier="6:1" id="YDY-sK-uU5"/>
+                                    <constraint firstAttribute="width" constant="180" id="Ym3-Sq-z34"/>
+                                </constraints>
+                                <state key="normal" title="Home"/>
+                                <connections>
+                                    <segue destination="ffX-If-XRi" kind="show" id="ttS-td-cSz"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="5FU-pH-bQy" firstAttribute="centerX" secondItem="Szr-lD-hlu" secondAttribute="centerX" constant="78" id="154-Yp-DR1"/>
                             <constraint firstItem="gJq-gU-GY5" firstAttribute="centerX" secondItem="Szr-lD-hlu" secondAttribute="centerX" constant="-84.5" id="4Uk-3Y-N4U"/>
+                            <constraint firstItem="10o-MI-uSK" firstAttribute="centerX" secondItem="Szr-lD-hlu" secondAttribute="centerX" id="5Cc-dQ-VUi"/>
+                            <constraint firstItem="10o-MI-uSK" firstAttribute="centerY" secondItem="Szr-lD-hlu" secondAttribute="centerY" constant="272.5" id="5v0-lV-2ME"/>
                             <constraint firstItem="rFJ-P6-Gdi" firstAttribute="centerY" secondItem="Szr-lD-hlu" secondAttribute="centerY" constant="141.5" id="8Nz-OF-jT8"/>
                             <constraint firstItem="5FU-pH-bQy" firstAttribute="centerY" secondItem="Szr-lD-hlu" secondAttribute="centerY" constant="-82" id="DVz-LT-ce4"/>
                             <constraint firstItem="m8H-Pa-mB2" firstAttribute="centerY" secondItem="Szr-lD-hlu" secondAttribute="centerY" constant="81.5" id="Edw-RW-arA"/>
@@ -1048,7 +1063,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZEe-pe-80i">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FFCell" id="fGg-me-7IK" customClass="FoundingFatherPrototypeTableViewCell" customModule="Greek_Life" customModuleProvider="target">
@@ -1407,8 +1422,6 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Qyn-Tv-ClQ"/>
-        <segue reference="szO-08-CBs"/>
-        <segue reference="i9E-qc-436"/>
+        <segue reference="ttS-td-cSz"/>
     </inferredMetricsTieBreakers>
 </document>
