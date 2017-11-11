@@ -848,10 +848,10 @@
             </objects>
             <point key="canvasLocation" x="-2430" y="0.0"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Info Tab_Navigation Controller-->
         <scene sceneID="iEd-hS-Rqo">
             <objects>
-                <navigationController id="JJj-kx-PlA" sceneMemberID="viewController">
+                <navigationController title="Info Tab_Navigation Controller" id="JJj-kx-PlA" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="hWv-jc-qsv">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -864,10 +864,10 @@
             </objects>
             <point key="canvasLocation" x="-3314" y="812"/>
         </scene>
-        <!--AEPi Chapter Details-->
+        <!--Info Tab-->
         <scene sceneID="OWX-B0-yYC">
             <objects>
-                <viewController id="Q3W-Ve-J2E" customClass="ChapterInfoControllerViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Info Tab" id="Q3W-Ve-J2E" customClass="ChapterInfoControllerViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bBZ-Wi-jdd"/>
                         <viewControllerLayoutGuide type="bottom" id="noa-w4-KtJ"/>
@@ -1017,10 +1017,10 @@
             </objects>
             <point key="canvasLocation" x="-2530.4000000000001" y="811.84407796101959"/>
         </scene>
-        <!--Constitution Web View View Controller-->
+        <!--Info Tab_Constitution-->
         <scene sceneID="Mqg-C4-M6Y">
             <objects>
-                <viewController id="UfK-qV-Ncm" customClass="ConstitutionWebViewViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Info Tab_Constitution" id="UfK-qV-Ncm" customClass="ConstitutionWebViewViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="rwN-aH-xAv"/>
                         <viewControllerLayoutGuide type="bottom" id="xr2-Et-5My"/>
@@ -1035,10 +1035,10 @@
             </objects>
             <point key="canvasLocation" x="-2516" y="1534"/>
         </scene>
-        <!--Founding Father View Controller-->
+        <!--Info Tab_Founding Father-->
         <scene sceneID="OOM-56-B2B">
             <objects>
-                <viewController id="aLh-28-2bP" customClass="FoundingFatherViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Info Tab_Founding Father" id="aLh-28-2bP" customClass="FoundingFatherViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="TXF-OP-izY"/>
                         <viewControllerLayoutGuide type="bottom" id="PWI-Sc-yhI"/>
