@@ -88,7 +88,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var Newest: UIButton!
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisMonth: UIButton!
-    @IBOutlet weak var ThisYear: UIButton!
+    @IBOutlet weak var ThisWeek: UIButton!
     @IBOutlet weak var NewPost: UITextView!
     @IBOutlet weak var NewPostView: UIView!
     @IBOutlet weak var PostButton: UIButton!
@@ -260,8 +260,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Oldest.layer.backgroundColor = UIColor.clear.cgColor
             ThisMonthClicked = false;
             ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
-            ThisYearClicked = false;
-            ThisYear.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeekClicked = false;
+            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -282,14 +282,16 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Newest.layer.backgroundColor = UIColor.clear.cgColor
             ThisMonthClicked = false;
             ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
-            ThisYearClicked = false;
-            ThisYear.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeekClicked = false;
+            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
             return;
         }
     }
-    @IBAction func ThisMonth(_ sender: Any) {
+    
+    
+    @IBAction func ThisMonth(_ sender: Any) { //actually this week
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if ThisMonthClicked == true{
             return
@@ -302,23 +304,24 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Oldest.layer.backgroundColor = UIColor.clear.cgColor
             NewestClicked = false;
             Newest.layer.backgroundColor = UIColor.clear.cgColor
-            ThisYearClicked = false;
-            ThisYear.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeekClicked = false;
+            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
             return;
         }
     }
-    @IBAction func ThisYear(_ sender: Any) {
+    
+    @IBAction func ThisWeek(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
-        if ThisYearClicked == true{
+        if ThisWeekClicked == true{
             return
         }
         else {
             self.SortByDate(Posts: Postings.AllPosts!)
-            ThisYear.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-            ThisYearClicked = true;
+            ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            ThisWeekClicked = true;
             OldestClicked = false;
             Oldest.layer.backgroundColor = UIColor.clear.cgColor
             NewestClicked = false;
@@ -331,11 +334,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             return;
         }
     }
+    
     //List order button clicked properties
     var OldestClicked = false;
     var NewestClicked = true;
     var ThisMonthClicked = false;
-    var ThisYearClicked = false;
+    var ThisWeekClicked = false;
     //
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return(NumberOfCells)//number of cells
@@ -404,8 +408,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 }
 
             }
-            else if(ThisYearClicked == true){
-                if((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 31536000){
+            else if(ThisWeekClicked == true){
+                if((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 604800){
                     cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
                     cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
                     cell.Post.text = Postings.AllPosts![indexPath.row].Post

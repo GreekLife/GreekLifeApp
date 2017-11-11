@@ -90,7 +90,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         if postings == 0 {
             postings = 1
         }
-        return postings
+        return postings+1
     }
     
     public func ReadCommentsForPost() {
@@ -113,7 +113,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                 }
             }
         }
-            self.TableView.reloadData();
+           self.CommentList = mergeSorting.mergeSort(self.CommentList)
+            self.CommentList = self.CommentList.reversed()
+           self.TableView.reloadData();
         }){ (error) in
             print("Could not retrieve object from database");
         }
@@ -142,10 +144,10 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
 
         //--Set Content--//
         cell.layer.borderWidth = 0.1
-        cell.Comment.text = CommentList[indexPath.row].Post
-        cell.CommenterName.text = CommentList[indexPath.row].Poster
+        cell.Comment.text = CommentList[indexPath.row-1].Post
+        cell.CommenterName.text = CommentList[indexPath.row-1].Poster
         cell.CommenterName.textColor = UIColor.blue
-        let timeSince = CreateDate.getTimeSince(epoch: CommentList[indexPath.row].PostEpoch) //<4 days
+        let timeSince = CreateDate.getTimeSince(epoch: CommentList[indexPath.row-1].PostEpoch) //<4 days
         cell.CommentDate.text = timeSince
         
         //--Change cell height--//

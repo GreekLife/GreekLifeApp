@@ -93,8 +93,12 @@ public class CreateDate {
     class func getTimeSince(epoch:Double)->String{
         let currentTime = NSDate().timeIntervalSince1970
         let secondsSince = currentTime - epoch
+        let minutesSince = Int(secondsSince/60)
         let hoursSince = Int(secondsSince/3600)
-        if hoursSince > 24 {
+        if minutesSince < 60 {
+            return String(minutesSince) + "m"
+        }
+        else if hoursSince > 24 {
             let daysSince = Int(hoursSince / 24)
             return String(daysSince) + "d"
         }

@@ -563,34 +563,19 @@
                                     <action selector="Oldest:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="DCZ-PG-Fhz"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zV-7a-WqU">
-                                <rect key="frame" x="162" y="67" width="87" height="37"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="87" id="pCL-EQ-yPv"/>
-                                    <constraint firstAttribute="width" secondItem="1zV-7a-WqU" secondAttribute="height" multiplier="87:37" id="yt0-1x-0ZD"/>
-                                    <constraint firstAttribute="height" constant="37" id="zlh-Dr-Oba"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="13"/>
-                                <state key="normal" title="This Month">
-                                    <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                </state>
-                                <connections>
-                                    <action selector="ThisMonth:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="bSa-EA-Ell"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e8r-he-NBa">
-                                <rect key="frame" x="271" y="67" width="69" height="37"/>
+                                <rect key="frame" x="169" y="67" width="69" height="37"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="e8r-he-NBa" secondAttribute="height" multiplier="69:37" id="Ke9-sY-E18"/>
-                                    <constraint firstAttribute="height" constant="37" id="PeI-5L-jET"/>
-                                    <constraint firstAttribute="width" constant="69" id="zVn-s6-JpH"/>
+                                    <constraint firstAttribute="height" constant="37" id="UXB-By-8x6"/>
+                                    <constraint firstAttribute="width" constant="69" id="VUv-wa-iEU"/>
+                                    <constraint firstAttribute="width" secondItem="e8r-he-NBa" secondAttribute="height" multiplier="69:37" id="lBL-Sa-kcE"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="13"/>
-                                <state key="normal" title="This Year">
+                                <state key="normal" title="This Week">
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
                                 <connections>
-                                    <action selector="ThisYear:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="fzs-wb-nak"/>
+                                    <action selector="ThisWeek:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="NXC-gE-KQw"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4km-pg-giE">
@@ -673,26 +658,41 @@
                                     <constraint firstAttribute="trailing" secondItem="Tsp-Vo-68B" secondAttribute="trailing" constant="8" id="zrE-oK-ZLU"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1zV-7a-WqU">
+                                <rect key="frame" x="260" y="67" width="87" height="37"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="87" id="B5N-lD-CMc"/>
+                                    <constraint firstAttribute="width" secondItem="1zV-7a-WqU" secondAttribute="height" multiplier="87:37" id="yvD-cp-PpH"/>
+                                    <constraint firstAttribute="height" constant="37" id="yvK-3j-oze"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="13"/>
+                                <state key="normal" title="This Month">
+                                    <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </state>
+                                <connections>
+                                    <action selector="ThisMonth:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="bSa-EA-Ell"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Ci0-Gd-WSe" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-294.5" id="2ba-UG-HUo"/>
                             <constraint firstItem="ekw-iY-rTH" firstAttribute="top" secondItem="VKu-4B-XYy" secondAttribute="bottom" constant="144" id="Ar1-3F-ZnA"/>
+                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-248" id="Cej-GO-SJc"/>
                             <constraint firstItem="VKu-4B-XYy" firstAttribute="top" secondItem="Ci0-Gd-WSe" secondAttribute="bottom" constant="30" id="Eu0-LO-5qX"/>
                             <constraint firstItem="ekw-iY-rTH" firstAttribute="top" secondItem="CFp-nx-dCu" secondAttribute="bottom" id="IyZ-fd-Lpm"/>
                             <constraint firstItem="SAm-UJ-31h" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-294.5" id="J8Q-BV-Fin"/>
                             <constraint firstAttribute="trailing" secondItem="CFp-nx-dCu" secondAttribute="trailing" id="Lse-Tl-Jcd"/>
                             <constraint firstAttribute="trailingMargin" secondItem="VKu-4B-XYy" secondAttribute="trailing" constant="32" id="MIH-ul-zcB"/>
+                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-248" id="R0z-TA-RrV"/>
                             <constraint firstItem="SAm-UJ-31h" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="66.5" id="Shk-yp-Ese"/>
                             <constraint firstItem="xcV-hw-LDd" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-66" id="Uxs-qm-chf"/>
                             <constraint firstItem="qzs-Gy-NdE" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="-136.5" id="Wap-6m-myg"/>
                             <constraint firstItem="CFp-nx-dCu" firstAttribute="top" secondItem="qzs-Gy-NdE" secondAttribute="bottom" id="XQl-Ls-MVk"/>
-                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-248" id="Y81-WT-kA1"/>
-                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-248" id="fqR-2g-sfJ"/>
+                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="16" id="Zmf-wJ-OTd"/>
+                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="116" id="e4I-Sm-ssT"/>
                             <constraint firstItem="Ci0-Gd-WSe" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" id="gbq-sh-gm5"/>
                             <constraint firstItem="VKu-4B-XYy" firstAttribute="leading" secondItem="Fsx-fa-udQ" secondAttribute="leadingMargin" constant="21" id="gtz-DV-KOF"/>
-                            <constraint firstItem="e8r-he-NBa" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="118" id="huJ-Lv-nlh"/>
-                            <constraint firstItem="1zV-7a-WqU" firstAttribute="centerX" secondItem="Fsx-fa-udQ" secondAttribute="centerX" constant="18" id="iLN-us-Acr"/>
                             <constraint firstItem="xcV-hw-LDd" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-294.5" id="iiT-Qq-NCd"/>
                             <constraint firstItem="qzs-Gy-NdE" firstAttribute="centerY" secondItem="Fsx-fa-udQ" secondAttribute="centerY" constant="-248" id="nuQ-CO-i4X"/>
                             <constraint firstItem="CFp-nx-dCu" firstAttribute="leading" secondItem="Fsx-fa-udQ" secondAttribute="leading" id="s7w-Im-Ui4"/>
@@ -712,7 +712,7 @@
                         <outlet property="PostTitle" destination="MfM-RM-LAW" id="P1B-Ur-EMw"/>
                         <outlet property="TableView" destination="CFp-nx-dCu" id="vty-eW-1tt"/>
                         <outlet property="ThisMonth" destination="1zV-7a-WqU" id="zvd-rc-32b"/>
-                        <outlet property="ThisYear" destination="e8r-he-NBa" id="h7n-uc-7Wm"/>
+                        <outlet property="ThisWeek" destination="e8r-he-NBa" id="FqH-9G-1ot"/>
                         <segue destination="Se9-dC-HbK" kind="show" identifier="ViewComments" id="xJY-qq-92y"/>
                     </connections>
                 </viewController>
@@ -1175,6 +1175,7 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="xJY-qq-92y"/>
         <segue reference="UGs-z0-CVF"/>
         <segue reference="i9E-qc-436"/>
     </inferredMetricsTieBreakers>
