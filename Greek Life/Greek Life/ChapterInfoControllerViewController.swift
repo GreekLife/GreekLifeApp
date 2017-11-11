@@ -10,9 +10,7 @@ import UIKit
 import FirebaseDatabase
 
 class ChapterInfoControllerViewController: UIViewController {
-    //Jordan added this
-    let pdfTitle = "Docs/GL - Official Consitution (Amended Sept_04_2017)"
-    
+    //Jordan added this    
     @IBOutlet weak var MasterName: UILabel!
     @IBOutlet weak var ConstitutionButton: UIButton!
     
@@ -20,19 +18,10 @@ class ChapterInfoControllerViewController: UIViewController {
 
    //Jordan added this
     @IBOutlet weak var OpenConstitution: UIButton!
-    @IBAction func OpenConsitution(_ sender: Any) {
-        if let url = Bundle.main.url(forResource: pdfTitle, withExtension: "pdf")
-    {
-        let webview = UIWebView(frame: self.view.frame)
-        let urlRequest = URLRequest(url: url)
-        webview.loadRequest(urlRequest as URLRequest)
-        self.view.addSubview(webview)
-        }
-    }
-    @IBOutlet weak var aepiChapterDetails: UILabel!
     @IBOutlet weak var chapterName: UILabel!
     @IBOutlet weak var foundingDate: UILabel!
     @IBOutlet weak var activeMaster: UILabel!
+    @IBOutlet weak var Logo: UIImageView!
     
     var ref: DatabaseReference!
     
@@ -53,14 +42,10 @@ class ChapterInfoControllerViewController: UIViewController {
     override func viewDidLoad() {
       super.viewDidLoad()
         ReadMaster()
-        
+        Logo.image = UIImage(named: "Docs/Logos/Letters1.png")
         LoadConfiguration.loadConfig() //temporary - Jonah
-        aepiChapterDetails.text = Configuration.Config!["Name"] as! String + " Chapter Details"
         chapterName.text = Configuration.Config!["ChapterName"] as! String + " Chapter"
         foundingDate.text = Configuration.Config!["FoundingDate"] as! String
-        
-        
-        
         
         // Do any additional setup after loading the view.
     }
