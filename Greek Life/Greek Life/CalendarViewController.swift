@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import MapKit
 
 
   //*******************//
@@ -100,14 +101,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         }
         else{print ("Not connected to network!")}
     }
-    func openCalendar()
-    {
-        
-    }
-    func closeCalendar()
-    {
-        
-    }
     
     
     //-----------------------//
@@ -131,10 +124,12 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let eventCell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "eventCell")
-        
-        eventCell.textLabel?.text = Array(calendar.eventList.values)[indexPath.row]["title"] as! String
-        
+        let eventCell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
+         
+        //let eventTitle = Array(calendar.eventList.values)[indexPath.row]["title"] as! String
+        //let doubleDate = Array(calendar.eventList.keys)[indexPath.row]
+        //let eventDateTime = doubleDate //CreateDate.getCurrentDate(epoch: doubleDate!)
+        //eventCell.
         return eventCell
         /*let cell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
         
@@ -143,7 +138,44 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         cell.textLabel?.text = text*/
         
     }
-    
-    
-    
 }
+  //********************//
+ //  Event Cell Class  //
+//********************//
+
+class EventCell: UITableViewCell
+{
+    
+    @IBOutlet weak var eventTitle: UILabel!
+    @IBOutlet weak var eventDateTime: UILabel!
+    @IBOutlet weak var eventLocation: MKMapView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        
+        // Configure the view for the selected state
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
