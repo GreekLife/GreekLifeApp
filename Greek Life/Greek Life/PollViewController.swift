@@ -1,0 +1,169 @@
+//
+//  PollViewController.swift
+//  Greek Life
+//
+//  Created by Jonah Elbaz on 2017-11-13.
+//  Copyright © 2017 ConcordiaDev. All rights reserved.
+//
+
+import UIKit
+import FirebaseDatabase
+
+struct Poll: Comparable {
+    
+    static func ==(lhs: Poll, rhs: Poll) -> Bool {
+        return lhs.Epoch == rhs.Epoch
+    }
+    static func < (lhs: Poll, rhs: Poll) -> Bool {
+        return lhs.Epoch > rhs.Epoch
+    }
+    
+    var pollId: String
+    var Epoch: Double
+    var poster: String
+    var PollTitle: String
+    var option1: String
+    var option2: String
+    var option3: String
+    var option4: String
+    var option5: String
+    var option6: String
+    
+    public init() {
+        self.pollId = ""
+        self.Epoch = 0
+        self.poster = ""
+        self.PollTitle = ""
+        self.option1 = ""
+        self.option2 = ""
+        self.option3 = ""
+        self.option4 = ""
+        self.option5 = ""
+        self.option6 = ""
+    }
+    
+    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, option1: String, option2: String, option3: String, option4: String, option5: String, option6: String)
+    {
+        self.pollId = pollId
+        self.Epoch = Epoch
+        self.poster = Poster
+        self.PollTitle = PollTitle
+        self.option1 = option1
+        self.option2 = option2
+        self.option3 = option3
+        self.option4 = option4
+        self.option5 = option5
+        self.option6 = option6
+    }
+    
+    
+}
+
+class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var ListOfPolls:[Poll] = []
+    var PollRef: DatabaseReference!
+    var rowHeight: CGFloat = 532
+
+    @IBOutlet weak var TableView: UITableView!
+    
+    func GetListOfPolls(completion: @escaping (Bool) -> Void) {
+        PollRef = Database.database().reference()
+        PollRef.child("Polls").observe(.value, with: { (snapshot) in
+            let snapshot = snapshot.children
+            for snap in snapshot {
+                if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
+                {
+                    if let pollDictionary = childSnapshot.value as? [String:AnyObject] , pollDictionary.count > 0{ //test for at least one child and turn it into a dictionary of values.
+                        if let Id = pollDictionary["PostId"] as? String {
+                            if let Epoch = pollDictionary["Epoch"] as? Double {
+                                if let Poster = pollDictionary["Poster"] as? String {
+                                    if let Title = pollDictionary["Title"] as? String {
+                                        let Option1 = pollDictionary["Option1"] as? String ?? ""
+                                        let Option2 = pollDictionary["Option2"] as? String ?? ""
+                                        let Option3 = pollDictionary["Option3"] as? String ?? ""
+                                        let Option4 = pollDictionary["Option4"] as? String ?? ""
+                                        let Option5 = pollDictionary["Option5"] as? String ?? ""
+                                        let Option6 = pollDictionary["Option6"] as? String ?? ""
+                                        
+                                        let retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, option1: Option1, option2: Option2, option3: Option3, option4: Option4, option5: Option5, option6: Option6)
+                                        self.ListOfPolls.append(retrievedPoll)
+                                        completion(true);
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+                    
+                }
+            }
+        }){ (error) in
+            print("Could not retrieve object from database");
+            completion(false);
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        GetListOfPolls() {(success) in
+            guard success else{
+                let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve polls.")
+                BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                self.view.addSubview(BadPostRequest)
+                print("Internet Connection not Available!")
+                return
+            }
+            self.TableView.reloadData()
+        }
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+
+    }
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return ListOfPolls.count
+
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
+        cell.Poll.text = self.ListOfPolls[indexPath.row].PollTitle
+        cell.Poster.text = self.ListOfPolls[indexPath.row].poster
+        let date = CreateDate.getTimeSince(epoch: self.ListOfPolls[indexPath.row].Epoch)
+        cell.PollDate.text = date
+        var count = 0
+        if self.ListOfPolls[indexPath.row].option1 == "" {cell.PollOption1.isHidden = true; cell.PollNumbers1.isHidden = true; count += 1}
+        else {cell.PollOption1.text = self.ListOfPolls[indexPath.row].option1}
+        if self.ListOfPolls[indexPath.row].option2 == "" {cell.PollOption2.isHidden = true; cell.PollNumbers2.isHidden = true; count += 1}
+        else {cell.PollOption2.text = self.ListOfPolls[indexPath.row].option2}
+        if self.ListOfPolls[indexPath.row].option3 == "" {cell.PollOption3.isHidden = true; cell.PollNumbers3.isHidden = true; count += 1}
+        else {cell.PollOption3.text = self.ListOfPolls[indexPath.row].option3}
+        if self.ListOfPolls[indexPath.row].option4 == "" {cell.PollOption4.isHidden = true; cell.PollNumbers4.isHidden = true; count += 1}
+        else {cell.PollOption4.text = self.ListOfPolls[indexPath.row].option4}
+        if self.ListOfPolls[indexPath.row].option5 == "" {cell.PollOption5.isHidden = true; cell.PollNumbers5.isHidden = true; count += 1}
+        else {cell.PollOption5.text = self.ListOfPolls[indexPath.row].option5}
+        if self.ListOfPolls[indexPath.row].option6 == "" {cell.PollOption6.isHidden = true; cell.PollNumbers6.isHidden = true; count += 1}
+        else {cell.PollOption6.text = self.ListOfPolls[indexPath.row].option6}
+        
+        //Handle size of the cell
+        let cgCount = CGFloat(count)
+        cell.PollResults.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollResults.frame.height)
+        cell.PollDate.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollDate.frame.height)
+        cell.SendReminder.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.SendReminder.frame.height)
+        self.rowHeight = self.rowHeight - (cgCount * cell.PollOption1.frame.height)
+        
+        
+
+        return cell
+    }
+
+}

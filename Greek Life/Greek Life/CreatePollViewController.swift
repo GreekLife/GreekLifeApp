@@ -9,56 +9,6 @@
 import UIKit
 import FirebaseDatabase
 
-class Poll: Comparable {
-    
-    static func ==(lhs: Poll, rhs: Poll) -> Bool {
-        return lhs.Epoch == rhs.Epoch
-    }
-    static func < (lhs: Poll, rhs: Poll) -> Bool {
-        return lhs.Epoch > rhs.Epoch
-    }
-    
-    var pollId: String
-    var Epoch: Double
-    var poster: String
-    var PollTitle: String
-    var option1: String
-    var option2: String
-    var option3: String
-    var option4: String
-    var option5: String
-    var option6: String
-    
-    public init() {
-        self.pollId = ""
-        self.Epoch = 0
-        self.poster = ""
-        self.PollTitle = ""
-        self.option1 = ""
-        self.option2 = ""
-        self.option3 = ""
-        self.option4 = ""
-        self.option5 = ""
-        self.option6 = ""
-    }
-    
-    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, option1: String, option2: String, option3: String, option4: String, option5: String, option6: String)
-    {
-        self.pollId = pollId
-        self.Epoch = Epoch
-        self.poster = Poster
-        self.PollTitle = PollTitle
-        self.option1 = option1
-        self.option2 = option2
-        self.option3 = option3
-        self.option4 = option4
-        self.option5 = option5
-        self.option6 = option6
-    }
-    
-    
-}
-
 class CreatePollViewController: UIViewController {
 
     @IBOutlet weak var Question: UITextField!
@@ -137,7 +87,7 @@ class CreatePollViewController: UIViewController {
         let Option4 = self.Option4.text
         let Option5 = self.Option5.text
         let Option6 = self.Option6.text
-        
+
         newPoll = Poll(pollId: postId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, option1: Option1!, option2: Option2!, option3: Option3!, option4: Option4!, option5: Option5!, option6: Option6!)
     }
     
