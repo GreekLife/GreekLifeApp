@@ -741,7 +741,7 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xL7-4i-Am5">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <items>
-                                    <barButtonItem systemItem="add" id="dHq-wG-SBd">
+                                    <barButtonItem systemItem="compose" id="dHq-wG-SBd">
                                         <connections>
                                             <segue destination="j7q-gr-89f" kind="presentation" id="Zdz-4Y-axP"/>
                                         </connections>
@@ -888,7 +888,7 @@
                                                     <state key="normal" title="Send a reminder"/>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2d" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EiZ-gj-H6L">
-                                                    <rect key="frame" x="306" y="494" width="33" height="21"/>
+                                                    <rect key="frame" x="306" y="493" width="33" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <nil key="textColor"/>
@@ -943,6 +943,21 @@
                                     <outlet property="delegate" destination="qAJ-oH-3NE" id="3d2-g5-IlU"/>
                                 </connections>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Polls" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7hg-bu-eqV">
+                                <rect key="frame" x="136" y="27" width="104" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s2C-M9-vqU">
+                                <rect key="frame" x="16" y="20" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Home"/>
+                                <connections>
+                                    <segue destination="ffX-If-XRi" kind="show" id="th1-MP-Mal"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -1154,16 +1169,12 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PmC-nf-wby">
-                                <rect key="frame" x="16" y="20" width="55" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="PmC-nf-wby" secondAttribute="height" multiplier="11:6" id="BCK-yV-bb1"/>
-                                    <constraint firstAttribute="height" constant="30" id="n6w-im-PwE"/>
-                                    <constraint firstAttribute="width" constant="55" id="naM-aV-k9Z"/>
-                                </constraints>
-                                <state key="normal" title="Cancel"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wV2-5U-b81">
+                                <rect key="frame" x="16" y="20" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Back"/>
                                 <connections>
-                                    <segue destination="qAJ-oH-3NE" kind="show" id="CAQ-wX-e97"/>
+                                    <segue destination="qAJ-oH-3NE" kind="show" id="vjc-B4-1S3"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1175,7 +1186,6 @@
                             <constraint firstItem="nPZ-N8-DAd" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="31.5" id="BCM-aH-05m"/>
                             <constraint firstItem="26o-Fs-tbV" firstAttribute="centerY" secondItem="Y5M-5c-Eep" secondAttribute="centerY" constant="62" id="CTB-iH-fbA"/>
                             <constraint firstItem="sEk-RQ-UcU" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="-137.5" id="Gpt-7Z-dZS"/>
-                            <constraint firstItem="PmC-nf-wby" firstAttribute="centerY" secondItem="Y5M-5c-Eep" secondAttribute="centerY" constant="-298.5" id="IfB-Fz-gGI"/>
                             <constraint firstItem="lED-Mi-DdL" firstAttribute="centerY" secondItem="Y5M-5c-Eep" secondAttribute="centerY" constant="175" id="JCJ-8r-NTe"/>
                             <constraint firstItem="7Oh-1s-zl6" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="-52.5" id="Ngg-8g-7e9"/>
                             <constraint firstItem="8aP-q2-ZmM" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="31.5" id="Q4m-7W-0Tp"/>
@@ -1200,7 +1210,6 @@
                             <constraint firstItem="R19-gN-LxN" firstAttribute="centerY" secondItem="Y5M-5c-Eep" secondAttribute="centerY" constant="-199" id="vWK-c2-hiT"/>
                             <constraint firstItem="8aP-q2-ZmM" firstAttribute="centerY" secondItem="Y5M-5c-Eep" secondAttribute="centerY" constant="9.5" id="wr1-UB-FyP"/>
                             <constraint firstItem="9jN-r9-zsQ" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="-137.5" id="xVg-WV-TiS"/>
-                            <constraint firstItem="PmC-nf-wby" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="-144" id="yJH-bc-yPk"/>
                             <constraint firstItem="BJV-qa-hei" firstAttribute="centerY" secondItem="Y5M-5c-Eep" secondAttribute="centerY" constant="-91" id="yPV-2L-Hzz"/>
                             <constraint firstItem="dO1-yl-XVL" firstAttribute="centerX" secondItem="Y5M-5c-Eep" secondAttribute="centerX" constant="31.5" id="yis-VG-T4e"/>
                         </constraints>
@@ -1567,7 +1576,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZEe-pe-80i">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FFCell" id="fGg-me-7IK" customClass="FoundingFatherPrototypeTableViewCell" customModule="Greek_Life" customModuleProvider="target">
@@ -1932,8 +1941,8 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="CAQ-wX-e97"/>
+        <segue reference="vjc-B4-1S3"/>
         <segue reference="Qyn-Tv-ClQ"/>
-        <segue reference="ttS-td-cSz"/>
+        <segue reference="th1-MP-Mal"/>
     </inferredMetricsTieBreakers>
 </document>

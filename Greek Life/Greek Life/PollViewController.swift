@@ -61,9 +61,12 @@ struct Poll: Comparable {
 
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    
     var ListOfPolls:[Poll] = []
+    var user = "Jonahelbaz"//LoggedIn.User["Username"] as! String
     var PollRef: DatabaseReference!
-    var rowHeight: CGFloat = 532
+    var rowHeight: CGFloat = 0
+    var defaultHeight: CGFloat = 532 //532 matches the default for 6 options as set in the storyboard
 
     @IBOutlet weak var TableView: UITableView!
     
@@ -117,6 +120,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             self.TableView.reloadData()
         }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -125,13 +129,14 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ListOfPolls.count
-
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return rowHeight
+    @objc func OptionSelected(button: UIButton) {
+        let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
+        let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
+        let indexPath = tbl.indexPath(for: cell)
+        let myData = ListOfPolls[indexPath!.row]
+        PollRef = Database.database().reference()
+        let tag = String(button.tag)
+        PollRef.child("PollOptions").child(myData.pollId).child(tag).setValue(["names" : [user]])
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -154,16 +159,56 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         if self.ListOfPolls[indexPath.row].option6 == "" {cell.PollOption6.isHidden = true; cell.PollNumbers6.isHidden = true; count += 1}
         else {cell.PollOption6.text = self.ListOfPolls[indexPath.row].option6}
         
+        //set style of cells
+        cell.PollNumbers1.layer.cornerRadius = cell.PollNumbers1.frame.width/2
+        cell.PollNumbers1.layer.borderWidth = 0.2
+        cell.PollNumbers1.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
+        cell.PollNumbers2.layer.cornerRadius = cell.PollNumbers2.frame.width/2
+        cell.PollNumbers2.layer.borderWidth = 0.2
+        cell.PollNumbers2.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
+        cell.PollNumbers3.layer.cornerRadius = cell.PollNumbers3.frame.width/2
+        cell.PollNumbers3.layer.borderWidth = 0.2
+        cell.PollNumbers3.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
+        cell.PollNumbers4.layer.cornerRadius = cell.PollNumbers4.frame.width/2
+        cell.PollNumbers4.layer.borderWidth = 0.2
+        cell.PollNumbers4.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
+        cell.PollNumbers5.layer.cornerRadius = cell.PollNumbers5.frame.width/2
+        cell.PollNumbers5.layer.borderWidth = 0.2
+        cell.PollNumbers5.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
+        cell.PollNumbers6.layer.cornerRadius = cell.PollNumbers6.frame.width/2
+        cell.PollNumbers6.layer.borderWidth = 0.2
+        cell.PollNumbers6.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
+        
         //Handle size of the cell
         let cgCount = CGFloat(count)
         cell.PollResults.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollResults.frame.height)
         cell.PollDate.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollDate.frame.height)
         cell.SendReminder.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.SendReminder.frame.height)
-        self.rowHeight = self.rowHeight - (cgCount * cell.PollOption1.frame.height)
+        self.rowHeight = self.defaultHeight - (cgCount * cell.PollOption1.frame.height)
         
-        
+        //Cell button actions
+        cell.PollNumbers1.tag = 1
+        cell.PollNumbers1.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
+        cell.PollNumbers2.tag = 2
+        cell.PollNumbers2.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
+        cell.PollNumbers3.tag = 3
+        cell.PollNumbers3.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
+        cell.PollNumbers4.tag = 4
+        cell.PollNumbers4.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
+        cell.PollNumbers5.tag = 5
+        cell.PollNumbers5.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
+        cell.PollNumbers6.tag = 6
+        cell.PollNumbers6.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
 
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.ListOfPolls.count
     }
 
 }

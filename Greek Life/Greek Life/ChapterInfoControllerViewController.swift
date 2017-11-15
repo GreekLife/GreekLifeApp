@@ -44,8 +44,10 @@ class ChapterInfoControllerViewController: UIViewController {
         ReadMaster()
         Logo.image = UIImage(named: "Docs/Logos/Letters1.png")
         LoadConfiguration.loadConfig() //temporary - Jonah
-        chapterName.text = Configuration.Config!["ChapterName"] as! String + " Chapter"
-        foundingDate.text = Configuration.Config!["FoundingDate"] as! String
+        chapterName.text = Configuration.Config!["ChapterName"] as? String ?? "" + " Chapter"
+        foundingDate.text = Configuration.Config!["FoundingDate"] as? String ?? ""
+        
+        
         
         // Do any additional setup after loading the view.
     }
