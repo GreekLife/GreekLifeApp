@@ -28,6 +28,7 @@ struct Poll: Comparable {
     var option4: String
     var option5: String
     var option6: String
+    var upVotes: [[String]]
     
     public init() {
         self.pollId = ""
@@ -40,9 +41,10 @@ struct Poll: Comparable {
         self.option4 = ""
         self.option5 = ""
         self.option6 = ""
+        self.upVotes = [[],[],[],[],[],[],[]]
     }
     
-    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, option1: String, option2: String, option3: String, option4: String, option5: String, option6: String)
+    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, option1: String, option2: String, option3: String, option4: String, option5: String, option6: String, upVotes: [[String]])
     {
         self.pollId = pollId
         self.Epoch = Epoch
@@ -54,6 +56,7 @@ struct Poll: Comparable {
         self.option4 = option4
         self.option5 = option5
         self.option6 = option6
+        self.upVotes = upVotes
     }
     
     
@@ -89,9 +92,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                         let Option5 = pollDictionary["Option5"] as? String ?? ""
                                         let Option6 = pollDictionary["Option6"] as? String ?? ""
                                         
-                                        let retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, option1: Option1, option2: Option2, option3: Option3, option4: Option4, option5: Option5, option6: Option6)
+                                        let retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, option1: Option1, option2: Option2, option3: Option3, option4: Option4, option5: Option5, option6: Option6, upVotes: [[],[],[],[],[],[],[]])
                                         self.ListOfPolls.append(retrievedPoll)
-                                        completion(true);
                                     }
                                 }
                             }
@@ -101,6 +103,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                     
                 }
             }
+            completion(true)
         }){ (error) in
             print("Could not retrieve object from database");
             completion(false);
@@ -118,9 +121,20 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 print("Internet Connection not Available!")
                 return
             }
-            self.TableView.reloadData()
+            self.CalculateUpVotes(){(success) in
+                guard success else{
+                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve polls.")
+                    BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                    self.view.addSubview(BadPostRequest)
+                    print("Internet Connection not Available!")
+                    return
+                }
+                self.TableView.reloadData()
+            }
+            
         }
-        
+
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -136,7 +150,55 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         let myData = ListOfPolls[indexPath!.row]
         PollRef = Database.database().reference()
         let tag = String(button.tag)
-        PollRef.child("PollOptions").child(myData.pollId).child(tag).setValue(["names" : [user]])
+        PollRef.child("PollOptions").child(myData.pollId).child("\"\(tag)\"").child("Names").updateChildValues([user:user])
+    }
+    
+    func refreshPollUpvotes(){
+        var refresh = 0
+        for _ in self.ListOfPolls {
+            var refresh2 = 0
+            for _ in self.ListOfPolls[refresh].upVotes{
+                self.ListOfPolls[refresh].upVotes[refresh2].removeAll()
+                refresh2 += 1
+            }
+            refresh += 1
+        }
+    }
+    
+    func CalculateUpVotes(completion: @escaping (Bool) -> Void) {
+        PollRef = Database.database().reference()
+        PollRef.child("PollOptions").observe(.value, with: { (snapshot) in
+            self.refreshPollUpvotes() //ideally we dont want to empty and reprocess everything but we're dealing with small numbers (<100)
+            let snapshot = snapshot.children
+            var pollVote = 0
+            for snap in snapshot {
+                if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
+                {
+                    var count = 0
+                    if let pollArray = childSnapshot.value as? [String:AnyObject] , pollArray.count >= 0{
+                        var keyArray:[String] = []
+                        for(key,_) in pollArray {
+                            let AKey = key
+                            keyArray.append(AKey)
+                        }
+                        for upVotes in pollArray {
+                            var value = upVotes.value as! [String:AnyObject]
+                            let names = value["Names"] as! [String:String]
+                            for name in names {
+                                let num = Int(keyArray[count].replacingOccurrences(of: "\"", with: ""))
+                                self.ListOfPolls[pollVote].upVotes[num!].append(name.value)
+                            }
+                            count += 1
+                    }
+                        pollVote += 1
+                  }
+                }
+            }
+            completion(true)
+        }){ (error) in
+            print("Could not retrieve object from database");
+            completion(false)
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -199,9 +261,18 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.PollNumbers5.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
         cell.PollNumbers6.tag = 6
         cell.PollNumbers6.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-
+        
+        //set Poll upvotes
+            cell.PollNumbers1.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[1].count), for: .normal)
+            cell.PollNumbers2.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[2].count), for: .normal)
+            cell.PollNumbers3.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[3].count), for: .normal)
+            cell.PollNumbers4.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[4].count), for: .normal)
+            cell.PollNumbers5.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[5].count), for: .normal)
+            cell.PollNumbers6.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[6].count), for: .normal)
+        
+        //returning before data is retrieved. Need to wait for call to finish.
         return cell
-    }
+            }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return self.rowHeight

@@ -88,7 +88,7 @@ class CreatePollViewController: UIViewController {
         let Option5 = self.Option5.text
         let Option6 = self.Option6.text
 
-        newPoll = Poll(pollId: postId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, option1: Option1!, option2: Option2!, option3: Option3!, option4: Option4!, option5: Option5!, option6: Option6!)
+        newPoll = Poll(pollId: postId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, option1: Option1!, option2: Option2!, option3: Option3!, option4: Option4!, option5: Option5!, option6: Option6!, upVotes: [])
     }
     
     var newPoll: Poll = Poll()
