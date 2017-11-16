@@ -70,7 +70,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //Current Snapshots of Database
     var calendarSnapshot:DataSnapshot?
     var calendarSettingsSnapshot:DataSnapshot?
-    //Local Calendar Instace
+    //location Calendar Instace
     var calendar:Calendar = Calendar(eventList: [:], settings: [:])
     
     func initCalendar()
@@ -107,7 +107,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         title:String,
         date:Date,
         duration:TimeInterval,
-        local:String,
+        location:String,
         description:String
         )
     {
@@ -118,7 +118,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
             dataRef.child("Calendar").child(String(Int(date.timeIntervalSince1970.magnitude))).setValue([
                 "title" : title,
                 "duration" : duration.magnitude,
-                "local" : local,
+                "location" : location,
                 "description" : description,
                 "date" : date.timeIntervalSince1970
                 ])
@@ -182,7 +182,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
             title:  (createEventInfo?.titleField.text!)!,
             date:  (createEventInfo?.datePicker.date)!,
             duration:  (createEventInfo?.durationPicker.countDownDuration)!,
-            local:  (createEventInfo?.localField.text)!,
+            location:  (createEventInfo?.locationField.text)!,
             description:  (createEventInfo?.descriptionField.text)!
         )
     }
@@ -254,6 +254,13 @@ class DisplayEventViewController: UIViewController
     
     override func viewDidLoad() {
         titleLabel.text = (eventData["title"] as! String)
+        
+        let date = Date.init(timeIntervalSince1970: eventData["date"] as! TimeInterval)
+        dateLabel.text = theFormatter.dateStringFromDate(date)
+        let endDate:Date = date.addingTimeInterval(eventData["duration"] as! TimeInterval)
+        timeLabel.text = "\(theFormatter.timeStringFromDate(date)) to \(theFormatter.timeStringFromDate(endDate))"
+        locationLabel.text = eventData["location"] as! String
+        descriptionField.text = eventData["description"] as! String
     }
     
 }
@@ -273,7 +280,7 @@ class EventEditorViewController: UIViewController
     var isCreatingNew:Bool = false //Is set by prepare function of Calendar Controller
     
     @IBOutlet weak var titleField: UITextField!
-    @IBOutlet weak var localField: UITextField!
+    @IBOutlet weak var locationField: UITextField!
     @IBOutlet weak var durationPicker: UIDatePicker!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var descriptionField: UITextView!
