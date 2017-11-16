@@ -1110,7 +1110,7 @@
                     <connections>
                         <outlet property="calendarTable" destination="yam-MZ-lYQ" id="4Gc-ql-KO7"/>
                         <outlet property="createEventBTN" destination="r2c-6c-cqT" id="alz-oO-ASz"/>
-                        <segue destination="dJk-PE-0Qz" kind="presentation" id="yEs-Us-dWb"/>
+                        <segue destination="dJk-PE-0Qz" kind="presentation" identifier="displayEventViewSegue" id="yEs-Us-dWb"/>
                         <segue destination="OWr-c4-QcE" kind="presentation" identifier="eventEditorSegue" id="Fni-Ih-T5y"/>
                     </connections>
                 </viewController>
@@ -1118,10 +1118,10 @@
             </objects>
             <point key="canvasLocation" x="-47.200000000000003" y="1355.1724137931035"/>
         </scene>
-        <!--View Controller-->
+        <!--Display Event View Controller-->
         <scene sceneID="eAF-SY-60m">
             <objects>
-                <viewController id="dJk-PE-0Qz" sceneMemberID="viewController">
+                <viewController id="dJk-PE-0Qz" customClass="DisplayEventViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="8dI-dd-5XG"/>
                         <viewControllerLayoutGuide type="bottom" id="EYh-Ig-t5y"/>
@@ -1136,6 +1136,9 @@
                                 <items>
                                     <barButtonItem title="Back" id="q7D-xm-HGR">
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <connections>
+                                            <action selector="backBTN:" destination="dJk-PE-0Qz" id="PLL-Vz-5cJ"/>
+                                        </connections>
                                     </barButtonItem>
                                 </items>
                                 <color key="barTintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1162,7 +1165,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="J4d-RK-yJ8">
-                                <rect key="frame" x="16" y="269" width="343" height="209"/>
+                                <rect key="frame" x="16" y="296" width="343" height="182"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="H3c-fI-3ao">
@@ -1175,9 +1178,24 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Jonah's Asshole" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LY4-sa-cNZ">
+                                <rect key="frame" x="77" y="267" width="221" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
+                    <connections>
+                        <outlet property="dateLabel" destination="YDH-tJ-gTy" id="3tg-1o-ANR"/>
+                        <outlet property="descriptionField" destination="H3c-fI-3ao" id="lOv-ID-fVc"/>
+                        <outlet property="locationLabel" destination="LY4-sa-cNZ" id="jOH-2S-xP4"/>
+                        <outlet property="mapView" destination="J4d-RK-yJ8" id="UQf-LI-pM8"/>
+                        <outlet property="timeLabel" destination="o0r-Mq-gTH" id="LEr-bq-hoX"/>
+                        <outlet property="titleLabel" destination="Anj-Zz-ril" id="Avj-2E-N3b"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="11C-L2-4ft" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

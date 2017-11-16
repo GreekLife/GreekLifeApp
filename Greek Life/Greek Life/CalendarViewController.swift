@@ -119,7 +119,8 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 "title" : title,
                 "duration" : duration.magnitude,
                 "local" : local,
-                "description" : description
+                "description" : description,
+                "date" : date.timeIntervalSince1970
                 ])
             
         }
@@ -148,17 +149,23 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         initCalendar()
+        calendarDataHandle = dataRef.child("Calendar").observe(.value, with: {(calendarSnapshot) in
+            self.calendar.eventList = (calendarSnapshot.value as? [String : [String : Any]])!
+            self.calendarTable.reloadData()
+        })
         
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         //For Viewing an Event
-        /*if segue.identifier == "viewEventSegue"
+        if segue.identifier == "displayEventViewSegue"
         {
-            segue.destination.titleLabel.text =
+            let displayEventView = segue.destination as? DisplayEventViewController
+            let eventData:[String:Any] = Array(calendar.eventList.values)[(sender as! Int)]
+            displayEventView?.eventData = eventData
         }
         //For Creating or Editing
-        else */if (sender as! String) == "createEvent"
+        else if (sender as! String) == "createEvent"
         {
             let eventEditorView = segue.destination as? EventEditorViewController
             eventEditorView?.isCreatingNew = true
@@ -195,6 +202,11 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         }
         return eventCell
     }
+    //To view an event in the DisplayEventViewController
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        performSegue(withIdentifier: "displayEventViewSegue", sender: indexPath.row)
+    }
 }
   //********************//
  //  Event Cell Class  //
@@ -220,11 +232,31 @@ class EventCell: UITableViewCell
 
 }
 
-  //*********************************//
- //  Event Viewer Controller Class  //
-//*********************************//
+  //***************************************//
+ //  Display Event View Controller Class  //
+//**************************************//
 
-//to be started after this commit
+class DisplayEventViewController: UIViewController
+{
+    var eventData:[String:Any] = [:]
+    
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var locationLabel: UILabel!
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var descriptionField: UITextView!
+    
+    @IBAction func backBTN(_ sender: Any)
+    {
+        presentingViewController?.dismiss(animated: true)
+    }
+    
+    override func viewDidLoad() {
+        titleLabel.text = (eventData["title"] as! String)
+    }
+    
+}
 
   //*********************************//
  //  Event Editor Controller Class  //
