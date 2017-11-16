@@ -48,6 +48,7 @@ struct Calendar {
             return 31
         }
     }
+    
 }
 
 
@@ -102,25 +103,84 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         else{print ("Not connected to network!")}
     }
     
+    func editEvent (
+        title:String,
+        date:Date,
+        duration:TimeInterval,
+        local:String,
+        description:String
+        )
+    {
+        if Reachability.isConnectedToNetwork()
+        {
+            
+            //Writing event data to database
+            dataRef.child("Calendar").child(String(Int(date.timeIntervalSince1970.magnitude))).setValue([
+                "title" : title,
+                "duration" : duration.magnitude,
+                "local" : local,
+                "description" : description
+                ])
+            
+        }
+    }
+    
     
     //-----------------------//
     //  Calendar Controller  //
     //-----------------------//
     
-    
+    //IBOutlets and IBActions
     @IBOutlet weak var calendarTable: UITableView!
-    @IBAction func createEventBTN(_ sender: Any) {
+    @IBOutlet weak var createEventBTN: UIBarButtonItem!
+    
+    @IBAction func createEventBTN(_ sender: Any)
+    {
+        performSegue(withIdentifier: "eventEditorSegue", sender: "createEvent")
     }
     @IBAction func backBTN(_ sender: Any)
     {
         self.presentingViewController?.dismiss(animated: true)
     }
     
+    
+    //View Lifecycle Things
     override func viewDidLoad() {
         super.viewDidLoad()
         initCalendar()
         
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        //For Viewing an Event
+        /*if segue.identifier == "viewEventSegue"
+        {
+            segue.destination.titleLabel.text =
+        }
+        //For Creating or Editing
+        else */if (sender as! String) == "createEvent"
+        {
+            let eventEditorView = segue.destination as? EventEditorViewController
+            eventEditorView?.isCreatingNew = true
+        }else{
+            print("didn't know what the fuck was happening")
+        }
+    }
+    //Unwinding from presented views
+    @IBAction func unwindCreateEvent(segue: UIStoryboardSegue)
+    {
+        
+        let createEventInfo = segue.source as? EventEditorViewController
+        editEvent(
+            title:  (createEventInfo?.titleField.text!)!,
+            date:  (createEventInfo?.datePicker.date)!,
+            duration:  (createEventInfo?.durationPicker.countDownDuration)!,
+            local:  (createEventInfo?.localField.text)!,
+            description:  (createEventInfo?.descriptionField.text)!
+        )
+    }
+    
+    //Table View Controller Functions
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return calendar.eventList.count
     }
@@ -160,8 +220,54 @@ class EventCell: UITableViewCell
 
 }
 
+  //*********************************//
+ //  Event Viewer Controller Class  //
+//*********************************//
 
+//to be started after this commit
 
+  //*********************************//
+ //  Event Editor Controller Class  //
+//*********************************//
+class EventEditorViewController: UIViewController
+{
+    
+    
+    @IBAction func cancelBTN(_ sender: UIBarButtonItem)
+    {
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
+    var isCreatingNew:Bool = false //Is set by prepare function of Calendar Controller
+    
+    @IBOutlet weak var titleField: UITextField!
+    @IBOutlet weak var localField: UITextField!
+    @IBOutlet weak var durationPicker: UIDatePicker!
+    @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var descriptionField: UITextView!
+    
+    
+    
+    override func viewDidLoad() {
+        
+        if (isCreatingNew)
+        {
+            print("Making new event")
+        }
+        else
+        {
+            print("Editing previoulsy created event")
+        }
+    }
+    
+    // To prepare to close the event editor,
+    // it calls the editEvent method from the model
+    // in order to save the changes to database
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        
+    }
+}
 
 
 
