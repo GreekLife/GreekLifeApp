@@ -166,7 +166,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         }
         //For Creating or Editing
         else if (sender as! String) == "createEvent"
-        {
+        { 
             let eventEditorView = segue.destination as? EventEditorViewController
             eventEditorView?.isCreatingNew = true
         }else{
