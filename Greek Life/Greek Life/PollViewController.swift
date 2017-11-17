@@ -112,7 +112,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.TableView.allowsSelection = false
+
         GetListOfPolls() {(success) in
             guard success else{
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve polls.")
@@ -204,6 +205,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
         cell.Poll.text = self.ListOfPolls[indexPath.row].PollTitle
+        cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
         cell.Poster.text = self.ListOfPolls[indexPath.row].poster
         let date = CreateDate.getTimeSince(epoch: self.ListOfPolls[indexPath.row].Epoch)
         cell.PollDate.text = date
@@ -241,6 +243,19 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.PollNumbers6.layer.borderWidth = 0.2
         cell.PollNumbers6.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
         
+        //Percent vote for poll
+        cell.PollOption1.layer.borderWidth = 0.5
+        let width1 = Int(cell.PollOption1.frame.size.width)
+        var totalVotes1 = 0
+        var x = 1
+        while x < 7 {
+            totalVotes1 += self.ListOfPolls[indexPath.row].upVotes[x].count
+            x += 1
+        }
+        let votesForOp1 = self.ListOfPolls[indexPath.row].upVotes[1].count
+        let percentOp1 = votesForOp1/totalVotes1
+        let percentFilledOp1 = width1 * percentOp1
+        
         //Handle size of the cell
         let cgCount = CGFloat(count)
         cell.PollResults.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollResults.frame.height)
@@ -270,7 +285,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell.PollNumbers5.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[5].count), for: .normal)
             cell.PollNumbers6.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[6].count), for: .normal)
         
-        //returning before data is retrieved. Need to wait for call to finish.
         return cell
             }
     

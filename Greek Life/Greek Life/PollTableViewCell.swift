@@ -10,6 +10,7 @@ import UIKit
 
 class PollTableViewCell: UITableViewCell {
     
+    @IBOutlet weak var PollerPicture: UIImageView!
     @IBOutlet weak var Poster: UILabel!
     @IBOutlet weak var Poll: UILabel!
     @IBOutlet weak var PollDate: UILabel!

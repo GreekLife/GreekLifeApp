@@ -746,6 +746,8 @@
                                             <segue destination="j7q-gr-89f" kind="presentation" id="Zdz-4Y-axP"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem width="287" style="plain" systemItem="fixedSpace" id="P4C-EN-Ixe"/>
+                                    <barButtonItem systemItem="trash" id="9RL-F2-ipp"/>
                                 </items>
                             </toolbar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="w33-oh-5gr">
@@ -759,17 +761,6 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="531.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Natey Polachek (Master)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BSM-Oa-Xv9">
-                                                    <rect key="frame" x="15" y="11" width="261" height="21"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" secondItem="BSM-Oa-Xv9" secondAttribute="height" multiplier="87:7" id="FYl-lQ-mRJ"/>
-                                                        <constraint firstAttribute="width" constant="261" id="hxg-9X-CtT"/>
-                                                        <constraint firstAttribute="height" constant="21" id="pPy-c6-zvd"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Where would we like to take a road trip to next year?" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q2S-vg-ncf">
                                                     <rect key="frame" x="35" y="40" width="313" height="61"/>
                                                     <constraints>
@@ -888,15 +879,29 @@
                                                     <state key="normal" title="Send a reminder"/>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2d" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EiZ-gj-H6L">
-                                                    <rect key="frame" x="306" y="493" width="33" height="21"/>
+                                                    <rect key="frame" x="316" y="493" width="23" height="15"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jqy-Rp-6WA">
+                                                    <rect key="frame" x="13" y="7" width="45" height="33"/>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Natey Polachek (Master)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BSM-Oa-Xv9">
+                                                    <rect key="frame" x="78" y="13" width="261" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="BSM-Oa-Xv9" secondAttribute="height" multiplier="87:7" id="FYl-lQ-mRJ"/>
+                                                        <constraint firstAttribute="width" constant="261" id="hxg-9X-CtT"/>
+                                                        <constraint firstAttribute="height" constant="21" id="pPy-c6-zvd"/>
+                                                    </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="BSM-Oa-Xv9" firstAttribute="leading" secondItem="4IV-Ju-uGO" secondAttribute="leadingMargin" id="1xn-XR-038"/>
+                                                <constraint firstItem="BSM-Oa-Xv9" firstAttribute="leading" secondItem="4IV-Ju-uGO" secondAttribute="leadingMargin" constant="63" id="1xn-XR-038"/>
                                                 <constraint firstItem="h4d-Uo-Sn3" firstAttribute="trailing" secondItem="4IV-Ju-uGO" secondAttribute="trailingMargin" id="7L7-VY-50j"/>
                                                 <constraint firstItem="yvb-vw-d75" firstAttribute="top" secondItem="f2F-l3-nnM" secondAttribute="bottom" constant="8" id="7Ta-ql-ulE"/>
                                                 <constraint firstItem="FDL-xc-Pzl" firstAttribute="top" secondItem="Q2S-vg-ncf" secondAttribute="bottom" constant="8" id="7Vh-S4-060"/>
@@ -904,14 +909,18 @@
                                                 <constraint firstItem="f2F-l3-nnM" firstAttribute="top" secondItem="FDL-xc-Pzl" secondAttribute="bottom" constant="8" id="Bfk-Ul-iTv"/>
                                                 <constraint firstItem="yvb-vw-d75" firstAttribute="trailing" secondItem="4IV-Ju-uGO" secondAttribute="trailingMargin" id="KCe-DZ-hau"/>
                                                 <constraint firstItem="FDL-xc-Pzl" firstAttribute="trailing" secondItem="4IV-Ju-uGO" secondAttribute="trailingMargin" id="LKU-xZ-CFW"/>
+                                                <constraint firstItem="jqy-Rp-6WA" firstAttribute="centerY" secondItem="BSM-Oa-Xv9" secondAttribute="centerY" id="LNm-wY-XDN"/>
                                                 <constraint firstItem="f2F-l3-nnM" firstAttribute="trailing" secondItem="4IV-Ju-uGO" secondAttribute="trailingMargin" id="MMf-3a-9Lw"/>
                                                 <constraint firstItem="I8d-dm-9po" firstAttribute="top" secondItem="28J-uc-6Tv" secondAttribute="bottom" constant="8" id="PdS-o8-Yuf"/>
                                                 <constraint firstItem="Q2S-vg-ncf" firstAttribute="leading" secondItem="4IV-Ju-uGO" secondAttribute="leadingMargin" constant="20" id="S9D-gU-wct"/>
-                                                <constraint firstItem="BSM-Oa-Xv9" firstAttribute="top" secondItem="4IV-Ju-uGO" secondAttribute="topMargin" id="a4o-zL-oM3"/>
+                                                <constraint firstItem="BSM-Oa-Xv9" firstAttribute="top" secondItem="4IV-Ju-uGO" secondAttribute="topMargin" constant="2" id="a4o-zL-oM3"/>
+                                                <constraint firstItem="jqy-Rp-6WA" firstAttribute="leading" secondItem="4IV-Ju-uGO" secondAttribute="leading" constant="13" id="akZ-2r-ItW"/>
                                                 <constraint firstItem="28J-uc-6Tv" firstAttribute="top" secondItem="yvb-vw-d75" secondAttribute="bottom" constant="8" id="bKh-jx-wgJ"/>
-                                                <constraint firstItem="Q2S-vg-ncf" firstAttribute="top" secondItem="BSM-Oa-Xv9" secondAttribute="bottom" constant="8" id="gQd-hZ-N5X"/>
+                                                <constraint firstItem="Q2S-vg-ncf" firstAttribute="top" secondItem="BSM-Oa-Xv9" secondAttribute="bottom" constant="6" id="gQd-hZ-N5X"/>
+                                                <constraint firstItem="BSM-Oa-Xv9" firstAttribute="leading" secondItem="jqy-Rp-6WA" secondAttribute="trailing" constant="20" id="lOd-Hm-FqE"/>
+                                                <constraint firstItem="Q2S-vg-ncf" firstAttribute="top" secondItem="jqy-Rp-6WA" secondAttribute="bottom" id="oFB-jI-kyS"/>
                                                 <constraint firstItem="I8d-dm-9po" firstAttribute="trailing" secondItem="4IV-Ju-uGO" secondAttribute="trailingMargin" id="rg0-kV-2eZ"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="BSM-Oa-Xv9" secondAttribute="trailing" constant="84" id="wGc-M2-sYu"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="BSM-Oa-Xv9" secondAttribute="trailing" constant="21" id="wGc-M2-sYu"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Q2S-vg-ncf" secondAttribute="trailing" constant="12" id="xHD-iE-A9e"/>
                                                 <constraint firstItem="h4d-Uo-Sn3" firstAttribute="top" secondItem="I8d-dm-9po" secondAttribute="bottom" constant="8" id="xxn-cf-Hgg"/>
                                                 <constraint firstItem="FDL-xc-Pzl" firstAttribute="top" secondItem="Q2S-vg-ncf" secondAttribute="bottom" constant="8" id="zTf-Ng-aa7"/>
@@ -933,6 +942,7 @@
                                             <outlet property="PollOption5" destination="I8d-dm-9po" id="tfc-8x-vn6"/>
                                             <outlet property="PollOption6" destination="h4d-Uo-Sn3" id="44d-zH-YA8"/>
                                             <outlet property="PollResults" destination="XYD-MM-lxd" id="SBb-4A-oB7"/>
+                                            <outlet property="PollerPicture" destination="jqy-Rp-6WA" id="qAO-zz-D67"/>
                                             <outlet property="Poster" destination="BSM-Oa-Xv9" id="fdW-KH-cki"/>
                                             <outlet property="SendReminder" destination="icf-lO-w6E" id="nLb-qX-7nk"/>
                                         </connections>
