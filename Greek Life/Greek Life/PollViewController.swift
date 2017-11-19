@@ -22,12 +22,7 @@ struct Poll: Comparable {
     var Epoch: Double
     var poster: String
     var PollTitle: String
-    var option1: String
-    var option2: String
-    var option3: String
-    var option4: String
-    var option5: String
-    var option6: String
+    var options: [String]
     var upVotes: [[String]]
     
     public init() {
@@ -35,27 +30,17 @@ struct Poll: Comparable {
         self.Epoch = 0
         self.poster = ""
         self.PollTitle = ""
-        self.option1 = ""
-        self.option2 = ""
-        self.option3 = ""
-        self.option4 = ""
-        self.option5 = ""
-        self.option6 = ""
-        self.upVotes = [[],[],[],[],[],[],[]]
+        self.options = []
+        self.upVotes = [[]]
     }
     
-    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, option1: String, option2: String, option3: String, option4: String, option5: String, option6: String, upVotes: [[String]])
+    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
     {
         self.pollId = pollId
         self.Epoch = Epoch
         self.poster = Poster
         self.PollTitle = PollTitle
-        self.option1 = option1
-        self.option2 = option2
-        self.option3 = option3
-        self.option4 = option4
-        self.option5 = option5
-        self.option6 = option6
+        self.options = options
         self.upVotes = upVotes
     }
     
@@ -66,16 +51,46 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     var ListOfPolls:[Poll] = []
-    var user = "Jonahelbaz"//LoggedIn.User["Username"] as! String
+    var user = LoggedIn.User["Username"] as! String
     var PollRef: DatabaseReference!
     var rowHeight: CGFloat = 0
     var defaultHeight: CGFloat = 532 //532 matches the default for 6 options as set in the storyboard
+    var CellState: [Bool] = []
+    var DeleteCellState: [Bool] = []
+    var deleteState = false
+    var deleteHeight: CGFloat = 0
+    var deleteButtons: [UIButton] = []
+    var indexPath:IndexPath = IndexPath(item: 0, section: 0)
 
     @IBOutlet weak var TableView: UITableView!
+    @IBAction func DeletePoll(_ sender: Any) {
+        self.TableView.scrollToRow(at: indexPath as IndexPath, at: UITableViewScrollPosition.top, animated: true)
+        DeleteCellState.removeAll()
+        for _ in self.ListOfPolls {
+            DeleteCellState.append(false)
+        }
+        
+        if self.deleteState == true {
+            self.deleteState = false
+            deleteHeight = 0
+            self.ListOfPolls = mergeSorting.mergeSort(self.ListOfPolls)
+            var deleteCount = 0
+            for _ in deleteButtons {
+                deleteButtons[deleteCount].removeFromSuperview()
+                deleteCount += 1
+            }
+            deleteButtons.removeAll()
+        }
+        else {
+        self.deleteState = true
+        }
+        TableView.reloadData()
+    }
     
     func GetListOfPolls(completion: @escaping (Bool) -> Void) {
         PollRef = Database.database().reference()
         PollRef.child("Polls").observe(.value, with: { (snapshot) in
+            self.ListOfPolls.removeAll()
             let snapshot = snapshot.children
             for snap in snapshot {
                 if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
@@ -85,15 +100,10 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                             if let Epoch = pollDictionary["Epoch"] as? Double {
                                 if let Poster = pollDictionary["Poster"] as? String {
                                     if let Title = pollDictionary["Title"] as? String {
-                                        let Option1 = pollDictionary["Option1"] as? String ?? ""
-                                        let Option2 = pollDictionary["Option2"] as? String ?? ""
-                                        let Option3 = pollDictionary["Option3"] as? String ?? ""
-                                        let Option4 = pollDictionary["Option4"] as? String ?? ""
-                                        let Option5 = pollDictionary["Option5"] as? String ?? ""
-                                        let Option6 = pollDictionary["Option6"] as? String ?? ""
-                                        
-                                        let retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, option1: Option1, option2: Option2, option3: Option3, option4: Option4, option5: Option5, option6: Option6, upVotes: [[],[],[],[],[],[],[]])
-                                        self.ListOfPolls.append(retrievedPoll)
+                                        if let Options = pollDictionary["Options"] as? [String] {
+                                            let retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [[]])
+                                            self.ListOfPolls.append(retrievedPoll)
+                                        }
                                     }
                                 }
                             }
@@ -122,16 +132,13 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 print("Internet Connection not Available!")
                 return
             }
-            self.CalculateUpVotes(){(success) in
-                guard success else{
-                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve polls.")
-                    BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
-                    self.view.addSubview(BadPostRequest)
-                    print("Internet Connection not Available!")
-                    return
-                }
-                self.TableView.reloadData()
+            var stateCount = 0
+            for _ in self.ListOfPolls {
+                self.CellState.append(false)
+                stateCount += 1
             }
+            self.ListOfPolls = mergeSorting.mergeSort(self.ListOfPolls)
+            self.TableView.reloadData()
             
         }
 
@@ -143,7 +150,56 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     }
     
+    //------------------------//
+    //-- Cell interactions --//
+    //----------------------//
     
+    //----Delete Post ----//
+    var identifier:String = ""
+    
+    @objc func DeletePost(button: UIButton) {
+        let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
+        let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: DeletePostInternal)
+        let destructor = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: DeletePostInternal)
+        verify.addAction(okAction)
+        verify.addAction(destructor)
+        self.present(verify, animated: true, completion: nil)
+        self.identifier = button.accessibilityIdentifier!
+    }
+
+    func DeletePostInternal(action: UIAlertAction) {
+        if action.title == "Delete"{
+            FirebaseDatabase.Database.database().reference(withPath: "Polls").child(self.identifier).removeValue()
+            deleteState = false
+            CellState.removeAll()
+            var stateCount = 0
+            for _ in self.ListOfPolls {
+                self.CellState.append(false)
+                stateCount += 1
+            }
+            DeleteCellState.removeAll()
+            for _ in self.ListOfPolls {
+                DeleteCellState.append(false)
+            }
+            deleteHeight = 0
+            var deleteCount = 0
+            for _ in deleteButtons {
+                deleteButtons[deleteCount].removeFromSuperview()
+                deleteCount += 1
+            }
+            deleteButtons.removeAll()
+            
+            var optionCount = 0
+            for _ in self.options {
+                options[optionCount].removeFromSuperview()
+                optionCount += 1
+            }
+            
+        }
+    }
+
+
+    //---Voted for an option ----//
     @objc func OptionSelected(button: UIButton) {
         let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
         let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
@@ -154,6 +210,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         PollRef.child("PollOptions").child(myData.pollId).child("\"\(tag)\"").child("Names").updateChildValues([user:user])
     }
     
+    //----Process total votes for each option ----//
     func refreshPollUpvotes(){
         var refresh = 0
         for _ in self.ListOfPolls {
@@ -202,88 +259,148 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    //---------------------//
+    //---Create elements---//
+    //--------------------//
+    
+    func textView(x:CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)->UITextView {
+        let textView = UITextView(frame: CGRect(x: x, y: y, width: width, height: height))
+        textView.textColor = UIColor.black
+        textView.backgroundColor = UIColor.clear
+        textView.layer.borderWidth = 0.8
+        textView.layer.borderColor = UIColor.black.cgColor
+        textView.isScrollEnabled = false
+        textView.isEditable = false
+        return textView
+    }
+    
+    func button(x:CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)->UIButton {
+        let button = UIButton(frame: CGRect(x: x, y: y, width: width, height: height))
+        button.backgroundColor = UIColor.clear
+        button.layer.borderWidth = 0.8
+        button.layer.borderColor = UIColor.black.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        return button
+    }
+    
+    func label(x:CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)->UILabel {
+    let label = UILabel(frame: CGRect(x: x, y: y, width: width, height: height))
+    label.backgroundColor = UIColor.clear
+    label.layer.borderColor = UIColor.black.cgColor
+    label.font = UIFont(name: label.font.fontName, size: 12)
+    return label
+    }
+    
+    //--------------------//
+    //---Table Views ----//
+    //------------------//
+    var options: [UITextView] = []
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
-        cell.Poll.text = self.ListOfPolls[indexPath.row].PollTitle
-        cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
-        cell.Poster.text = self.ListOfPolls[indexPath.row].poster
-        let date = CreateDate.getTimeSince(epoch: self.ListOfPolls[indexPath.row].Epoch)
-        cell.PollDate.text = date
-        var count = 0
-        if self.ListOfPolls[indexPath.row].option1 == "" {cell.PollOption1.isHidden = true; cell.PollNumbers1.isHidden = true; count += 1}
-        else {cell.PollOption1.text = self.ListOfPolls[indexPath.row].option1}
-        if self.ListOfPolls[indexPath.row].option2 == "" {cell.PollOption2.isHidden = true; cell.PollNumbers2.isHidden = true; count += 1}
-        else {cell.PollOption2.text = self.ListOfPolls[indexPath.row].option2}
-        if self.ListOfPolls[indexPath.row].option3 == "" {cell.PollOption3.isHidden = true; cell.PollNumbers3.isHidden = true; count += 1}
-        else {cell.PollOption3.text = self.ListOfPolls[indexPath.row].option3}
-        if self.ListOfPolls[indexPath.row].option4 == "" {cell.PollOption4.isHidden = true; cell.PollNumbers4.isHidden = true; count += 1}
-        else {cell.PollOption4.text = self.ListOfPolls[indexPath.row].option4}
-        if self.ListOfPolls[indexPath.row].option5 == "" {cell.PollOption5.isHidden = true; cell.PollNumbers5.isHidden = true; count += 1}
-        else {cell.PollOption5.text = self.ListOfPolls[indexPath.row].option5}
-        if self.ListOfPolls[indexPath.row].option6 == "" {cell.PollOption6.isHidden = true; cell.PollNumbers6.isHidden = true; count += 1}
-        else {cell.PollOption6.text = self.ListOfPolls[indexPath.row].option6}
+        let defaultOptionHeight: CGFloat = 52
+        let defaultOptionWidth: CGFloat = 257
+        let defaultOptionX: CGFloat = 103
+        let smallestPossibleTextArea: CGFloat = 30
+        var existingOptions: Int = 0
         
-        //set style of cells
-        cell.PollNumbers1.layer.cornerRadius = cell.PollNumbers1.frame.width/2
-        cell.PollNumbers1.layer.borderWidth = 0.2
-        cell.PollNumbers1.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
-        cell.PollNumbers2.layer.cornerRadius = cell.PollNumbers2.frame.width/2
-        cell.PollNumbers2.layer.borderWidth = 0.2
-        cell.PollNumbers2.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
-        cell.PollNumbers3.layer.cornerRadius = cell.PollNumbers3.frame.width/2
-        cell.PollNumbers3.layer.borderWidth = 0.2
-        cell.PollNumbers3.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
-        cell.PollNumbers4.layer.cornerRadius = cell.PollNumbers4.frame.width/2
-        cell.PollNumbers4.layer.borderWidth = 0.2
-        cell.PollNumbers4.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
-        cell.PollNumbers5.layer.cornerRadius = cell.PollNumbers5.frame.width/2
-        cell.PollNumbers5.layer.borderWidth = 0.2
-        cell.PollNumbers5.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
-        cell.PollNumbers6.layer.cornerRadius = cell.PollNumbers6.frame.width/2
-        cell.PollNumbers6.layer.borderWidth = 0.2
-        cell.PollNumbers6.layer.backgroundColor = UIColor(red: 187/255, green: 220/255, blue: 255/255, alpha:0.2).cgColor
-        
-        //Percent vote for poll
-        cell.PollOption1.layer.borderWidth = 0.5
-        let width1 = Int(cell.PollOption1.frame.size.width)
-        var totalVotes1 = 0
-        var x = 1
-        while x < 7 {
-            totalVotes1 += self.ListOfPolls[indexPath.row].upVotes[x].count
-            x += 1
+        if deleteState == true {
+            var filteredListOfPolls:[Poll] = []
+            if self.user != "Master" {
+                for poll in self.ListOfPolls {
+                    if poll.poster == self.user {
+                        filteredListOfPolls.append(poll)
+                    }
+                }
+                self.ListOfPolls = filteredListOfPolls
+                self.ListOfPolls = mergeSorting.mergeSort(self.ListOfPolls)
+            }
         }
-        let votesForOp1 = self.ListOfPolls[indexPath.row].upVotes[1].count
-        let percentOp1 = votesForOp1/totalVotes1
-        let percentFilledOp1 = width1 * percentOp1
-        
-        //Handle size of the cell
-        let cgCount = CGFloat(count)
-        cell.PollResults.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollResults.frame.height)
-        cell.PollDate.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.PollDate.frame.height)
-        cell.SendReminder.frame.origin.y -=  ((cgCount * cell.PollOption1.frame.height) + cell.SendReminder.frame.height)
-        self.rowHeight = self.defaultHeight - (cgCount * cell.PollOption1.frame.height)
-        
-        //Cell button actions
-        cell.PollNumbers1.tag = 1
-        cell.PollNumbers1.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-        cell.PollNumbers2.tag = 2
-        cell.PollNumbers2.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-        cell.PollNumbers3.tag = 3
-        cell.PollNumbers3.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-        cell.PollNumbers4.tag = 4
-        cell.PollNumbers4.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-        cell.PollNumbers5.tag = 5
-        cell.PollNumbers5.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-        cell.PollNumbers6.tag = 6
-        cell.PollNumbers6.addTarget(self, action: #selector(OptionSelected(button:)), for: .touchUpInside)
-        
-        //set Poll upvotes
-            cell.PollNumbers1.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[1].count), for: .normal)
-            cell.PollNumbers2.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[2].count), for: .normal)
-            cell.PollNumbers3.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[3].count), for: .normal)
-            cell.PollNumbers4.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[4].count), for: .normal)
-            cell.PollNumbers5.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[5].count), for: .normal)
-            cell.PollNumbers6.setTitle(String(self.ListOfPolls[indexPath.row].upVotes[6].count), for: .normal)
+//        optionCount = 0
+//        for _ in options {
+//            options
+//        } --> Options is cleared but actually needs to have them removed from super view in some cases.
+         options = [] //--Included in cell height ---//
+        if self.CellState[indexPath.row] == false {
+            cell.Poll.text = self.ListOfPolls[indexPath.row].PollTitle
+            GenericTools.FrameToFitTextView(View: cell.Poll)
+            
+            cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
+            cell.Poster.text = self.ListOfPolls[indexPath.row].poster
+            let date = CreateDate.getTimeSince(epoch: self.ListOfPolls[indexPath.row].Epoch)
+            cell.PollDate.text = date
+            cell.Poll.textAlignment = .justified
+        for option in self.ListOfPolls[indexPath.row].options {
+            if existingOptions == 0 {
+                cell.PollOptionDefault.layer.borderWidth = 0.8
+                cell.PollOptionDefault.layer.borderColor = UIColor.black.cgColor
+                cell.PollOptionDefault.text = option
+                GenericTools.FrameToFitTextView(View: cell.PollOptionDefault )
+                cell.PollOptionDefault.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 30
+                options.append(cell.PollOptionDefault)
+                existingOptions += 1
+                cell.PollVotesDefault.frame.size.height = smallestPossibleTextArea
+                cell.PollVotesDefault.frame.size.width = smallestPossibleTextArea
+                cell.PollVotesDefault.frame.origin.y = ((cell.PollOptionDefault.frame.origin.y) + ((cell.PollOptionDefault.frame.size.height - smallestPossibleTextArea)/2))
+                cell.PollVotesDefault.frame.origin.x = cell.PollOptionDefault.frame.origin.x - 50
+                cell.PollVotesDefault.layer.borderWidth = 0.8
+                cell.PollVotesDefault.layer.cornerRadius = cell.PollVotesDefault.frame.width/2
+                cell.PollVotesDefault.setTitle("1", for: .normal)
+                cell.PollOptionDefault.textAlignment = .justified
+
+                let newLabelY = ((cell.PollOptionDefault.frame.origin.y) + ((cell.PollOptionDefault.frame.size.height - smallestPossibleTextArea)/2))
+                let newLabelX: CGFloat =  cell.PollOptionDefault.frame.origin.x - 90
+                let newLabel = label(x: newLabelX, y: newLabelY - 5, width: smallestPossibleTextArea + 10, height: smallestPossibleTextArea + 10)
+                newLabel.text = "100%"
+                cell.contentView.addSubview(newLabel)
+                self.CellState[indexPath.row] = true
+            }
+            else {
+                let lastOption = options[existingOptions - 1]
+                let newOptionY: CGFloat = lastOption.frame.origin.y + lastOption.frame.height + 15
+                let optionView = textView(x: defaultOptionX, y: newOptionY, width: defaultOptionWidth, height: defaultOptionHeight)
+                optionView.text = option
+                optionView.textAlignment = .justified
+                GenericTools.FrameToFitTextView(View: optionView)
+                cell.contentView.addSubview(optionView)
+                options.append(optionView)
+                existingOptions += 1
+                let newButtonY: CGFloat = ((optionView.frame.origin.y) + ((optionView.frame.size.height - smallestPossibleTextArea)/2))
+                let newButtonX: CGFloat = optionView.frame.origin.x - 50
+                let newButton = button(x: newButtonX, y: newButtonY, width: smallestPossibleTextArea, height: smallestPossibleTextArea)
+                newButton.setTitle("0", for: .normal) //--not working???
+                newButton.tintColor = UIColor.blue
+                cell.contentView.addSubview(newButton)
+                let newLabelX: CGFloat = optionView.frame.origin.x - 90
+                let newLabel = label(x: newLabelX, y: newButtonY - 5, width: smallestPossibleTextArea + 10, height: smallestPossibleTextArea + 10)
+                newLabel.text = "100%"
+                cell.contentView.addSubview(newLabel)
+                self.CellState[indexPath.row] = true
+
+            }
+        }
+            cell.PollResults.frame.origin.y = options[existingOptions-1].frame.origin.y + options[existingOptions-1].frame.height + 20
+            cell.PollDate.frame.origin.y = options[existingOptions-1].frame.origin.y + options[existingOptions-1].frame.height + 20
+            cell.SendReminder.frame.origin.y = options[existingOptions-1].frame.origin.y + options[existingOptions-1].frame.height + 20
+
+        }
+        if deleteState == true {
+            let height = cell.PollResults.frame.origin.y + cell.PollResults.frame.height
+            if DeleteCellState[indexPath.row] == false {
+            let deleteButton = button(x: 0 , y: height, width: UIScreen.main.bounds.width, height: smallestPossibleTextArea)
+            deleteButton.setTitle("Delete", for: .normal)
+            deleteButton.backgroundColor = UIColor.red
+            deleteButton.layer.borderColor = UIColor.clear.cgColor
+            deleteButton.layer.cornerRadius = 0
+            deleteHeight = smallestPossibleTextArea * 1.5
+            deleteButton.accessibilityIdentifier = self.ListOfPolls[indexPath.row].pollId
+            deleteButton.addTarget(self, action: #selector(DeletePost(button:)), for: .touchUpInside)
+            cell.contentView.addSubview(deleteButton)
+            deleteButtons.append(deleteButton)
+            DeleteCellState[indexPath.row] = true
+            }
+        }
+         self.rowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.height + 15 + deleteHeight
+
         
         return cell
             }

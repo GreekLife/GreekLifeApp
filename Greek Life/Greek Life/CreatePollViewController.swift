@@ -15,45 +15,42 @@ class CreatePollViewController: UIViewController {
     @IBOutlet weak var AddNewOption: UIButton!
     @IBOutlet weak var CreatePoll: UIButton!
     @IBOutlet weak var Option1: UITextField!
-    @IBOutlet weak var Option2: UITextField!
-    @IBOutlet weak var Option3: UITextField!
-    @IBOutlet weak var Option4: UITextField!
-    @IBOutlet weak var Option5: UITextField!
-    @IBOutlet weak var Option6: UITextField!
-    @IBOutlet weak var number2: UILabel!
-    @IBOutlet weak var Number3: UILabel!
-    @IBOutlet weak var Number4: UILabel!
-    @IBOutlet weak var Number5: UILabel!
-    @IBOutlet weak var Number6: UILabel!
+    @IBOutlet weak var AddAnOptionLbl: UILabel!
+    @IBOutlet weak var DefaultOptionLbl: UILabel!
+    @IBOutlet weak var Toolbar: UIToolbar!
+    @IBOutlet weak var DeleteOption: UIButton!
     
-    
-    
+    let screensize: CGRect = UIScreen.main.bounds
+    var scrollView: UIScrollView!
+
+    var NumberOfOptons = 1
+    var Options:[UITextField] = []
+    var OptionsLbl: [UILabel] = []
     @IBAction func AddButton(_ sender: Any) { //Function that controls adding an option
-        if Option2.isHidden == true {
-            Option2.isHidden = false
-            number2.isHidden = false
-        }
-        else if Option3.isHidden == true {
-            Option3.isHidden = false
-            Number3.isHidden = false
-        }
-        else if Option4.isHidden == true {
-            Option4.isHidden = false
-            Number4.isHidden = false
-        }
-        else if Option5.isHidden == true {
-            Option5.isHidden = false
-            Number5.isHidden = false
-        }
-        else if Option6.isHidden == true {
-            Option6.isHidden = false
-            Number6.isHidden = false
-        }
-        else {
-            let NoMore = UIAlertController(title: "Alert!", message: "You can only include up to 5 options in your poll", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default)
-            NoMore.addAction(okAction)
-            self.present(NoMore, animated: true, completion: nil)
+        let newestOption = Options[NumberOfOptons-1]
+        let newOriginY = newestOption.frame.origin.y + newestOption.frame.size.height + 10
+        let newOption = UITextField(frame: CGRect(x: newestOption.frame.origin.x, y: newOriginY, width: newestOption.frame.size.width, height: newestOption.frame.size.height))
+        newOption.textColor = UIColor.black
+        newOption.backgroundColor = UIColor.clear
+        newOption.font = UIFont(name: newOption.font!.fontName, size: 11)
+        newOption.textAlignment = .justified
+        newOption.borderStyle = .roundedRect
+        NumberOfOptons += 1
+        newOption.placeholder = " Option \(NumberOfOptons)"
+        self.scrollView.addSubview(newOption)
+        Options.append(newOption)
+        let newCreatePollLocation = newOption.frame.origin.y + newOption.frame.size.height + 30
+        CreatePoll.frame.origin.y = newCreatePollLocation
+        let maxSize = CreatePoll.frame.origin.y + CreatePoll.frame.size.height + 74
+        
+        let newLabel = UILabel(frame: CGRect(x: DefaultOptionLbl.frame.origin.x, y: newOriginY, width: DefaultOptionLbl.frame.size.height, height: DefaultOptionLbl.frame.size.height))
+        newLabel.text = "\(NumberOfOptons)."
+        scrollView.addSubview(newLabel)
+        OptionsLbl.append(newLabel)
+        
+        if self.scrollView.contentSize.height <= maxSize {
+        let newScrollHeight = self.scrollView.contentSize.height + newOption.frame.size.height + 10
+        self.scrollView.contentSize = CGSize(width: self.scrollView.contentSize.width, height: newScrollHeight)
         }
     }
     @IBAction func CreateButton(_ sender: Any) { //function to initiate officially creating the poll
@@ -70,70 +67,96 @@ class CreatePollViewController: UIViewController {
             self.present(AtLeastOne, animated: true, completion: nil)
         }
         else {
+            var isValid = false
+            for option in Options {
+                if let text = option.text {
+                    if text == "" {
+                        isValid = false
+                        break
+                    }
+                    isValid = true
+                }
+            }
+            if isValid == true {
             CreateAPoll()
             }
+            else {
+                let AtLeastOne = UIAlertController(title: "Alert!", message: "You cannot leave any empty options", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default)
+                AtLeastOne.addAction(okAction)
+                self.present(AtLeastOne, animated: true, completion: nil)
+            }
+        }
             
         }
     
+    @IBAction func DeleteOption(_ sender: Any) {
+        if NumberOfOptons > 1 {
+            let option = Options[NumberOfOptons - 1]
+            Options[NumberOfOptons - 1].removeFromSuperview()
+            Options.remove(at: (NumberOfOptons - 1))
+            
+            OptionsLbl[NumberOfOptons - 1].removeFromSuperview()
+            OptionsLbl.remove(at: NumberOfOptons - 1)
+            
+            NumberOfOptons -= 1
+            self.CreatePoll.frame.origin.y -= option.frame.size.height
+            //-- should adjust scroll view in some cases as well --//
+        }
+    }
     
-    func RetrievePollObject() {
+    var ArrayOfOptions: [String] = []
+    func RetrievePollObject() -> Poll {
         let Epoch = Date().timeIntervalSince1970
         let postId = UUID().uuidString
         let Poster = "Jonahelbaz"//LoggedIn.User["Username"] as! String
         let Title = Question.text
-        let Option1 = self.Option1.text
-        let Option2 = self.Option2.text
-        let Option3 = self.Option3.text
-        let Option4 = self.Option4.text
-        let Option5 = self.Option5.text
-        let Option6 = self.Option6.text
+        for option in Options {
+            ArrayOfOptions.append(option.text!)
+        }
 
-        newPoll = Poll(pollId: postId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, option1: Option1!, option2: Option2!, option3: Option3!, option4: Option4!, option5: Option5!, option6: Option6!, upVotes: [])
+        let newPoll = Poll(pollId: postId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
+        return newPoll
     }
     
-    var newPoll: Poll = Poll()
     var ref: DatabaseReference!
-
     func CreateAPoll() {
-        RetrievePollObject()
+        let poll = RetrievePollObject()
         let ThePoll: [String: Any] = [
-            "Epoch" : newPoll.Epoch,
-            "PostId" : newPoll.pollId,
-            "Poster" : newPoll.poster,
-            "Title" : newPoll.PollTitle,
-            "Option1" : newPoll.option1,
-            "Option2" : newPoll.option2,
-            "Option3" : newPoll.option3,
-            "Option4" : newPoll.option4,
-            "Option5" : newPoll.option5,
-            "Option6" : newPoll.option6
+            "Epoch" : poll.Epoch,
+            "PostId" : poll.pollId,
+            "Poster" : poll.poster,
+            "Title" : poll.PollTitle,
+            "Options": poll.options
         ]
-        let ThePollKey = [newPoll.pollId : ThePoll]
+        let ThePollKey = [poll.pollId : ThePoll]
         ref = Database.database().reference()
         ref.child("Polls").updateChildValues(ThePollKey)
     }
-    
-    let op1 = true
-    let op2 = false
-    let op3 = false
-    let op4 = false
-    let op5 = false
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Option1.isHidden = false
-        Option2.isHidden = true
-        Option3.isHidden = true
-        Option4.isHidden = true
-        Option5.isHidden = true
-        Option6.isHidden = true
+        self.Option1.textColor = UIColor.black
+        self.Option1.backgroundColor = UIColor.clear
+        Options.append(self.Option1)
+        OptionsLbl.append(self.DefaultOptionLbl)
+        let screenWidth = screensize.width
+        let screenHeight = screensize.height
+        scrollView = UIScrollView(frame: CGRect(x: 0, y: 64, width: screenWidth, height: screenHeight))
+        // constrain the scroll view to 8-pts on each side
+        scrollView.addSubview(Question)
+        scrollView.addSubview(AddNewOption)
+        scrollView.addSubview(CreatePoll)
+        scrollView.addSubview(Option1)
+        scrollView.addSubview(AddAnOptionLbl)
+        scrollView.addSubview(DefaultOptionLbl)
+        scrollView.addSubview(DeleteOption)
         
-        number2.isHidden = true
-        Number3.isHidden = true
-        Number4.isHidden = true
-        Number5.isHidden = true
-        Number6.isHidden = true
-        
+        scrollView.contentSize = CGSize(width: screenWidth, height: screenHeight)
+        self.view.addSubview(scrollView)
+
+
         // Do any additional setup after loading the view.
     }
 
@@ -142,15 +165,5 @@ class CreatePollViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
