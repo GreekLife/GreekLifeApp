@@ -15,6 +15,7 @@
 		6D2E2E3F1FA68045001BF8D0 /* ForumCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E2E3E1FA68045001BF8D0 /* ForumCellTableViewCell.swift */; };
 		6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */; };
 		6D39D94F1FB28093001CE6D8 /* MemberCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */; };
+		6D5005EC1FC3D151007C21B5 /* ViewResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5005EB1FC3D151007C21B5 /* ViewResultsController.swift */; };
 		6D806DAC1FAAB53F00D80CC2 /* MainConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */; };
 		6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */; };
 		6D806DB01FAABD2500D80CC2 /* Docs in Resources */ = {isa = PBXBuildFile; fileRef = 6D806DAF1FAABD2500D80CC2 /* Docs */; };
@@ -74,6 +75,7 @@
 		6D2E2E3E1FA68045001BF8D0 /* ForumCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumCellTableViewCell.swift; sourceTree = "<group>"; };
 		6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembersViewController.swift; sourceTree = "<group>"; };
 		6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCollectionViewCell.swift; sourceTree = "<group>"; };
+		6D5005EB1FC3D151007C21B5 /* ViewResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewResultsController.swift; sourceTree = "<group>"; };
 		6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = MainConfig.plist; sourceTree = "<group>"; };
 		6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6D806DAF1FAABD2500D80CC2 /* Docs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Docs; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				6D1896681FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift */,
 				6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */,
 				6DCAFF0D1F9AC46F00D1311E /* Main.storyboard */,
+				6D5005EB1FC3D151007C21B5 /* ViewResultsController.swift */,
 				6D1896651FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift */,
 				6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */,
 				6DCAFF101F9AC46F00D1311E /* Assets.xcassets */,
@@ -564,6 +567,7 @@
 				6DCAFF081F9AC46F00D1311E /* AppDelegate.swift in Sources */,
 				6DF68DB11FACD87D006E0B76 /* CommentTableViewCell.swift in Sources */,
 				6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */,
+				6D5005EC1FC3D151007C21B5 /* ViewResultsController.swift in Sources */,
 				6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */,
 				6DF7DC601FBA11FB00155E23 /* PollTableViewCell.swift in Sources */,
 				6D18966A1FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift in Sources */,

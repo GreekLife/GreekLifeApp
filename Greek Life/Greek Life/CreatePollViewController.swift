@@ -109,7 +109,9 @@ class CreatePollViewController: UIViewController {
     func RetrievePollObject() -> Poll {
         let Epoch = Date().timeIntervalSince1970
         let postId = UUID().uuidString
-        let Poster = "Jonahelbaz"//LoggedIn.User["Username"] as! String
+        let first = LoggedIn.User["First Name"] as! String
+        let last = LoggedIn.User["Last Name"] as! String
+        let Poster =  "\(first) \(last)"
         let Title = Question.text
         for option in Options {
             ArrayOfOptions.append(option.text!)
