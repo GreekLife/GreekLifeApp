@@ -24,6 +24,10 @@ struct Poll: Comparable {
     var PollTitle: String
     var options: [String]
     var upVotes: [[String]]
+    var PercentLbl: [UILabel]
+    var VoteBtn: [UIButton]
+    var OptionTxt: [UITextView]
+    var Drawn: Bool
     
     public init() {
         self.pollId = ""
@@ -32,6 +36,10 @@ struct Poll: Comparable {
         self.PollTitle = ""
         self.options = []
         self.upVotes = [[]]
+        self.PercentLbl = []
+        self.VoteBtn = []
+        self.OptionTxt = []
+        self.Drawn = false
     }
     
     public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
@@ -42,6 +50,10 @@ struct Poll: Comparable {
         self.PollTitle = PollTitle
         self.options = options
         self.upVotes = upVotes
+        self.PercentLbl = []
+        self.VoteBtn = []
+        self.OptionTxt = []
+        self.Drawn = false
     }
     
     
@@ -54,7 +66,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var user = LoggedIn.User["Username"] as! String
     var PollRef: DatabaseReference!
     var rowHeight: CGFloat = 0
-    var CellState: [Bool] = []
     var DeleteCellState: [Bool] = []
     var deleteState = false
     var deleteHeight: CGFloat = 0
@@ -101,9 +112,10 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             var stateCount = 0
             for _ in self.ListOfPolls {
-                self.CellState.append(false)
+                self.ListOfPolls[stateCount].Drawn = false
                 stateCount += 1
             }
+            self.ListOfPolls = mergeSorting.mergeSort(self.ListOfPolls)
             self.CalculateUpVotes(){(completion) in
                 guard success else {
                     let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve votes.")
@@ -112,20 +124,25 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                     print("Internet Connection not Available!")
                     return
                 }
-                self.ListOfPolls = mergeSorting.mergeSort(self.ListOfPolls)
+               // self.resetCellState()
+                self.UpdateVotes()
                 self.TableView.reloadData()
-                return
             }
-            
+            self.TableView.reloadData()
         }
 
 
+    }
+    
+    func UpdateVotes() {
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
     }
+    
     
     func GetListOfPolls(completion: @escaping (Bool) -> Void) {
         PollRef = Database.database().reference()
@@ -160,6 +177,46 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }){ (error) in
             print("Could not retrieve object from database");
             completion(false);
+        }
+    }
+    
+    func CalculateUpVotes(completion: @escaping (Bool) -> Void) {
+        PollRef = Database.database().reference()
+        PollRef.child("PollOptions").observe(.value, with: { (snapshot) in
+            self.refreshPollUpvotes() //ideally we dont want to empty and reprocess everything but we're dealing with small numbers (<100)
+            let snapshot = snapshot.children
+            for snap in snapshot {
+                if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
+                {
+                    var count = 0
+                    if let pollArray = childSnapshot.value as? [String:AnyObject] , pollArray.count >= 0{
+                        var keyArray:[String] = [] //array of options that have been voted on per poll
+                        for(key,_) in pollArray {
+                            let AKey = key
+                            keyArray.append(AKey)
+                        }
+                        for upVotes in pollArray {
+                            var value = upVotes.value as! [String:AnyObject]
+                            let names = value["Names"] as! [String:String]
+                            for name in names {
+                                let num = Int(keyArray[count].replacingOccurrences(of: "\"", with: ""))
+                                var pollCount = 0
+                                for poll in self.ListOfPolls {
+                                    if poll.pollId == childSnapshot.key {
+                                        self.ListOfPolls[pollCount].upVotes[num! - 1].append(name.value) //search for the poll id instead of using indexes on list of polls
+                                    }
+                                    pollCount += 1
+                                }
+                            }
+                            count += 1
+                        }
+                    }
+                }
+            }
+            completion(true)
+        }){ (error) in
+            print("Could not retrieve object from database");
+            completion(false)
         }
     }
     
@@ -211,92 +268,60 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    func resetCellStateAtIndex(index: Int) {
+        self.ListOfPolls[index].Drawn = false
+        
+        var txt = 0
+        for _ in self.ListOfPolls[index].OptionTxt {
+            self.ListOfPolls[index].OptionTxt[txt].removeFromSuperview()
+            txt += 1
+        }
+        self.ListOfPolls[index].OptionTxt.removeAll()
+        
+        var lbl = 0
+        for _ in self.ListOfPolls[index].PercentLbl {
+            self.ListOfPolls[index].PercentLbl[lbl].removeFromSuperview()
+            lbl += 1
+        }
+        self.ListOfPolls[index].PercentLbl.removeAll()
+        
+        var btn = 0
+        for _ in self.ListOfPolls[index].PercentLbl {
+            self.ListOfPolls[index].VoteBtn[btn].removeFromSuperview()
+            btn += 1
+        }
+        self.ListOfPolls[index].VoteBtn.removeAll()
+    }
+    
     func resetCellState() {
-        deleteState = false
-        deleteHeight = 0
-        
-        CellState.removeAll()
-        var stateCount = 0
+        var index = 0
         for _ in self.ListOfPolls {
-            self.CellState.append(false)
-            stateCount += 1
-        }
-        
-        DeleteCellState.removeAll()
-        for _ in self.ListOfPolls {
-            DeleteCellState.append(false)
-        }
-        
-        var deleteCount = 0
-        for _ in deleteButtons {
-            deleteButtons[deleteCount].removeFromSuperview()
-            deleteCount += 1
-        }
-        
-        var optionCount = 0
-        for _ in self.AllOptions {
-            self.AllOptions[optionCount].removeFromSuperview()
-            optionCount += 1
-        }
-        
-        var labelCount = 0
-        for _ in self.AllLabels {
-            self.AllLabels[labelCount].removeFromSuperview()
-            labelCount += 1
-        }
-        
-        var buttonCount = 0
-        for _ in self.AllButtons {
-            self.AllButtons[buttonCount].removeFromSuperview()
-            buttonCount += 1
-        }
-        self.AllOptions.removeAll()
-        self.AllButtons.removeAll()
-        self.AllLabels.removeAll()
-        self.deleteButtons.removeAll()
-        }
-    
-
-    
-    func CalculateUpVotes(completion: @escaping (Bool) -> Void) {
-        PollRef = Database.database().reference()
-        PollRef.child("PollOptions").observe(.value, with: { (snapshot) in
-            self.refreshPollUpvotes() //ideally we dont want to empty and reprocess everything but we're dealing with small numbers (<100)
-            //self.resetCellState()
-            let snapshot = snapshot.children
-            for snap in snapshot {
-                if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
-                {
-                    var count = 0
-                    if let pollArray = childSnapshot.value as? [String:AnyObject] , pollArray.count >= 0{
-                        var keyArray:[String] = [] //array of options that have been voted on per poll
-                        for(key,_) in pollArray {
-                            let AKey = key
-                            keyArray.append(AKey)
-                        }
-                        for upVotes in pollArray {
-                            var value = upVotes.value as! [String:AnyObject]
-                            let names = value["Names"] as! [String:String]
-                            for name in names {
-                                let num = Int(keyArray[count].replacingOccurrences(of: "\"", with: ""))
-                                var pollCount = 0
-                                for poll in self.ListOfPolls {
-                                    if poll.pollId == childSnapshot.key {
-                                        self.ListOfPolls[pollCount].upVotes[num! - 1].append(name.value) //search for the poll id instead of using indexes on list of polls
-                                    }
-                                    pollCount += 1
-                                }
-                            }
-                            count += 1
-                        }
-                    }
-                }
+            self.ListOfPolls[index].Drawn = false
+            
+            var txt = 0
+            for _ in self.ListOfPolls[index].OptionTxt {
+                self.ListOfPolls[index].OptionTxt[txt].removeFromSuperview()
+                txt += 1
             }
-            completion(true)
-        }){ (error) in
-            print("Could not retrieve object from database");
-            completion(false)
+            self.ListOfPolls[index].OptionTxt.removeAll()
+            
+            var lbl = 0
+            for _ in self.ListOfPolls[index].PercentLbl {
+                self.ListOfPolls[index].PercentLbl[lbl].removeFromSuperview()
+                lbl += 1
+            }
+            self.ListOfPolls[index].PercentLbl.removeAll()
+            
+            var btn = 0
+            for _ in self.ListOfPolls[index].VoteBtn {
+                self.ListOfPolls[index].VoteBtn[btn].removeFromSuperview()
+                btn += 1
+            }
+            self.ListOfPolls[index].VoteBtn.removeAll()
+            
+            index += 1
         }
+        self.rowHeight = 0
     }
     
     //---View Results ---//
@@ -351,10 +376,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     //--------------------//
     //---Table Views ----//
     //------------------//
-    var AllOptions: [UITextView] = []
-    var AllButtons: [UIButton] = []
-    var AllLabels: [UILabel] = []
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
         let defaultOptionHeight: CGFloat = cell.PollOptionDefault.frame.size.height
@@ -378,7 +399,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         var options:[UITextView] = []
         
-        if self.CellState[indexPath.row] == false {
+        if self.ListOfPolls[indexPath.row].Drawn == false {
             
             cell.Poll.text = self.ListOfPolls[indexPath.row].PollTitle
             GenericTools.FrameToFitTextView(View: cell.Poll)
@@ -431,8 +452,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
 
                 cell.contentView.addSubview(newLabel)
                 
-                self.AllLabels.append(newLabel)
-                self.CellState[indexPath.row] = true
+                self.ListOfPolls[indexPath.row].PercentLbl.append(newLabel)
+                self.ListOfPolls[indexPath.row].Drawn = true
                 
             }
             else {
@@ -476,11 +497,11 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 cell.contentView.addSubview(newLabel)
 
                 
-                self.CellState[indexPath.row] = true
-                self.AllLabels.append(newLabel)
-                self.AllButtons.append(newButton)
-                self.AllOptions.append(optionView)
-                
+                self.ListOfPolls[indexPath.row].Drawn = true
+                self.ListOfPolls[indexPath.row].PercentLbl.append(newLabel)
+                self.ListOfPolls[indexPath.row].VoteBtn.append(newButton)
+                self.ListOfPolls[indexPath.row].OptionTxt.append(optionView)
+
             }
         }
             cell.PollResults.frame.origin.y = options[existingOptions-1].frame.origin.y + options[existingOptions-1].frame.height + 20
@@ -514,6 +535,30 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         
          self.rowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.height + 15 + deleteHeight
+//
+//        var btn = 0
+//        for _ in self.ListOfPolls[indexPath.row].VoteBtn {
+//            self.ListOfPolls[indexPath.row].VoteBtn[btn].setTitle(String(self.ListOfPolls[indexPath.row].upVotes[btn].count), for: .normal)
+//            self.ListOfPolls[indexPath.row].VoteBtn[btn].removeFromSuperview()
+//            cell.contentView.addSubview(self.ListOfPolls[indexPath.row].VoteBtn[btn])
+//            btn += 1
+//        }
+//        var lbl = 0
+//        for _ in self.ListOfPolls[indexPath.row].PercentLbl {
+//            let votesForOption = self.ListOfPolls[indexPath.row].upVotes[lbl].count
+//            var totalVotes = 0
+//            for option in self.ListOfPolls[indexPath.row].upVotes {
+//                totalVotes += option.count
+//            }
+//            var voteResult: Float = 0
+//            if totalVotes != 0 {
+//                voteResult = (Float(votesForOption) / Float(totalVotes)) * Float(100)
+//            }
+//            self.ListOfPolls[indexPath.row].PercentLbl[lbl].text = String(String(Int(voteResult)) + "%")
+//            self.ListOfPolls[indexPath.row].PercentLbl[lbl].removeFromSuperview()
+//            cell.contentView.addSubview(self.ListOfPolls[indexPath.row].PercentLbl[lbl])
+//            lbl += 1
+//        }
 
         return cell
     }
