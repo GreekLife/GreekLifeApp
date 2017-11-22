@@ -62,6 +62,34 @@ struct Poll: Comparable {
     
 }
 
+class PollTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var PollerPicture: UIImageView!
+    @IBOutlet weak var Poster: UILabel!
+    @IBOutlet weak var Poll: UITextView!
+    @IBOutlet weak var PollDate: UILabel!
+    @IBOutlet weak var PercentDefault: UILabel!
+
+    
+    @IBOutlet weak var PollOptionDefault: UITextView!
+    @IBOutlet weak var PollVotesDefault: UIButton!
+    
+    @IBOutlet weak var PollResults: UIButton!
+    @IBOutlet weak var SendReminder: UIButton!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        
+        // Configure the view for the selected state
+    }
+    
+}
+
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var ListOfPolls:[Poll] = []
@@ -276,6 +304,9 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell.PollOptionDefault.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 30
             cell.PollOptionDefault.text = self.ListOfPolls[indexPath.row].Options[CurrentOption]
             
+            cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
+            cell.PollerPicture.layer.cornerRadius = cell.PollerPicture.frame.width/2
+            
             cell.PollVotesDefault.setTitle(self.ListOfPolls[indexPath.row].VoteBtn[CurrentOption].titleLabel?.text, for: .normal)
             cell.PollVotesDefault.frame.size.height = smallestPossibleTextArea
             cell.PollVotesDefault.frame.size.width = smallestPossibleTextArea
@@ -290,19 +321,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             //Here we set the label value for the first option of every passing pole to its % value. I checked and i believe these are all set
             //correctly
-            self.ListOfPolls[indexPath.row].PercentLbl[CurrentOption].text = self.ListOfPolls[indexPath.row].Placing[CurrentOption]
+            cell.PercentDefault.text = self.ListOfPolls[indexPath.row].Placing[CurrentOption]
 
-            //We only append to the cell once per poll. This is where I believe shits gettin fucked
-            if self.ListOfPolls[indexPath.row].Drawn == false {
-                self.ListOfPolls[indexPath.row].PercentLbl[CurrentOption].frame.size.width = smallestPossibleTextArea
-                self.ListOfPolls[indexPath.row].PercentLbl[CurrentOption].frame.size.height = smallestPossibleTextArea
-                self.ListOfPolls[indexPath.row].PercentLbl[CurrentOption].frame.origin.x = cell.PollVotesDefault.frame.origin.x - (smallestPossibleTextArea + 10)
-                self.ListOfPolls[indexPath.row].PercentLbl[CurrentOption].frame.origin.y = cell.PollVotesDefault.frame.origin.y
-                
-                //Pretty sure the values being added by this method are correct. They don't display correctly though
-                cell.contentView.addSubview(self.ListOfPolls[indexPath.row].PercentLbl[CurrentOption])
-                self.ListOfPolls[indexPath.row].Drawn = true
-            }
             ExistingOptions.append(cell.PollOptionDefault)
             CurrentOption += 1
         }

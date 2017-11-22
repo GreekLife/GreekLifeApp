@@ -37,7 +37,6 @@
 		6DF68DB11FACD87D006E0B76 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF68DB01FACD87D006E0B76 /* CommentTableViewCell.swift */; };
 		6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF68DB61FACD989006E0B76 /* CommentViewController.swift */; };
 		6DF7DC5E1FBA118700155E23 /* PollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF7DC5D1FBA118700155E23 /* PollViewController.swift */; };
-		6DF7DC601FBA11FB00155E23 /* PollTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF7DC5F1FBA11FB00155E23 /* PollTableViewCell.swift */; };
 		DD2ACC8B36E3DAEC6AA5E24F /* Pods_Greek_LifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */; };
 		E46E9A7F5A892FE2BC73BB13 /* Pods_Greek_LifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28671ACEC86852828460720F /* Pods_Greek_LifeUITests.framework */; };
 		F8097DCECAAF0F3DE317CE9F /* Pods_Greek_Life.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CBFC2FC5943F408FDB76E4F /* Pods_Greek_Life.framework */; };
@@ -101,7 +100,6 @@
 		6DF68DB01FACD87D006E0B76 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		6DF68DB61FACD989006E0B76 /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		6DF7DC5D1FBA118700155E23 /* PollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollViewController.swift; sourceTree = "<group>"; };
-		6DF7DC5F1FBA11FB00155E23 /* PollTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollTableViewCell.swift; sourceTree = "<group>"; };
 		A02B277DDDEBFA4F94517A05 /* Pods-Greek LifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeUITests/Pods-Greek LifeUITests.release.xcconfig"; sourceTree = "<group>"; };
 		ABC78943538C4DFF004622E8 /* Pods-Greek LifeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeTests/Pods-Greek LifeTests.release.xcconfig"; sourceTree = "<group>"; };
 		D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Greek_LifeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,7 +195,6 @@
 				6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */,
 				6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */,
 				6DF7DC5D1FBA118700155E23 /* PollViewController.swift */,
-				6DF7DC5F1FBA11FB00155E23 /* PollTableViewCell.swift */,
 			);
 			path = "Greek Life";
 			sourceTree = "<group>";
@@ -569,7 +566,6 @@
 				6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */,
 				6D5005EC1FC3D151007C21B5 /* ViewResultsController.swift in Sources */,
 				6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */,
-				6DF7DC601FBA11FB00155E23 /* PollTableViewCell.swift in Sources */,
 				6D18966A1FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift in Sources */,
 				6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */,
 			);
