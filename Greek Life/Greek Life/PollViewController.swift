@@ -420,6 +420,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
          Polling.OuterIndex = 0
         //Get expected height of table
         var size: CGFloat = 0
@@ -431,6 +432,13 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
+        cell.isHidden = false
+        if deleteState == true {
+            if self.User != Polling.ListOfPolls[indexPath.row].Poster {
+                cell.isHidden = true
+            }
+        }
+        
         Polling.OuterIndex = indexPath.row
         let date = CreateDate.getTimeSince(epoch: Polling.ListOfPolls[indexPath.row].Epoch)
         cell.PollerPicture.layer.cornerRadius = cell.PollerPicture.frame.size.width/2
