@@ -202,7 +202,11 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var deleteState = false
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     
-    
+    @IBOutlet weak var Newest: UIButton!
+    @IBOutlet weak var Oldest: UIButton!
+    @IBOutlet weak var ThisWeek: UIButton!
+    @IBOutlet weak var ThisMonth: UIButton!
+
     @IBOutlet weak var TableView: UITableView!
     @IBAction func DeletePoll(_ sender: Any) {
         if deleteState == true {
@@ -217,6 +221,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
+        self.view.backgroundColor = UIColor.lightGray
         self.TableView.allowsSelection = false
         //Get poll info for each existing poll
         if Reachability.isConnectedToNetwork() {
@@ -475,8 +480,11 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.DeleteButton.layer.cornerRadius = 5
         cell.DeleteButton.accessibilityLabel = Polling.ListOfPolls[indexPath.row].PollId
         cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
-        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y - cell.InnerTable.frame.size.height - 15
-        Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height + 20 + cell.DeleteButton.frame.size.height
+        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 10
+        cell.PollResults.frame.origin.y = cell.DeleteButton.frame.origin.y + cell.DeleteButton.frame.size.height + 10
+        cell.SendReminder.frame.origin.y = cell.PollResults.frame.origin.y
+        cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
+        Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
             }
         }
         else {
