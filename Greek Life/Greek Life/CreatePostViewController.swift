@@ -16,7 +16,6 @@ class CreatePostViewController: UIViewController {
     @IBOutlet weak var PostTitle: UITextView!
     @IBOutlet weak var Post: UITextView!
     @IBOutlet weak var WritePost: UIButton!
-    @IBOutlet weak var Cancel: UIButton!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     let user = LoggedIn.User["Username"] as! String
     var CreatePostRef: DatabaseReference!
@@ -41,6 +40,14 @@ class CreatePostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.WritePost.layer.cornerRadius = 5
+        self.Post.layer.borderWidth = 0.7
+        self.Post.layer.borderColor = UIColor.black.cgColor
+        self.Post.layer.cornerRadius = 5
+
+        self.PostTitle.layer.borderWidth = 0.7
+        self.PostTitle.layer.borderColor = UIColor.black.cgColor
+        self.PostTitle.layer.cornerRadius = 5
+
         self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
         self.PosterName.text = self.user
         // Do any additional setup after loading the view.
