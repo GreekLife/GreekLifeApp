@@ -10,6 +10,29 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 
+class ForumCellTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var PostTitle: UITextView!
+    @IBOutlet weak var Post: UITextView!
+    @IBOutlet weak var PosterName: UILabel!
+    @IBOutlet weak var PosterImage: UIImageView!
+    @IBOutlet weak var PostDate: UILabel!
+    @IBOutlet weak var NumberOfComments: UILabel!
+    
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        
+        // Configure the view for the selected state
+    }
+    
+}
+
 class Comment: Comparable {
     static func <(lhs: Comment, rhs: Comment) -> Bool {
         return lhs.PostEpoch > rhs.PostEpoch
@@ -73,14 +96,15 @@ struct Postings {
 }
 
 class ForumViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, UITextFieldDelegate {
+    
     var ref: DatabaseReference!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     var tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ForumViewController.dismissKeyboard))
-    let Username = LoggedIn.User["Username"] as! String
-    var rowHeight:CGFloat = 427
-
-
-    var NumberOfCells:Int = 0;
+    let username = LoggedIn.User["Username"] as! String
+    var deleting = false
+    
+    var rowHeight:CGFloat = 0
+    var numberOfCells:Int = 0;
     @IBOutlet weak var TableView: UITableView!
     
     //List order button properties
@@ -93,26 +117,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var NewPostView: UIView!
     @IBOutlet weak var PostButton: UIButton!
     @IBOutlet weak var PostError: UILabel!
-    
-    @IBOutlet weak var DeletePost: UIButton!
-    var Deleting = false
-    @IBAction func DeletePost(_ sender: Any) {
-        if(Deleting == false){
-        Deleting = true
-        DeletePost.layer.backgroundColor = UIColor.black.cgColor
-        }
-        else{
-            Deleting = false
-            DeletePost.layer.backgroundColor = UIColor.clear.cgColor
-        }
-            self.TableView.reloadData()
-    }
-    
-    
-    
-    
-    
-    
     
     @IBAction func ExitPost(_ sender: Any) {
          UIView.animate(withDuration: 0.4, delay: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations: {
@@ -140,7 +144,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             UIApplication.shared.endIgnoringInteractionEvents();
             return false
         }
-        else if(words > 150){
+        else if(words > 1000){
             self.PostError.textColor = .red
             PostError.text = "Post must be no more than 150 words"
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
@@ -184,7 +188,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         let FirstName = LoggedIn.User["First Name"] as! String
         let LastName = LoggedIn.User["Last Name"] as! String
         var Name = FirstName + " " + LastName
-        if(Username == "Master"){
+        if(self.username == "Master"){
             Name = Name + " (Master)"
         }
         let Epoch = Date().timeIntervalSince1970
@@ -199,7 +203,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 "PostTitle": Title!,
                 "Poster": Name,
                 "Epoch": Epoch,
-                "Username": Username,
+                "Username": self.username,
                 "PostId": postId
                 ] as [String : Any]
             PostData(newPostData: Post){(success, error) in
@@ -290,6 +294,27 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
     
+    @IBAction func ThisWeek(_ sender: Any) {
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
+        if ThisWeekClicked == true{
+            return
+        }
+        else {
+            self.SortByDate(Posts: Postings.AllPosts!)
+            ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            ThisWeekClicked = true;
+            OldestClicked = false;
+            Oldest.layer.backgroundColor = UIColor.clear.cgColor
+            NewestClicked = false;
+            Newest.layer.backgroundColor = UIColor.clear.cgColor
+            ThisMonthClicked = false;
+            ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
+            self.TableView.reloadData();
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            return;
+        }
+    }
     
     @IBAction func ThisMonth(_ sender: Any) { //actually this week
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
@@ -313,150 +338,15 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
     
-    @IBAction func ThisWeek(_ sender: Any) {
-        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
-        if ThisWeekClicked == true{
-            return
-        }
-        else {
-            self.SortByDate(Posts: Postings.AllPosts!)
-            ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-            ThisWeekClicked = true;
-            OldestClicked = false;
-            Oldest.layer.backgroundColor = UIColor.clear.cgColor
-            NewestClicked = false;
-            Newest.layer.backgroundColor = UIColor.clear.cgColor
-            ThisMonthClicked = false;
-            ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
-            self.TableView.reloadData();
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            return;
-        }
-    }
-    
     //List order button clicked properties
     var OldestClicked = false;
     var NewestClicked = true;
     var ThisMonthClicked = false;
     var ThisWeekClicked = false;
     //
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return(NumberOfCells)//number of cells
-    }
-    
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if(Deleting == true){
-            let foo = UIAlertController(title: "Alert!", message: "This post and all its comments will be completely erased.", preferredStyle: UIAlertControllerStyle.alert)
-            let DestructiveAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) {
-                (result : UIAlertAction) -> Void in
-            }
-            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default) {
-                (result : UIAlertAction) -> Void in
-                if editingStyle == UITableViewCellEditingStyle.delete {
-                    Database.database().reference(withPath: "Forum").queryOrdered(byChild: "Epoch").queryEqual(toValue: Postings.AllPosts![indexPath.row].Epoch).observe(.value, with: { (snapshot) in
-                        if let forumPosts = snapshot.value as? [String: [String: AnyObject]] {
-                            for (key, _) in forumPosts  {
-                                FirebaseDatabase.Database.database().reference(withPath: "Forum").child(key).removeValue()
-                            }
-                        }
-                    })
-                    Postings.AllPosts?.remove(at: indexPath.row)
-                }
-                print("Post Deleted")
-            }
-            
-            foo.addAction(okAction)
-            foo.addAction(DestructiveAction)
-
-            self.present(foo, animated: true, completion: nil)
-        }
-    }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
-        if(Deleting == true){
-            if(Username == "Master"){
-                cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-                cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-                cell.Post.text = Postings.AllPosts![indexPath.row].Post
-                let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-                cell.PostDate.text = date
-            }
-            else if(Postings.AllPosts![indexPath.row].User == Username){
-                cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-                cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-                cell.Post.text = Postings.AllPosts![indexPath.row].Post
-                let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-                cell.PostDate.text = date
-            }
-            else {
-                cell.isHidden = true
-            }
-        }
-        else if(Postings.AllPosts != nil){
-            if(ThisMonthClicked == true){
-                if((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 2678400){
-                    cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-                    cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-                    cell.Post.text = Postings.AllPosts![indexPath.row].Post
-                    let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-                    cell.PostDate.text = date
-                }
-                else {
-                    cell.isHidden = true
-                }
-
-            }
-            else if(ThisWeekClicked == true){
-                if((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 604800){
-                    cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-                    cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-                    cell.Post.text = Postings.AllPosts![indexPath.row].Post
-                    let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-                    cell.PostDate.text = date
-                }
-                else {
-                    cell.isHidden = true;
-                }
-            }
-            else {
-            cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-            cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-            cell.Post.text = Postings.AllPosts![indexPath.row].Post
-            let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-            cell.PostDate.text = date
-            }
-        }
-        
-        let oldHeight = cell.Post.frame.size.height
-        let oldWidth = cell.Post.frame.size.width
-        GenericTools.FrameToFitTextView(View: cell.Post)
-        cell.Post.frame.size.width = oldWidth
-        let newHeight = cell.Post.frame.size.height
-        let heightDifference = oldHeight - newHeight
-        cell.PostDate.frame.origin.y -= heightDifference
-        cell.NumberOfComments.frame.origin.y -= heightDifference
-        let cellHeight = 127 + newHeight
-        self.rowHeight = cellHeight
-        
-        cell.NumberOfComments.text = "\(Postings.AllPosts![indexPath.row].Comments.count) Comments"
-        return(cell)
-    }
-
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Postings.myIndex = indexPath.row
-        self.performSegue(withIdentifier: "ViewComments", sender: self)
-    }
-    
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.rowHeight
-    }
-    
     
     func SortByDate(Posts:[ForumPost]){
-        let post : [ForumPost] = mergeSorting.mergeSort(Posts)
-        Postings.AllPosts = post
+        Postings.AllPosts = mergeSorting.mergeSort(Posts)
     }
     
     func getPosts(completion: @escaping (Bool, Any?) -> Void){
@@ -495,7 +385,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                 }
                                                     let newPost = ForumPost(uId: count, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
                                         Posts.append(newPost);
-                                        count = count + 1
+                                        count += 1
                                                 
                                         }
                                        }
@@ -532,7 +422,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 return
             }
             Postings.AllPosts = PostList
-            self.NumberOfCells = PostList.count
+            self.numberOfCells = PostList.count
             self.SortByDate(Posts: Postings.AllPosts!)
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
@@ -557,6 +447,70 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.numberOfCells
+    }
+    
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
+        if(self.deleting == true){
+            if(self.username == "Master"){
+                cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
+                cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
+                cell.Post.text = Postings.AllPosts![indexPath.row].Post
+                let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
+                cell.PostDate.text = date
+            }
+            else if(Postings.AllPosts![indexPath.row].User == self.username){
+                cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
+                cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
+                cell.Post.text = Postings.AllPosts![indexPath.row].Post
+                let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
+                cell.PostDate.text = date
+            }
+            else {
+                cell.isHidden = true
+            }
+        }
+        else if(Postings.AllPosts != nil){
+            
+            cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
+            cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
+            cell.Post.text = Postings.AllPosts![indexPath.row].Post
+            let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
+            cell.PostDate.text = date
+            
+            if(ThisMonthClicked == true){
+                if(!((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 2678400)){
+                    cell.isHidden = true
+                }
+            }
+            else if(ThisWeekClicked == true){
+                if(!((Date().timeIntervalSince1970 - Postings.AllPosts![indexPath.row].PostDate) <= 604800)){
+                    cell.isHidden = true;
+                }
+            }
+        }
+        GenericTools.FrameToFitTextView(View: cell.PostTitle)
+        cell.Post.frame.origin.y = cell.PostTitle.frame.origin.y + cell.PostTitle.frame.size.height + 10
+        GenericTools.FrameToFitTextView(View: cell.Post)
+        cell.NumberOfComments.frame.origin.y = cell.Post.frame.origin.y + cell.Post.frame.size.height + 10
+        cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
+        self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
+        
+        cell.NumberOfComments.text = "\(Postings.AllPosts![indexPath.row].Comments.count) Comments"
+        return(cell)
+    }
+    
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        Postings.myIndex = indexPath.row
+        self.performSegue(withIdentifier: "ViewComments", sender: self)
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.rowHeight
     }
     
 

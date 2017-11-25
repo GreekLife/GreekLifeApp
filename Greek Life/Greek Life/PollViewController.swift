@@ -62,24 +62,117 @@ struct Poll: Comparable {
     
 }
 
-class PollTableViewCell: UITableViewCell {
+class InnerPollTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var OptionText: UITextView!
+    @IBOutlet weak var VoteBtn: UIButton!
+    @IBOutlet weak var PercentLbl: UILabel!
+    
+}
+
+class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDelegate {
+    
+    var rowHeight: CGFloat = 0
+    var InnerPollRef: DatabaseReference!
+    var User = LoggedIn.User["Username"] as! String
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return Polling.ListOfPolls[Polling.OuterIndex].Options.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = InnerTable.dequeueReusableCell(withIdentifier: "InnerCell") as! InnerPollTableViewCell
+        cell.OptionText.isEditable = false
+        cell.OptionText.isScrollEnabled = false
+        cell.OptionText.isSelectable = false
+        cell.OptionText.textAlignment = .justified
+        cell.OptionText.layer.cornerRadius = 5
+        cell.OptionText.layer.borderWidth = 0.8
+        cell.OptionText.layer.borderColor = UIColor.black.cgColor
+        cell.VoteBtn.layer.borderWidth = 0.8
+        cell.VoteBtn.layer.cornerRadius = cell.VoteBtn.frame.width/2
+        cell.VoteBtn.backgroundColor = .clear
+
+        for voter in Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row] {
+            if voter == User {
+                cell.VoteBtn.backgroundColor = .lightGray
+            }
+        }
+        var placings:[Int] = []
+        if Polling.fetched == true {
+        for votes in Polling.ListOfPolls[Polling.OuterIndex].Placing {
+            let percentIndex = votes.index(of: "%")
+            let strVal = votes.prefix(upTo: percentIndex!)
+            let val = Int(strVal)
+            placings.append(val!)
+            
+            }
+        }
+        cell.VoteBtn.tag = (indexPath.row + 1)
+        cell.VoteBtn.accessibilityLabel = Polling.ListOfPolls[Polling.OuterIndex].PollId
+        cell.VoteBtn.addTarget(self, action: #selector(UpVoteOption(button:)), for: .touchUpInside)
+        
+        cell.OptionText.text = Polling.ListOfPolls[Polling.OuterIndex].Options[indexPath.row]
+        GenericTools.FrameToFitTextView(View: cell.OptionText)
+        cell.VoteBtn.setTitle(String(Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row].count), for: .normal)
+        cell.PercentLbl.text = Polling.ListOfPolls[Polling.OuterIndex].Placing[indexPath.row]
+        if Polling.fetched == true {
+        let percentIndex = cell.PercentLbl.text?.index(of: "%")
+        let strVal = (cell.PercentLbl.text!).prefix(upTo: percentIndex!)
+        let value = Int(strVal)
+        
+        if placings.max() == placings.min() && placings.max() == value {
+            cell.PercentLbl.textColor = .purple
+        }
+        else if value == placings.max() {
+            cell.PercentLbl.textColor = .green
+        }
+        else if value == placings.min() {
+            cell.PercentLbl.textColor =  .red
+        }
+    }
+        self.rowHeight = cell.OptionText.frame.origin.y + cell.OptionText.frame.size.height
+        
+        return cell
+    }
+    
+    func UpVoteOption(button: UIButton) {
+        if Reachability.isConnectedToNetwork() == true {
+        self.InnerPollRef = Database.database().reference()
+        InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
+            if snapshot.hasChild(self.User){
+                FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").child(self.User).removeValue()
+            }
+            else {
+                self.InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").updateChildValues([self.User:self.User])
+            }
+        })
+        }
+        else {
+            //should help user handle error
+            print("Internet Connection not Available!")
+        }
+    }
+    
     
     @IBOutlet weak var PollerPicture: UIImageView!
     @IBOutlet weak var Poster: UILabel!
     @IBOutlet weak var Poll: UITextView!
     @IBOutlet weak var PollDate: UILabel!
-    @IBOutlet weak var PercentDefault: UILabel!
-
-    
-    @IBOutlet weak var PollOptionDefault: UITextView!
-    @IBOutlet weak var PollVotesDefault: UIButton!
+    @IBOutlet weak var InnerTable: UITableView!
     
     @IBOutlet weak var PollResults: UIButton!
     @IBOutlet weak var SendReminder: UIButton!
+    @IBOutlet weak var DeleteButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        setUpTable()
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -88,22 +181,44 @@ class PollTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    func setUpTable(){
+        InnerTable?.delegate = self
+        InnerTable?.dataSource = self
+  }
+}
+
+struct Polling {
+    static var ListOfPolls:[Poll] = []
+    static var OuterIndex = 0
+    static var RowHeight: CGFloat = 0
+    static var fetched = false
 }
 
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var ListOfPolls:[Poll] = []
-    var User = LoggedIn.User["Username"] as! String
+    var User = "Jonahelbaz"//LoggedIn.User["Username"] as! String
     var PollRef: DatabaseReference!
     var RowHeight: CGFloat = 0
-    var fetched = false
+    var deleteState = false
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     
     @IBOutlet weak var TableView: UITableView!
-    @IBAction func DeletePoll(_ sender: Any) { }
+    @IBAction func DeletePoll(_ sender: Any) {
+        if deleteState == true {
+            deleteState = false
+        }
+        else {
+        deleteState = true
+        }
+        self.TableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
+        self.TableView.allowsSelection = false
         //Get poll info for each existing poll
+        if Reachability.isConnectedToNetwork() {
         GetListOfPolls() {(success) in
             guard success else{
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve polls.")
@@ -112,7 +227,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 print("Internet Connection not Available!")
                 return
             }
-            self.ListOfPolls = mergeSorting.mergeSort(self.ListOfPolls)
+            Polling.ListOfPolls = mergeSorting.mergeSort(Polling.ListOfPolls)
                 self.CalculateUpVotes(){(success) in
                     guard success else{
                         let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve votes.")
@@ -123,35 +238,48 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                     }
                 //Calculate Percentages --
                         var PollNumber = 0
-                        for _ in self.ListOfPolls {
+                        for _ in Polling.ListOfPolls {
                             var VoteNumber = 0
                             var totalVotes = 0
-                            for option in self.ListOfPolls[PollNumber].UpVotes {
+                            for option in Polling.ListOfPolls[PollNumber].UpVotes {
                                 totalVotes += option.count
                             }
-                            for _ in self.ListOfPolls[PollNumber].UpVotes {
-                                let votesForOption = self.ListOfPolls[PollNumber].UpVotes[VoteNumber].count
+                            for _ in Polling.ListOfPolls[PollNumber].UpVotes {
+                                var votesForOption = 0
+                                if VoteNumber == 0 {
+                                     votesForOption = Polling.ListOfPolls[PollNumber].UpVotes[VoteNumber].count
+                                }
+                                else {
+                                  votesForOption = Polling.ListOfPolls[PollNumber].UpVotes[VoteNumber].count
+                                }
                                 var voteResult: Float = 0
                                 if totalVotes != 0 {
                                     voteResult = (Float(votesForOption) / Float(totalVotes)) * Float(100)
                                 }
-                                self.ListOfPolls[PollNumber].Placing[VoteNumber] = String(String(Int(voteResult)) + "%")
+                                Polling.ListOfPolls[PollNumber].Placing[VoteNumber] = String(String(Int(voteResult)) + "%")
                                 VoteNumber += 1
                             }
                             PollNumber += 1
                     }//--
                     //Create elements for options
-                    self.CreateAvailableOptions()
-                    self.fetched = true
-                    self.TableView.reloadData()
+                    Polling.fetched = true
+                        self.TableView.reloadData()
             } // --
         }  // Finished Accumulating Data
-
+        }
+        else {
+           let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
+            error.backgroundColor = UIColor.black.withAlphaComponent(1)
+            self.view.addSubview(error)
+            print("Internet Connection not Available!")
+        }
+        self.activityIndicator.stopAnimating();
+        UIApplication.shared.endIgnoringInteractionEvents();
     }
         func GetListOfPolls(completion: @escaping (Bool) -> Void) {
             PollRef = Database.database().reference()
             PollRef.child("Polls").observe(.value, with: { (snapshot) in
-                self.ListOfPolls.removeAll()
+                Polling.ListOfPolls.removeAll()
                 let snapshot = snapshot.children
                 for snap in snapshot {
                     if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
@@ -165,9 +293,9 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                                 var retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
                                                 for _ in retrievedPoll.Options {
                                                     retrievedPoll.UpVotes.append([])
-                                                    retrievedPoll.Placing.append("0 %")
+                                                    retrievedPoll.Placing.append("0%")
                                                 }
-                                                self.ListOfPolls.append(retrievedPoll)
+                                                Polling.ListOfPolls.append(retrievedPoll)
                                             }
                                         }
                                     }
@@ -188,28 +316,31 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     func CalculateUpVotes(completion: @escaping (Bool) -> Void) {
         PollRef = Database.database().reference()
         PollRef.child("PollOptions").observe(.value, with: { (snapshot) in
+            self.refreshPollUpvotes()
             let snapshot = snapshot.children
             for snap in snapshot {
                 if let childSnapshot = snap as? DataSnapshot //Datasnapshot provides usable information
                 {
                     var count = 0
-                    if let pollArray = childSnapshot.value as? [String:AnyObject] , pollArray.count >= 0{
+                    if let Options = childSnapshot.value as? [String:AnyObject] , Options.count >= 0{
                         var keyArray:[String] = [] //array of options that have been voted on per poll
-                        for(key,_) in pollArray {
+                        for(key,_) in Options {
                             let AKey = key
                             keyArray.append(AKey)
                         }
-                        for upVotes in pollArray {
-                            var value = upVotes.value as! [String:AnyObject]
+                        for option in Options {
+                            var value = option.value as! [String:AnyObject]
                             let names = value["Names"] as! [String:String]
                             for name in names {
                                 let num = Int(keyArray[count].replacingOccurrences(of: "\"", with: ""))
+                                if num != 0 {
                                 var pollCount = 0
-                                for poll in self.ListOfPolls {
+                                for poll in Polling.ListOfPolls {
                                     if poll.PollId == childSnapshot.key {
-                                        self.ListOfPolls[pollCount].UpVotes[num! - 1].append(name.value) //search for the poll id instead of using indexes on list of polls
+                                        Polling.ListOfPolls[pollCount].UpVotes[num! - 1].append(name.value) //search for the poll id instead of using indexes on list of polls
                                     }
                                     pollCount += 1
+                                  }
                                 }
                             }
                             count += 1
@@ -224,121 +355,135 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func CreateAvailableOptions() {
-        var PollNumber = 0
-        for poll in self.ListOfPolls {
-            var option = 0
-            for options in poll.Options {
-                let NewTextOption = self.textView(x: 0, y: 0, width: 0, height: 0)
-                NewTextOption.text = options
-                self.ListOfPolls[PollNumber].OptionTxt.append(NewTextOption)
-                
-                let NewVoteButton = self.button(x: 0, y: 0, width: 0, height: 0)
-                NewVoteButton.setTitle(String(poll.UpVotes[option].count), for: .normal)
-                self.ListOfPolls[PollNumber].VoteBtn.append(NewVoteButton)
-                
-                let NewPlacingLabel = self.label(x: 0, y: 0, width: 0, height: 0)
-                NewPlacingLabel.text = poll.Placing[option]
-                self.ListOfPolls[PollNumber].PercentLbl.append(NewPlacingLabel)
-                option += 1
+    func refreshPollUpvotes(){
+        var refresh = 0
+        for _ in Polling.ListOfPolls {
+            var refresh2 = 0
+            for _ in Polling.ListOfPolls[refresh].UpVotes{
+                Polling.ListOfPolls[refresh].UpVotes[refresh2].removeAll()
+                refresh2 += 1
             }
-            PollNumber += 1
+            refresh += 1
         }
     }
     
-    
-    //---------------------//
-    //---Create elements---//
-    //--------------------//
-    
-    func textView(x:CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)->UITextView {
-        let textView = UITextView(frame: CGRect(x: x, y: y, width: width, height: height))
-        textView.textColor = UIColor.black
-        textView.backgroundColor = UIColor.clear
-        textView.layer.borderWidth = 0.8
-        textView.layer.borderColor = UIColor.black.cgColor
-        textView.isScrollEnabled = false
-        textView.isEditable = false
-        return textView
+    func DeleteSelectedPoll(button: UIButton) {
+        if Reachability.isConnectedToNetwork() == true {
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
+        let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
+        let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: DeleteSelectedPollInternal)
+        let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+        verify.addAction(okAction)
+        verify.addAction(destructorAction)
+        self.present(verify, animated: true, completion: nil)
+        self.buttonIdentifier = button.accessibilityLabel!
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
+            error.backgroundColor = UIColor.black.withAlphaComponent(1)
+            self.view.addSubview(error)
+            print("Internet Connection not Available!")
+        }
+        
     }
     
-    func button(x:CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)->UIButton {
-        let button = UIButton(frame: CGRect(x: x, y: y, width: width, height: height))
-        button.backgroundColor = UIColor.clear
-        button.layer.borderWidth = 0.8
-        button.layer.borderColor = UIColor.black.cgColor
-        button.titleLabel?.font = UIFont(name: (button.titleLabel?.font.fontName)!, size: 15)
-        return button
+    var buttonIdentifier: String = ""
+    func DeleteSelectedPollInternal(action: UIAlertAction) {
+        if action.title == "Delete"{
+            FirebaseDatabase.Database.database().reference(withPath: "Polls").child(self.buttonIdentifier).removeValue()
+            FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.buttonIdentifier).removeValue()
+            self.TableView.reloadData()
+        }
+        self.activityIndicator.stopAnimating();
+        UIApplication.shared.endIgnoringInteractionEvents();
     }
     
-    func label(x:CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)->UILabel {
-        let label = UILabel(frame: CGRect(x: x, y: y, width: width, height: height))
-        label.backgroundColor = UIColor.clear
-        label.layer.borderColor = UIColor.black.cgColor
-        label.font = UIFont(name: label.font.fontName, size: 12)
-        return label
+    var tempIndexPath = 0
+    @objc func ViewResults(button: UIButton) {
+        let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
+        let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
+        let indexPath = tbl.indexPath(for: cell)
+        self.tempIndexPath = indexPath!.row
+        performSegue(withIdentifier: "ViewResults", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ViewResults" {
+            APoll.poll = Polling.ListOfPolls[tempIndexPath]
+            
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ListOfPolls.count
+        return Polling.ListOfPolls.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
-        let defaultOptionHeight: CGFloat = cell.PollOptionDefault.frame.size.height
-        let defaultOptionWidth: CGFloat = cell.PollOptionDefault.frame.size.width
-        let defaultOptionX: CGFloat = cell.PollOptionDefault.frame.origin.x
-        let smallestPossibleTextArea: CGFloat = cell.PollOptionDefault.frame.size.height
+         Polling.OuterIndex = 0
+        //Get expected height of table
+        var size: CGFloat = 0
+        for option in Polling.ListOfPolls[indexPath.row].Options {
+            let newText = UITextView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+            newText.text = option
+            GenericTools.FrameToFitTextView(View: newText)
+            size += newText.frame.size.height
+            }
         
-        var CurrentOption = 0 //Defining what option number in the poll array
-        var ExistingOptions:[UITextView] = []
-        if fetched == true {
-        if CurrentOption == 0 {
-            //option 0 has an existing text view for the poll question and the first option plus a button to vote
-            cell.Poll.text = self.ListOfPolls[indexPath.row].PollTitle
-            GenericTools.FrameToFitTextView(View: cell.Poll)
-            cell.Poll.textAlignment = .justified
-            cell.PollOptionDefault.layer.cornerRadius = 5
-            cell.PollOptionDefault.layer.borderWidth = 0.8
-            cell.PollOptionDefault.layer.borderColor = UIColor.black.cgColor
-            cell.PollOptionDefault.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 30
-            cell.PollOptionDefault.text = self.ListOfPolls[indexPath.row].Options[CurrentOption]
-            
-            cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
-            cell.PollerPicture.layer.cornerRadius = cell.PollerPicture.frame.width/2
-            
-            cell.PollVotesDefault.setTitle(self.ListOfPolls[indexPath.row].VoteBtn[CurrentOption].titleLabel?.text, for: .normal)
-            cell.PollVotesDefault.frame.size.height = smallestPossibleTextArea
-            cell.PollVotesDefault.frame.size.width = smallestPossibleTextArea
-            cell.PollVotesDefault.frame.origin.y = ((cell.PollOptionDefault.frame.origin.y) + ((cell.PollOptionDefault.frame.size.height - smallestPossibleTextArea)/2))
-            cell.PollVotesDefault.frame.origin.x = cell.PollOptionDefault.frame.origin.x - 50
-            cell.PollVotesDefault.layer.borderWidth = 0.8
-            cell.PollVotesDefault.layer.cornerRadius = cell.PollVotesDefault.frame.width/2
-            
-            let date = CreateDate.getTimeSince(epoch: self.ListOfPolls[indexPath.row].Epoch)
-            cell.PollDate.text = date
-            cell.Poster.text = self.ListOfPolls[indexPath.row].Poster
-            
-            //Here we set the label value for the first option of every passing pole to its % value. I checked and i believe these are all set
-            //correctly
-            cell.PercentDefault.text = self.ListOfPolls[indexPath.row].Placing[CurrentOption]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
+        Polling.OuterIndex = indexPath.row
+        let date = CreateDate.getTimeSince(epoch: Polling.ListOfPolls[indexPath.row].Epoch)
+        cell.PollerPicture.layer.cornerRadius = cell.PollerPicture.frame.size.width/2
+        cell.InnerTable.separatorStyle = UITableViewCellSeparatorStyle.none
+        cell.InnerTable.isScrollEnabled = false
+        cell.InnerTable.allowsSelection = false
+        cell.InnerTable.frame.size.height = size + CGFloat(Polling.ListOfPolls[indexPath.row].Options.count * 3)
 
-            ExistingOptions.append(cell.PollOptionDefault)
-            CurrentOption += 1
+        cell.Poll.text = Polling.ListOfPolls[indexPath.row].PollTitle
+        GenericTools.FrameToFitTextView(View: cell.Poll)
+        
+        cell.PollDate.text = date
+        cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
+        cell.Poster.text = Polling.ListOfPolls[indexPath.row].Poster
+        
+        cell.InnerTable.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 10
+        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 15
+        cell.PollResults.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 15
+        cell.SendReminder.frame.origin.y = cell.PollResults.frame.origin.y
+        cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
+        Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
+        cell.SendReminder.isHidden = true
+        
+        if self.User == cell.Poster.text || self.User == "Master" {
+            cell.SendReminder.isHidden = false
+        }
+        
+        cell.InnerTable.reloadData()
+        
+        if self.deleteState == true {
+            
+            if cell.Poster.text == User || User == "Master" {
+        cell.DeleteButton.isHidden = false
+        cell.DeleteButton.layer.cornerRadius = 5
+        cell.DeleteButton.accessibilityLabel = Polling.ListOfPolls[indexPath.row].PollId
+        cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
+        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y - cell.InnerTable.frame.size.height - 15
+        Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height + 20 + cell.DeleteButton.frame.size.height
+            }
         }
         else {
-//            for option in self.ListOfPolls[indexPath.row].Options {
-//
-//            }
+            
+            cell.DeleteButton.isHidden = true
         }
-    }
-    
-        self.RowHeight = 500
+        
+        cell.PollResults.addTarget(self, action: #selector(ViewResults(button:)), for: .touchUpInside)
+
+        
         return cell
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.RowHeight
+        return Polling.RowHeight
     }
     
     
