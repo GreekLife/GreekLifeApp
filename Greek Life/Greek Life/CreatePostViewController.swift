@@ -41,7 +41,6 @@ class CreatePostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.WritePost.layer.cornerRadius = 5
-        self.Cancel.layer.cornerRadius = 5
         self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
         self.PosterName.text = self.user
         // Do any additional setup after loading the view.
