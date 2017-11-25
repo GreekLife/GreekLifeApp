@@ -75,6 +75,8 @@ class ViewResultsController: UIViewController, UITableViewDelegate, UITableViewD
         self.TableView.separatorStyle = UITableViewCellSeparatorStyle.none
 
     }
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

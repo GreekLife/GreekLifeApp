@@ -202,6 +202,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var deleteState = false
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     
+    
     @IBOutlet weak var TableView: UITableView!
     @IBAction func DeletePoll(_ sender: Any) {
         if deleteState == true {

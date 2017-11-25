@@ -18,6 +18,7 @@ class ForumCellTableViewCell: UITableViewCell {
     @IBOutlet weak var PosterImage: UIImageView!
     @IBOutlet weak var PostDate: UILabel!
     @IBOutlet weak var NumberOfComments: UILabel!
+    @IBOutlet weak var DeleteButton: UIButton!
     
     
     override func awakeFromNib() {
@@ -99,7 +100,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var ref: DatabaseReference!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
-    var tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ForumViewController.dismissKeyboard))
     let username = LoggedIn.User["Username"] as! String
     var deleting = false
     
@@ -108,147 +108,19 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var TableView: UITableView!
     
     //List order button properties
-    @IBOutlet weak var PostTitle: UITextField!
     @IBOutlet weak var Newest: UIButton!
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisMonth: UIButton!
     @IBOutlet weak var ThisWeek: UIButton!
-    @IBOutlet weak var NewPost: UITextView!
-    @IBOutlet weak var NewPostView: UIView!
-    @IBOutlet weak var PostButton: UIButton!
-    @IBOutlet weak var PostError: UILabel!
-    
-    @IBAction func ExitPost(_ sender: Any) {
-         UIView.animate(withDuration: 0.4, delay: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.NewPostView.alpha = 0
-        })
-        NewPost.text = "Write your post here..."
-        PostError.text = ""
-        PostTitle.text = ""
-        self.view.endEditing(true)
-        view.removeGestureRecognizer(tap)
-    }
-    
-    func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    func validate(words:Int)->Bool{
-        if(words < 20) {
-            self.PostError.textColor = .red
-            PostError.text = "Post must be at least 20 words"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                self.PostError.text = ""
-            }
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            return false
-        }
-        else if(words > 1000){
-            self.PostError.textColor = .red
-            PostError.text = "Post must be no more than 150 words"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                self.PostError.text = ""
-            }
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            return false
-        }
-        
-        else if(PostTitle.text?.count == 0 || PostTitle.text == nil){
-            self.PostError.textColor = .red
-            PostError.text = "Post must have a title"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                self.PostError.text = ""
-            }
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            return false
-        }
-        else{
-            return true
-        }
-        
-        
-    }
-    
-    @IBAction func Post(_ sender: Any) {
-        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: NewPostView); //loading wheel is not showing
-        let components = NewPost.text.components(separatedBy: .whitespacesAndNewlines)
-        let PostWords = components.filter { !$0.isEmpty }
-        
-        let valid = validate(words: PostWords.count)
-        
-        if(valid == true)
-        {
-            UploadPost()
-        }
-}
-    func UploadPost(){
-        let FirstName = LoggedIn.User["First Name"] as! String
-        let LastName = LoggedIn.User["Last Name"] as! String
-        var Name = FirstName + " " + LastName
-        if(self.username == "Master"){
-            Name = Name + " (Master)"
-        }
-        let Epoch = Date().timeIntervalSince1970
-        let Title = PostTitle.text
-        let Posting = NewPost.text
-        let postId = UUID().uuidString
 
-        //let Picture = LoggedIn.User["Picture"]
-        if(Title != nil && Posting != nil){
-            let Post = [
-                "Post": Posting!,
-                "PostTitle": Title!,
-                "Poster": Name,
-                "Epoch": Epoch,
-                "Username": self.username,
-                "PostId": postId
-                ] as [String : Any]
-            PostData(newPostData: Post){(success, error) in
-                if(success == true){
-                    self.PostError.text = "Post Succesfully added"
-                    self.PostError.textColor = .blue
-                    self.PostTitle.text = ""
-                    self.NewPost.text = ""
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        self.PostError.text = ""
-                    }
-                    self.activityIndicator.stopAnimating();
-                    UIApplication.shared.endIgnoringInteractionEvents();
-                }
-            }
+    @IBAction func Deleting(_ sender: Any) {
+        if deleting == true {
+            deleting = false
         }
-    }
-    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
-        ref = Database.database().reference()
-        let pID = newPostData["PostId"] as! String
-        self.ref.child("Forum").child(pID).setValue(newPostData)
-        completion(true, nil)
-    }
-    
-    //Create Post
-    @IBOutlet weak var CreatePost: UIButton!
-    @IBAction func CreatePost(_ sender: Any) {
-        view.addGestureRecognizer(tap)
-        UIView.animate(withDuration: 0.4, delay: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            self.NewPostView.layer.backgroundColor = UIColor.black.cgColor
-            self.PostButton.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-            self.NewPostView.layer.cornerRadius = 10;
-            self.NewPostView.layer.shadowColor = UIColor.black.cgColor
-            self.NewPostView.layer.shadowOffset = CGSize(width: 3, height: 3)
-            self.NewPostView.layer.shadowOpacity = 0.7
-            self.NewPostView.layer.shadowRadius = 4.0
-            self.NewPost.layer.cornerRadius = 10;
-            self.NewPostView.alpha = 0.95
-
-        })
-    }
-    //drop text field on enter
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
+        else {
+            deleting = true
+        }
+        self.TableView.reloadData()
     }
     
     //List order button actions
@@ -440,8 +312,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
         }
-        self.PostTitle.delegate = self
-        tap = UITapGestureRecognizer(target: self, action: #selector(ForumViewController.dismissKeyboard))
     }
     
     override func didReceiveMemoryWarning() {
@@ -456,6 +326,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
         if(self.deleting == true){
+            cell.DeleteButton.isHidden = false
             if(self.username == "Master"){
                 cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
                 cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
@@ -473,9 +344,16 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             else {
                 cell.isHidden = true
             }
+            GenericTools.FrameToFitTextView(View: cell.PostTitle)
+            cell.Post.frame.origin.y = cell.PostTitle.frame.origin.y + cell.PostTitle.frame.size.height + 10
+            GenericTools.FrameToFitTextView(View: cell.Post)
+            cell.DeleteButton.frame.origin.y = cell.Post.frame.origin.y + cell.Post.frame.size.height + 10
+            cell.NumberOfComments.frame.origin.y = cell.DeleteButton.frame.origin.y + cell.DeleteButton.frame.size.height + 10
+            cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
+            self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
         }
         else if(Postings.AllPosts != nil){
-            
+            cell.DeleteButton.isHidden = true
             cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
             cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
             cell.Post.text = Postings.AllPosts![indexPath.row].Post
@@ -492,13 +370,13 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                     cell.isHidden = true;
                 }
             }
+            GenericTools.FrameToFitTextView(View: cell.PostTitle)
+            cell.Post.frame.origin.y = cell.PostTitle.frame.origin.y + cell.PostTitle.frame.size.height + 10
+            GenericTools.FrameToFitTextView(View: cell.Post)
+            cell.NumberOfComments.frame.origin.y = cell.Post.frame.origin.y + cell.Post.frame.size.height + 10
+            cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
+            self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
         }
-        GenericTools.FrameToFitTextView(View: cell.PostTitle)
-        cell.Post.frame.origin.y = cell.PostTitle.frame.origin.y + cell.PostTitle.frame.size.height + 10
-        GenericTools.FrameToFitTextView(View: cell.Post)
-        cell.NumberOfComments.frame.origin.y = cell.Post.frame.origin.y + cell.Post.frame.size.height + 10
-        cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
-        self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
         
         cell.NumberOfComments.text = "\(Postings.AllPosts![indexPath.row].Comments.count) Comments"
         return(cell)
