@@ -1642,7 +1642,7 @@
                                     </barButtonItem>
                                     <barButtonItem style="plain" id="Eqq-9E-Cum">
                                         <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Leave comment..." textAlignment="natural" minimumFontSize="17" id="8pQ-EY-rjK">
-                                            <rect key="frame" x="61.5" y="7" width="136" height="30"/>
+                                            <rect key="frame" x="59" y="7" width="300" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1971,7 +1971,7 @@
         <segue reference="AVj-CA-Dgt"/>
         <segue reference="7AK-EZ-goz"/>
         <segue reference="oRg-07-6Ii"/>
-        <segue reference="69V-5i-9BA"/>
+        <segue reference="XYt-tt-6Ak"/>
         <segue reference="Q59-5t-9Pb"/>
     </inferredMetricsTieBreakers>
 </document>

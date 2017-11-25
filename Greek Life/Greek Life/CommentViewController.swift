@@ -36,6 +36,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var CommentList:[Comment] = []
     let user = LoggedIn.User["Username"] as! String
 
+
     //---Prototype cell component declarations---//
     @IBOutlet weak var TableView: UITableView!
     
@@ -78,6 +79,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         ReadCommentsForPost()
+
         //---Add styles---//
             }
 
