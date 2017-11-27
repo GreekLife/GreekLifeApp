@@ -377,7 +377,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func DeleteSelectedPoll(button: UIButton) {
         if Reachability.isConnectedToNetwork() == true {
-        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
         let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: DeleteSelectedPollInternal)
         let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
@@ -402,8 +401,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.buttonIdentifier).removeValue()
             self.TableView.reloadData()
         }
-        self.activityIndicator.stopAnimating();
-        UIApplication.shared.endIgnoringInteractionEvents();
     }
     
     var tempIndexPath = 0

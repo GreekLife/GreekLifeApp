@@ -1994,7 +1994,6 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Zdz-4Y-axP"/>
         <segue reference="AVj-CA-Dgt"/>
         <segue reference="7AK-EZ-goz"/>
         <segue reference="oRg-07-6Ii"/>
