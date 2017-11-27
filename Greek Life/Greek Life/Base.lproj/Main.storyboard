@@ -987,7 +987,7 @@
                                 </constraints>
                                 <state key="normal" title="Home"/>
                                 <connections>
-                                    <segue destination="ffX-If-XRi" kind="show" id="ttS-td-cSz"/>
+                                    <action selector="HomeBTN:" destination="Q3W-Ve-J2E" eventType="touchUpInside" id="Saz-kx-MCH"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -1633,6 +1633,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Qyn-Tv-ClQ"/>
-        <segue reference="ttS-td-cSz"/>
+        <segue reference="i9E-qc-436"/>
     </inferredMetricsTieBreakers>
 </document>
