@@ -62,6 +62,8 @@ class CreatePostViewController: UIViewController {
     func validate(words:Int)->Bool{
         if(words < 20) {
             let emptyError = UIAlertController(title: "Too Small", message: "Post must be at least 20 words", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
             self.present(emptyError, animated: true, completion: nil)
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -69,6 +71,8 @@ class CreatePostViewController: UIViewController {
         }
         else if(words > 1000){
             let emptyError = UIAlertController(title: "Too Large", message: "Post must be no more than 1000 words", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
             self.present(emptyError, animated: true, completion: nil)
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -77,6 +81,8 @@ class CreatePostViewController: UIViewController {
             
         else if(PostTitle.text?.count == 0 || PostTitle.text == nil){
             let emptyError = UIAlertController(title: "No Title", message: "Post must have a title", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
             self.present(emptyError, animated: true, completion: nil)
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();

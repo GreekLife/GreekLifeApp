@@ -314,6 +314,33 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
     
+    func DeleteSelectedPoll(button: UIButton) {
+        if Reachability.isConnectedToNetwork() == true {
+            let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: DeleteSelectedPollInternal)
+            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            verify.addAction(destructorAction)
+            self.present(verify, animated: true, completion: nil)
+            self.buttonIdentifier = button.accessibilityLabel!
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
+            error.backgroundColor = UIColor.black.withAlphaComponent(1)
+            self.view.addSubview(error)
+            print("Internet Connection not Available!")
+        }
+        
+    }
+    
+    var buttonIdentifier: String = ""
+    func DeleteSelectedPollInternal(action: UIAlertAction) {
+        if action.title == "Delete"{
+            FirebaseDatabase.Database.database().reference(withPath: "Forum").child(self.buttonIdentifier).removeValue()
+            self.TableView.reloadData()
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -333,6 +360,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 cell.Post.text = Postings.AllPosts![indexPath.row].Post
                 let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
                 cell.PostDate.text = date
+                cell.DeleteButton.accessibilityLabel = Postings.AllPosts![indexPath.row].PostId
+                cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
             }
             else if(Postings.AllPosts![indexPath.row].User == self.username){
                 cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
