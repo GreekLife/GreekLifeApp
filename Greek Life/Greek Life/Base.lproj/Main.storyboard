@@ -107,7 +107,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="b3r-Ks-YnZ" kind="show" id="Qyn-Tv-ClQ"/>
+                                    <segue destination="b3r-Ks-YnZ" kind="show" id="VWi-WZ-5cT"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Forum" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5xj-Kb-Hqf">
@@ -598,7 +598,7 @@
                                     <barButtonItem width="298" style="plain" systemItem="fixedSpace" id="MRx-Mz-yFH"/>
                                     <barButtonItem style="plain" systemItem="compose" id="kP2-Kf-Ty0">
                                         <connections>
-                                            <segue destination="NFk-hy-JhN" kind="show" id="AVj-CA-Dgt"/>
+                                            <action selector="CreatePost:" destination="b3r-Ks-YnZ" id="r1p-UJ-Klz"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -608,7 +608,7 @@
                                 <items>
                                     <barButtonItem title="Home" id="5pk-Gy-Fk3">
                                         <connections>
-                                            <segue destination="ffX-If-XRi" kind="show" id="Q59-5t-9Pb"/>
+                                            <segue destination="ffX-If-XRi" kind="show" id="2f5-mG-tMl"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -656,8 +656,8 @@
                         <outlet property="TableView" destination="CFp-nx-dCu" id="vty-eW-1tt"/>
                         <outlet property="ThisMonth" destination="1zV-7a-WqU" id="zvd-rc-32b"/>
                         <outlet property="ThisWeek" destination="e8r-he-NBa" id="FqH-9G-1ot"/>
-                        <segue destination="Se9-dC-HbK" kind="show" identifier="ViewComments" id="xJY-qq-92y"/>
-                        <segue destination="NFk-hy-JhN" kind="show" identifier="CreateAPost" id="Ya2-GM-t78"/>
+                        <segue destination="NFk-hy-JhN" kind="show" identifier="WritePost" id="dk6-ks-akz"/>
+                        <segue destination="Se9-dC-HbK" kind="presentation" identifier="ForumComments" id="Ity-UM-uyi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rGt-SX-J0j" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1639,7 +1639,7 @@
                                 <items>
                                     <barButtonItem title="Back" id="mat-aM-bTL">
                                         <connections>
-                                            <segue destination="b3r-Ks-YnZ" kind="show" id="XYt-tt-6Ak"/>
+                                            <action selector="BackToForum:" destination="Se9-dC-HbK" id="KuX-u1-Hqy"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -1695,7 +1695,6 @@
                         <outlet property="CommentBox" destination="8pQ-EY-rjK" id="AO8-3T-wU0"/>
                         <outlet property="LeaveComment" destination="xva-BF-CsI" id="sKO-wq-gCH"/>
                         <outlet property="TableView" destination="AL8-h0-O2T" id="q5z-kN-8UC"/>
-                        <segue destination="b3r-Ks-YnZ" kind="show" identifier="EndCommentView" id="UGs-z0-CVF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OIR-C9-4jU" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1762,7 +1761,7 @@
                                 <items>
                                     <barButtonItem title="Cancel" id="5FL-p3-l4W">
                                         <connections>
-                                            <segue destination="b3r-Ks-YnZ" kind="show" id="ken-qQ-qzJ"/>
+                                            <action selector="BackToForum:" destination="NFk-hy-JhN" id="CB5-MU-UUb"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -1819,7 +1818,6 @@
                         <outlet property="PosterImage" destination="BJS-AV-3zq" id="tkl-Z0-H0Y"/>
                         <outlet property="PosterName" destination="FTb-ky-LBb" id="U4W-VS-AbD"/>
                         <outlet property="WritePost" destination="tg6-Mu-IfG" id="8eH-6s-YYU"/>
-                        <segue destination="b3r-Ks-YnZ" kind="show" identifier="BackToForum" id="69V-5i-9BA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4bG-RX-7lU" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1994,10 +1992,8 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="AVj-CA-Dgt"/>
-        <segue reference="7AK-EZ-goz"/>
+        <segue reference="8yI-27-pKE"/>
         <segue reference="oRg-07-6Ii"/>
-        <segue reference="ken-qQ-qzJ"/>
-        <segue reference="Q59-5t-9Pb"/>
+        <segue reference="kFV-pn-yBU"/>
     </inferredMetricsTieBreakers>
 </document>

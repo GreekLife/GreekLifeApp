@@ -36,7 +36,10 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var CommentList:[Comment] = []
     let user = LoggedIn.User["Username"] as! String
 
-
+    @IBAction func BackToForum(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     //---Prototype cell component declarations---//
     @IBOutlet weak var TableView: UITableView!
     

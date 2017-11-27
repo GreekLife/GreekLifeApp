@@ -20,7 +20,10 @@ class CreatePostViewController: UIViewController {
     let user = LoggedIn.User["Username"] as! String
     var CreatePostRef: DatabaseReference!
 
-
+    @IBAction func BackToForum(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     @IBAction func WritePost(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator, view: self.view);
         let components = Post.text.components(separatedBy: .whitespacesAndNewlines)
@@ -33,10 +36,7 @@ class CreatePostViewController: UIViewController {
             UploadPost()
         }
     }
-    
-    @IBAction func Cancel(_ sender: Any) {
-        performSegue(withIdentifier: "BackToForum", sender: self)
-    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.WritePost.layer.cornerRadius = 5

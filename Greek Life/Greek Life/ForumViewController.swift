@@ -112,7 +112,11 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisMonth: UIButton!
     @IBOutlet weak var ThisWeek: UIButton!
-
+    @IBAction func CreatePost(_ sender: Any) {
+        performSegue(withIdentifier: "WritePost", sender: self)
+    }
+    
+    
     @IBAction func Deleting(_ sender: Any) {
         if deleting == true {
             deleting = false
@@ -413,7 +417,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Postings.myIndex = indexPath.row
-        self.performSegue(withIdentifier: "ViewComments", sender: self)
+        self.performSegue(withIdentifier: "ForumComments", sender: self)
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
