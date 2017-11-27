@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39666CE41FCA6A5C00DDE931 /* MessengerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39666CE31FCA6A5C00DDE931 /* MessengerViewController.swift */; };
 		6D1896661FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */; };
 		6D1896671FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896651FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift */; };
 		6D18966A1FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896681FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift */; };
@@ -61,6 +62,7 @@
 		28671ACEC86852828460720F /* Pods_Greek_LifeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Greek_LifeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CBFC2FC5943F408FDB76E4F /* Pods_Greek_Life.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Greek_Life.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		38B7D48EC2D33636B0CD21CB /* Pods-Greek Life.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek Life.release.xcconfig"; path = "Pods/Target Support Files/Pods-Greek Life/Pods-Greek Life.release.xcconfig"; sourceTree = "<group>"; };
+		39666CE31FCA6A5C00DDE931 /* MessengerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerViewController.swift; sourceTree = "<group>"; };
 		51E2CF9D00CB950F66234C9B /* Pods-Greek LifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek LifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Greek LifeTests/Pods-Greek LifeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		54075C3988D567332DE403D0 /* Pods-Greek Life.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Greek Life.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Greek Life/Pods-Greek Life.debug.xcconfig"; sourceTree = "<group>"; };
 		6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstitutionWebViewViewController.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				6D1896681FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift */,
 				6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */,
 				6DCAFF0D1F9AC46F00D1311E /* Main.storyboard */,
+				39666CE31FCA6A5C00DDE931 /* MessengerViewController.swift */,
 				6D1896651FB6C4FB0087C3EC /* ChapterInfoControllerViewController.swift */,
 				6D1896641FB6C4FB0087C3EC /* ConstitutionWebViewViewController.swift */,
 				6DCAFF101F9AC46F00D1311E /* Assets.xcassets */,
@@ -554,6 +557,7 @@
 				6DCAFF081F9AC46F00D1311E /* AppDelegate.swift in Sources */,
 				6DF68DB11FACD87D006E0B76 /* CommentTableViewCell.swift in Sources */,
 				6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */,
+				39666CE41FCA6A5C00DDE931 /* MessengerViewController.swift in Sources */,
 				6D18966A1FB6C5080087C3EC /* FoundingFatherPrototypeTableViewCell.swift in Sources */,
 				6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */,
 			);
