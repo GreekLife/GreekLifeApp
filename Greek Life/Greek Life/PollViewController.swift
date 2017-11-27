@@ -201,7 +201,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var RowHeight: CGFloat = 0
     var deleteState = false
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
-    
+    var indexPath:IndexPath = IndexPath(item: 0, section: 0) //used for scrolling to the top
+
     @IBOutlet weak var Newest: UIButton!
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisWeek: UIButton!
@@ -216,6 +217,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         deleteState = true
         }
         self.TableView.reloadData()
+        self.TableView.scrollToRow(at: indexPath as IndexPath, at: UITableViewScrollPosition.top, animated: true)
     }
     
     override func viewDidLoad() {
