@@ -196,7 +196,7 @@ struct Polling {
 
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var User = "Jonahelbaz"//LoggedIn.User["Username"] as! String
+    var User = LoggedIn.User["Username"] as! String
     var PollRef: DatabaseReference!
     var RowHeight: CGFloat = 0
     var deleteState = false
