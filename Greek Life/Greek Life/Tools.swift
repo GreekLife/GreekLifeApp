@@ -117,6 +117,33 @@ public class CreateDate {
     }
 }
 
+//Jon's Better Version of CreateDate
+public class theFormatter
+{
+    class func timeStringFromDate(_ date:Date)->String
+    {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from:date)
+    }
+    
+    class func dateStringFromDate(_ date:Date)->String
+    {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter.string(from:date)
+    }
+    
+    class func jonahStringFromDate(_ date:Date)->String
+    {
+        let formater = DateFormatter()
+        formater.dateFormat = "MMM dd YYYY, hh:mm"
+        return formater.string(from: date)
+    }
+}
+
 public class Banner {
     class func ErrorBanner(errorTitle:String)->UILabel{
         let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))

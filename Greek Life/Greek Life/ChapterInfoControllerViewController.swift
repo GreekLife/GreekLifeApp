@@ -22,6 +22,11 @@ class ChapterInfoControllerViewController: UIViewController {
     @IBOutlet weak var foundingDate: UILabel!
     @IBOutlet weak var activeMaster: UILabel!
     @IBOutlet weak var Logo: UIImageView!
+    @IBAction func HomeBTN(_ sender: Any)
+    {
+        presentingViewController?.dismiss(animated: true)
+    }
+    
     
     var ref: DatabaseReference!
     
