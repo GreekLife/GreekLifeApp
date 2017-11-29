@@ -841,7 +841,7 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="w33-oh-5gr">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="w33-oh-5gr">
                                 <rect key="frame" x="0.0" y="101" width="375" height="522"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -849,7 +849,7 @@
                                         <rect key="frame" x="0.0" y="28" width="375" height="254"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1dI-hj-pbO" id="4IV-Ju-uGO">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="253.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="254"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XYD-MM-lxd">
@@ -989,6 +989,7 @@
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
                                 <connections>
+                                    <action selector="Newest:" destination="qAJ-oH-3NE" eventType="touchUpInside" id="dzk-CG-uy6"/>
                                     <action selector="Newest:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="eSO-Ve-puc"/>
                                 </connections>
                             </button>
@@ -1004,6 +1005,7 @@
                                 </state>
                                 <connections>
                                     <action selector="Oldest:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="WMM-aY-oJf"/>
+                                    <action selector="Oldest:" destination="qAJ-oH-3NE" eventType="touchUpInside" id="kUz-3n-Hvu"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yiU-96-Xmz">
@@ -1017,6 +1019,7 @@
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
                                 <connections>
+                                    <action selector="ThisWeek:" destination="qAJ-oH-3NE" eventType="touchUpInside" id="0A0-wg-41r"/>
                                     <action selector="ThisWeek:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="1Fz-1b-CZQ"/>
                                 </connections>
                             </button>
@@ -1031,6 +1034,7 @@
                                     <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </state>
                                 <connections>
+                                    <action selector="ThisMonth:" destination="qAJ-oH-3NE" eventType="touchUpInside" id="X7e-KM-tYG"/>
                                     <action selector="ThisMonth:" destination="b3r-Ks-YnZ" eventType="touchUpInside" id="gBL-pH-CBr"/>
                                 </connections>
                             </button>
@@ -1664,7 +1668,7 @@
                                     </barButtonItem>
                                     <barButtonItem style="plain" id="Eqq-9E-Cum">
                                         <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Leave comment..." textAlignment="natural" minimumFontSize="17" id="8pQ-EY-rjK">
-                                            <rect key="frame" x="61.5" y="7" width="136" height="30"/>
+                                            <rect key="frame" x="61.5" y="7" width="135.5" height="30"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -2195,8 +2199,8 @@
         <image name="Icons/Profile.png" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="nOf-VG-nin"/>
+        <segue reference="7AK-EZ-goz"/>
         <segue reference="oRg-07-6Ii"/>
-        <segue reference="kFV-pn-yBU"/>
+        <segue reference="2f5-mG-tMl"/>
     </inferredMetricsTieBreakers>
 </document>

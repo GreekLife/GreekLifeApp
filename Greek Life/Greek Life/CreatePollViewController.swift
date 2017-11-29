@@ -141,10 +141,10 @@ class CreatePollViewController: UIViewController {
         ref.child("Polls").updateChildValues(ThePollKey)
         let ThePollOptionKey = [poll.PollId :
             [
-                "\"1\"" :
+                "\"0\"" :
                     [
                         "Names" :
-                            ["\"0\"" : ""]
+                            ["Empty" : "Empty"]
                 ]
             ]
         ]

@@ -75,6 +75,8 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     var rowHeight: CGFloat = 0
     var InnerPollRef: DatabaseReference!
     var User = LoggedIn.User["Username"] as! String
+    let first = LoggedIn.User["First Name"] as? String ?? "Unknown"
+    let last = LoggedIn.User["Last Name"] as? String ?? "Unknown"
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return Polling.ListOfPolls[Polling.OuterIndex].Options.count
@@ -96,9 +98,10 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         cell.VoteBtn.layer.borderWidth = 0.8
         cell.VoteBtn.layer.cornerRadius = cell.VoteBtn.frame.width/2
         cell.VoteBtn.backgroundColor = .clear
+        let name = "\(self.first) \(self.last)"
 
         for voter in Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row] {
-            if voter == User {
+            if voter == name {
                 cell.VoteBtn.backgroundColor = .lightGray
             }
         }
@@ -141,14 +144,16 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     }
     
     func UpVoteOption(button: UIButton) {
+        let name = "\(self.first) \(self.last)"
         if Reachability.isConnectedToNetwork() == true {
         self.InnerPollRef = Database.database().reference()
         InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
-            if snapshot.hasChild(self.User){
-                FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").child(self.User).removeValue()
+            if snapshot.hasChild(name){
+                FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").child(name).removeValue()
             }
             else {
-                self.InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").updateChildValues([self.User:self.User])
+                let name = "\(self.first) \(self.last)"
+                self.InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").updateChildValues([name:name])
             }
         })
         }
@@ -197,17 +202,81 @@ struct Polling {
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var User = LoggedIn.User["Username"] as! String
+    let first = LoggedIn.User["First Name"] as! String
+    let last = LoggedIn.User["Last Name"] as! String
     var PollRef: DatabaseReference!
     var RowHeight: CGFloat = 0
     var deleteState = false
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     var indexPath:IndexPath = IndexPath(item: 0, section: 0) //used for scrolling to the top
+    var newestClicked = true
+    var oldestClicked = false
+    var thisWeekClicked = false
+    var thisMonthClicked = false
 
     @IBOutlet weak var Newest: UIButton!
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisWeek: UIButton!
     @IBOutlet weak var ThisMonth: UIButton!
 
+    @IBAction func Newest(_ sender: Any) {
+        thisMonthClicked = false
+        thisWeekClicked = false
+        if oldestClicked == true {
+        Polling.ListOfPolls.reverse()
+        }
+       Newest.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+        Oldest.backgroundColor = UIColor.clear
+        ThisWeek.backgroundColor = UIColor.clear
+        ThisMonth.backgroundColor = UIColor.clear
+        oldestClicked = false
+        newestClicked = true
+        self.TableView.reloadData()
+
+    }
+    
+    @IBAction func Oldest(_ sender: Any) {
+        thisMonthClicked = false
+        thisWeekClicked = false
+        Polling.ListOfPolls.reverse()
+        Oldest.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+        Newest.backgroundColor = UIColor.clear
+        ThisWeek.backgroundColor = UIColor.clear
+        ThisMonth.backgroundColor = UIColor.clear
+        newestClicked = false
+        oldestClicked = true
+        self.TableView.reloadData()
+    }
+    
+    @IBAction func ThisWeek(_ sender: Any) {
+        if oldestClicked == true {
+            Polling.ListOfPolls.reverse()
+        }
+        ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+        Newest.backgroundColor = UIColor.clear
+        Oldest.backgroundColor = UIColor.clear
+        ThisMonth.backgroundColor = UIColor.clear
+        thisMonthClicked = false
+        newestClicked = false
+        oldestClicked = false
+        thisWeekClicked = true
+        self.TableView.reloadData()
+    }
+    @IBAction func ThisMonth(_ sender: Any) {
+        if oldestClicked == true {
+            Polling.ListOfPolls.reverse()
+        }
+        ThisMonth.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+        Newest.backgroundColor = UIColor.clear
+        Oldest.backgroundColor = UIColor.clear
+        ThisWeek.backgroundColor = UIColor.clear
+        thisMonthClicked = true
+        newestClicked = false
+        oldestClicked = false
+        thisWeekClicked = false
+        self.TableView.reloadData()
+        
+    }
     @IBOutlet weak var TableView: UITableView!
     @IBAction func DeletePoll(_ sender: Any) {
         if deleteState == true {
@@ -424,7 +493,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+        let name = "\(first) \(last)"
          Polling.OuterIndex = 0
         //Get expected height of table
         var size: CGFloat = 0
@@ -437,8 +506,25 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
         cell.isHidden = false
+        
         if deleteState == true {
-            if self.User != Polling.ListOfPolls[indexPath.row].Poster {
+            if name != Polling.ListOfPolls[indexPath.row].Poster && self.User != "Master" {
+                cell.isHidden = true
+            }
+        }
+        let epoch = Date().timeIntervalSince1970
+        let month = 2678400
+        let week = 604800
+        if deleteState != true && self.thisWeekClicked {
+            let timeSince = Int(epoch - Polling.ListOfPolls[indexPath.row].Epoch)
+            if timeSince > week {
+                cell.isHidden = true
+            }
+        }
+        
+        if deleteState != true && self.thisMonthClicked {
+            let timeSince = Int(epoch - Polling.ListOfPolls[indexPath.row].Epoch)
+            if timeSince > month {
                 cell.isHidden = true
             }
         }
@@ -466,15 +552,15 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
         cell.SendReminder.isHidden = true
         
-        if self.User == cell.Poster.text || self.User == "Master" {
+        if name == cell.Poster.text || self.User == "Master" {
             cell.SendReminder.isHidden = false
         }
         
         cell.InnerTable.reloadData()
         
         if self.deleteState == true {
-            
-            if cell.Poster.text == User || User == "Master" {
+        
+            if cell.Poster.text == name || self.User == "Master" {
         cell.DeleteButton.isHidden = false
         cell.DeleteButton.layer.cornerRadius = 5
         cell.DeleteButton.accessibilityLabel = Polling.ListOfPolls[indexPath.row].PollId
@@ -493,7 +579,9 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         cell.PollResults.addTarget(self, action: #selector(ViewResults(button:)), for: .touchUpInside)
 
-        
+        if cell.isHidden {
+            Polling.RowHeight = 0
+        }
         return cell
         
     }
