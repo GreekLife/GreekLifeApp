@@ -26,11 +26,93 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
     
+    @IBOutlet weak var CodeView: UIView!
+    @IBOutlet weak var CodeBox1: UITextField!
+    @IBOutlet weak var CodeBox2: UITextField!
+    @IBOutlet weak var CodeBox3: UITextField!
+    @IBOutlet weak var CodeBox4: UITextField!
+    @IBOutlet weak var Errors: UITextField!
+    
+    @IBOutlet weak var CancelCode: UIButton!
+    
+    @IBOutlet weak var EnterCode: UIButton!
+    
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     
     var ref: DatabaseReference!
     var email:String = ""
 
+    @IBOutlet weak var BlurBackground: UIVisualEffectView!
+    
+    @IBOutlet weak var text: UITextField!
+    @IBOutlet weak var ForgotPassword: UIButton!
+    @IBOutlet weak var CreateAccount: UIButton!
+    @IBAction func CreateAccount(_ sender: Any) {
+        Errors.layer.borderColor = UIColor.clear.cgColor
+        Errors.layer.borderWidth = 0
+        Errors.isHidden = false
+        text.isHidden = false
+        BlurBackground.isHidden = false
+        BlurBackground.effect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+        EnterCode.layer.cornerRadius = 5
+        CodeView.isHidden = false
+        CancelCode.isHidden = false
+        EnterCode.isHidden = false
+        CodeBox1.text = "0"
+        CodeBox2.text = "0"
+        CodeBox3.text = "0"
+        CodeBox4.text = "0"
+    }
+    @IBAction func ForgotPassword(_ sender: Any) {
+        performSegue(withIdentifier: "ForgotPassword", sender: self)
+    }
+    @IBAction func EnterCode(_ sender: Any) {
+        let enteredCode = CodeBox1.text! + CodeBox2.text! + CodeBox3.text! + CodeBox4.text!
+        if CodeBox1.text == "" || CodeBox2.text == "" || CodeBox3.text == "" || CodeBox4.text == "" {
+            return
+        }
+        ref = Database.database().reference()
+        ref.child("CreateAccount").child("GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
+            let code = snapshot.value as? Int
+            if code == Int(enteredCode) {
+                self.performSegue(withIdentifier: "CreateAccount", sender: self)
+            }
+            else {
+                self.Errors.text = "You entered the incorrect code"
+            }
+        }) {(error) in
+            print(error.localizedDescription)
+            print("Could not read code from database")
+            self.Errors.text = "An error occured"
+        }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField.text == "" {
+            textField.text = "0"
+            return
+        }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.text = ""
+        return
+    }
+
+    
+    @IBAction func CancelCode(_ sender: Any) {
+        Errors.isHidden = true
+        text.isHidden = true
+        CancelCode.isHidden = true
+        EnterCode.isHidden = true
+        BlurBackground.isHidden = true
+        CodeView.isHidden = true
+        CodeBox1.text = ""
+        CodeBox2.text = ""
+        CodeBox3.text = ""
+        CodeBox4.text = ""
+    }
+    
     @IBAction func Login(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
@@ -132,14 +214,14 @@ class LoginController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
-
-        self.Username.delegate = self;
-        self.Password.delegate = self;
+        CodeBox1.delegate = self
+        CodeBox2.delegate = self
+        CodeBox3.delegate = self
+        CodeBox4.delegate = self
         
         let pic = BackgroundPic;
         pic?.image = UIImage(named: "Docs/School.png");
@@ -164,6 +246,11 @@ class LoginController: UIViewController, UITextFieldDelegate {
         LoginLabel.layer.cornerRadius = LoginLabel.frame.height / 2;
         LoginLabel.alpha = 0.7
         
+        CreateAccount.layer.cornerRadius = LoginLabel.frame.height / 2;
+        CreateAccount.alpha = 0.7
+        
+        ForgotPassword.layer.cornerRadius = LoginLabel.frame.height / 2;
+        ForgotPassword.alpha = 0.7
 
         Title_Pic.image = UIImage(named: "Docs/Logos/Letters1.png");
 
@@ -176,25 +263,5 @@ class LoginController: UIViewController, UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
-    }
-    
-    
-    
-    
-    
-    
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
