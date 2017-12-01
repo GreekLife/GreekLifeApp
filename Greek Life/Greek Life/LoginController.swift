@@ -67,7 +67,10 @@ class LoginController: UIViewController, UITextFieldDelegate {
         performSegue(withIdentifier: "ForgotPassword", sender: self)
     }
     @IBAction func EnterCode(_ sender: Any) {
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         let enteredCode = CodeBox1.text! + CodeBox2.text! + CodeBox3.text! + CodeBox4.text!
+        
+        //should actually be testing for nil on type cast
         if CodeBox1.text == "" || CodeBox2.text == "" || CodeBox3.text == "" || CodeBox4.text == "" {
             return
         }
@@ -75,27 +78,57 @@ class LoginController: UIViewController, UITextFieldDelegate {
         ref.child("CreateAccount").child("GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
             let code = snapshot.value as? Int
             if code == Int(enteredCode) {
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
                 self.performSegue(withIdentifier: "CreateAccount", sender: self)
             }
             else {
                 self.Errors.text = "You entered the incorrect code"
+                let delay = DispatchTime.now() + 3
+                DispatchQueue.main.asyncAfter(deadline: delay) {
+                    self.Errors.text = ""
+                }
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
             }
         }) {(error) in
             print(error.localizedDescription)
             print("Could not read code from database")
             self.Errors.text = "An error occured"
+            let delay = DispatchTime.now() + 3 
+            DispatchQueue.main.asyncAfter(deadline: delay) {
+                self.Errors.text = ""
+            }
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        self.EnterCode.isEnabled = true
         if textField.text == "" {
+            textField.text = "0"
+            return
+        }
+        let val = Int(textField.text!)
+        if val == nil {
             textField.text = "0"
             return
         }
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField.text!.count > 0 {
+        if let nextField = textField.superview?.viewWithTag(textField.tag + 1) as? UITextField {
+            nextField.becomeFirstResponder()
+        } else {
+            textField.resignFirstResponder()
+            }
+        }
+        return true
+    }
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.text = ""
+        self.EnterCode.isEnabled = false
         return
     }
 
