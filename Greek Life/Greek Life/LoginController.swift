@@ -65,6 +65,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     @IBAction func ForgotPassword(_ sender: Any) {
         performSegue(withIdentifier: "ForgotPassword", sender: self)
+        
     }
     @IBAction func EnterCode(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
@@ -298,3 +299,48 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
 
 }
+
+class ForgotPassword: UIViewController {
+    
+    @IBOutlet weak var ResetPassword: UIButton!
+    @IBOutlet weak var Email: UITextField!
+    
+    
+    @IBAction func ResetPassword(_ sender: Any) {
+        if Email.text == "" {
+            let alert = UIAlertController(title: "Invalid", message: "Please enter an email address", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        else {
+            Auth.auth().sendPasswordReset(withEmail: Email.text!) { error in
+                if error != nil {
+                let alert = UIAlertController(title: "Invalid", message: "Account could not be reset", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                print(error!)
+                }
+                else {
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
+        
+    }
+    
+    @IBAction func Cancel(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        ResetPassword.layer.cornerRadius = 5
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+}
+
