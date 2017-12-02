@@ -14,6 +14,7 @@ import FirebaseStorage
 
 struct NewUser {
     static var email = ""
+    static var userID = ""
 }
 
 class AccountDetails: UIViewController {
@@ -60,15 +61,17 @@ class AccountDetails: UIViewController {
             UIApplication.shared.endIgnoringInteractionEvents();
             return
         }
+        //Validate email
         Auth.auth().createUser(withEmail: Email.text!, password: Password.text!) { (user, Error) in
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
                 if (Error == nil) {
                         if(user != nil){
                             print("Account created")
+                            NewUser.email = self.Email.text!
+                            NewUser.userID = (user?.uid)!
                             self.performSegue(withIdentifier: "Profile", sender: self);
-                             NewUser.email = self.Email.text!
-                        }
+                    }
                 }
             else {
                 if let myError = Error?.localizedDescription{
@@ -150,8 +153,8 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         }
         var image = "Empty"
         if self.pickedImage != nil {
-            let imageName = "\(self.BrotherName.text!).png"
-            let storageRef = Storage.storage().reference().child(imageName)
+            image = NewUser.userID
+            let storageRef = Storage.storage().reference().child(image)
             if let uploadData = UIImagePNGRepresentation(self.pickedImage!){
                 storageRef.putData(uploadData, metadata: nil, completion:{ (metadata, error) in
                     if error != nil {
@@ -161,7 +164,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         image = imageURL
                     }
                     var username = ""
-                    if self.Position.text == "Master" {
+                    if self.Position.text == "Master" { //noone can identify as master in their profile so this should be valid. Actually master will never be created except by me with placeholders.
                         username = "Master"
                     }
                     else {
@@ -178,11 +181,11 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         "Postition": self.Position.text!,
                         "Username": username,
                         "Email": NewUser.email,
-                        "Image": image
+                        "Image": image,
+                        "UserID": NewUser.userID
                     ]
                     
                     self.CreateProfile(newPostData: newUserData) {(success ,error) in
-                        self.dismiss(animated: true, completion: nil)
                         self.performSegue(withIdentifier: "ProfileCreated", sender: self)
                     }
                 
@@ -194,7 +197,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        ref.child("Users").child(self.BrotherName.text!).setValue(newPostData)
+        ref.child("Users").child(NewUser.userID).setValue(newPostData)
         completion(true, nil)
     }
     
@@ -206,8 +209,15 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            ImageButton.contentMode = .scaleAspectFill //this aint right
+        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+            ImageButton.contentMode = .center //this aint right
+            
+            ImageButton.setBackgroundImage(editedImage, for: .normal)
+            ImageButton.setTitle("", for: .normal)
+            self.pickedImage = editedImage
+        }
+        else if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            ImageButton.contentMode = .center //this aint right
             ImageButton.setBackgroundImage(pickedImage, for: .normal)
             ImageButton.setTitle("", for: .normal)
             self.pickedImage = pickedImage

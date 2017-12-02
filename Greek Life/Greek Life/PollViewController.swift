@@ -21,6 +21,7 @@ struct Poll: Comparable {
     var PollId: String
     var Epoch: Double
     var Poster: String
+    var PosterId: String
     var PollTitle: String
     var Options: [String]
     var UpVotes: [[String]]
@@ -42,9 +43,10 @@ struct Poll: Comparable {
         self.VoteBtn = []
         self.OptionTxt = []
         self.Drawn = false
+        self.PosterId = ""
     }
     
-    public init(pollId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
+    public init(pollId: String, PosterId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
     {
         self.PollId = pollId
         self.Epoch = Epoch
@@ -57,6 +59,7 @@ struct Poll: Comparable {
         self.VoteBtn = []
         self.OptionTxt = []
         self.Drawn = false
+        self.PosterId = PosterId
     }
     
     
@@ -75,6 +78,7 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     var rowHeight: CGFloat = 0
     var InnerPollRef: DatabaseReference!
     var User = LoggedIn.User["Username"] as! String
+    var UserId = LoggedIn.User["UserID"] as! String
     let first = LoggedIn.User["First Name"] as? String ?? "Unknown"
     let last = LoggedIn.User["Last Name"] as? String ?? "Unknown"
     
@@ -202,6 +206,7 @@ struct Polling {
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var User = LoggedIn.User["Username"] as! String
+    var UserId = LoggedIn.User["UserID"] as! String
     let first = LoggedIn.User["First Name"] as! String
     let last = LoggedIn.User["Last Name"] as! String
     var PollRef: DatabaseReference!
@@ -367,12 +372,14 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                     if let Poster = pollDictionary["Poster"] as? String {
                                         if let Title = pollDictionary["Title"] as? String {
                                             if let Options = pollDictionary["Options"] as? [String] {
-                                                var retrievedPoll = Poll(pollId: Id, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
+                                                if let PosterId = pollDictionary["PosterId"] as? String {
+                                                    var retrievedPoll = Poll(pollId: Id, PosterId: PosterId, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
                                                 for _ in retrievedPoll.Options {
                                                     retrievedPoll.UpVotes.append([])
                                                     retrievedPoll.Placing.append("0%")
                                                 }
                                                 Polling.ListOfPolls.append(retrievedPoll)
+                                                }
                                             }
                                         }
                                     }
@@ -493,7 +500,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let name = "\(first) \(last)"
          Polling.OuterIndex = 0
         //Get expected height of table
         var size: CGFloat = 0
@@ -508,7 +514,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.isHidden = false
         
         if deleteState == true {
-            if name != Polling.ListOfPolls[indexPath.row].Poster && self.User != "Master" {
+            if UserId != Polling.ListOfPolls[indexPath.row].PosterId && self.User != "Master" {
                 cell.isHidden = true
             }
         }
@@ -552,7 +558,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
         cell.SendReminder.isHidden = true
         
-        if name == cell.Poster.text || self.User == "Master" {
+        if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.User == "Master" {
             cell.SendReminder.isHidden = false
         }
         
@@ -560,7 +566,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         if self.deleteState == true {
         
-            if cell.Poster.text == name || self.User == "Master" {
+            if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.User == "Master" {
         cell.DeleteButton.isHidden = false
         cell.DeleteButton.layer.cornerRadius = 5
         cell.DeleteButton.accessibilityLabel = Polling.ListOfPolls[indexPath.row].PollId

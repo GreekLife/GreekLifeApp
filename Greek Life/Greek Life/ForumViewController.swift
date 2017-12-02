@@ -69,6 +69,7 @@ class ForumPost: Hashable, Comparable {
     var PostId:String
     var Post:String
     var Poster:String
+    var PosterId: String
     var PostDate:Double
     var PostTitle:String
     var User:String
@@ -78,7 +79,7 @@ class ForumPost: Hashable, Comparable {
     }
     var Epoch:Double
     
-    init(uId: Int, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Comment]){
+    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Comment]){
         self.uid = uId;
         self.Post = Post;
         self.Poster = Poster;
@@ -88,6 +89,7 @@ class ForumPost: Hashable, Comparable {
         self.User = User;
         self.Epoch = Epoch;
         self.PostId = PostId;
+        self.PosterId = PosterId;
     }
 }
 
@@ -101,6 +103,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     var ref: DatabaseReference!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     let username = LoggedIn.User["Username"] as! String
+    let userId = LoggedIn.User["UserID"] as! String
     var deleting = false
     
     var rowHeight:CGFloat = 0
@@ -240,6 +243,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                     if let postId = postDictionary["PostId"] as? String {
                                         if let date = postDictionary["Epoch"] as? Double {
                                             if let user = postDictionary["Username"] as? String {
+                                                if let userId = postDictionary["PosterId"] as? String {
                                                 var newComment:[Comment] = []
                                                 var x = 0
                                                 if let comments = postDictionary["Comments"] as? [String : [String:AnyObject]] {
@@ -259,10 +263,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                         newComment.append(newComm)
                                                     }
                                                 }
-                                                    let newPost = ForumPost(uId: count, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
+                                                    let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
                                         Posts.append(newPost);
                                         count += 1
-                                                
+                                                }
                                         }
                                        }
                                 }
@@ -367,7 +371,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 cell.DeleteButton.accessibilityLabel = Postings.AllPosts![indexPath.row].PostId
                 cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
             }
-            else if(Postings.AllPosts![indexPath.row].User == self.username){
+            else if(Postings.AllPosts![indexPath.row].PosterId == self.userId){
                 cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
                 cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
                 cell.Post.text = Postings.AllPosts![indexPath.row].Post

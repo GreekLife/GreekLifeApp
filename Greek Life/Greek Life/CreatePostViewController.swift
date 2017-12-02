@@ -98,6 +98,7 @@ class CreatePostViewController: UIViewController {
     func UploadPost(){
         let FirstName = LoggedIn.User["First Name"] as! String
         let LastName = LoggedIn.User["Last Name"] as! String
+        let posterId = LoggedIn.User["UserID"] as! String
         var Name = FirstName + " " + LastName
         if(self.user == "Master"){
             Name = Name + " (Master)"
@@ -115,7 +116,8 @@ class CreatePostViewController: UIViewController {
                 "Poster": Name,
                 "Epoch": Epoch,
                 "Username": self.user,
-                "PostId": postId
+                "PostId": postId,
+                "PosterId": posterId
                 ] as [String : Any]
             PostData(newPostData: Post){(success, error) in
                 guard success else{
@@ -127,7 +129,7 @@ class CreatePostViewController: UIViewController {
                 }
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
-               // performSegue(withIdentifier: "BackToForum", sender: self)
+                self.performSegue(withIdentifier: "BackToForum", sender: self)
             }
         }
     }

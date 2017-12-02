@@ -210,14 +210,19 @@ class LoginController: UIViewController, UITextFieldDelegate {
         }
     }
     func getEmail(name: String, completion: @escaping (Bool, Any?, Error?) -> Void){
-        var userEmail = ""
         ref = Database.database().reference()
-        self.ref.child("Users").child(name).observeSingleEvent(of: .value, with: { (snapshot) in
-            if let user = snapshot.value as? [String:Any] {
-                print("User found");
-                LoggedIn.User = user;
-                userEmail = user["Email"] as! String;
-                completion(true, userEmail, nil);
+        self.ref.child("Users").observe(.value, with: { (snapshot) in
+            if let user = snapshot.value as? [String:[String:Any]] {
+                for (key, _ ) in user {
+                    if (user[key]!["Username"] as! String) == name || (user[key]!["Email"] as! String) == name {
+                        print("User found");
+                        LoggedIn.User = user[key]!;
+                        let userEmail = user[key]!["Email"] as! String;
+                        completion(true, userEmail, nil);
+                        return
+                    }
+                }
+                completion(false, nil, nil)
             }
             else{
                 print("The username is incorrect.");

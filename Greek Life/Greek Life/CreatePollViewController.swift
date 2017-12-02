@@ -113,13 +113,14 @@ class CreatePollViewController: UIViewController {
         let postId = UUID().uuidString
         let first = LoggedIn.User["First Name"] as! String
         let last = LoggedIn.User["Last Name"] as! String
+        let UserId = LoggedIn.User["UserID"] as! String
         let Poster =  "\(first) \(last)"
         let Title = Question.text
         for option in Options {
             ArrayOfOptions.append(option.text!)
         }
 
-        let newPoll = Poll(pollId: postId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
+        let newPoll = Poll(pollId: postId, PosterId: UserId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
         return newPoll
     }
     
@@ -134,7 +135,8 @@ class CreatePollViewController: UIViewController {
             "PostId" : poll.PollId,
             "Poster" : poll.Poster,
             "Title" : poll.PollTitle,
-            "Options": poll.Options
+            "Options": poll.Options,
+            "PosterId": poll.PosterId
         ]
         let ThePollKey = [poll.PollId : ThePoll]
         ref = Database.database().reference()
