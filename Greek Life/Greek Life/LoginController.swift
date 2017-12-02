@@ -77,8 +77,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
         }
         ref = Database.database().reference()
         ref.child("CreateAccount").child("GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
-            let code = snapshot.value as? Int
-            if code == Int(enteredCode) {
+            let code = snapshot.value as? String
+            if code == enteredCode {
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
                 self.performSegue(withIdentifier: "CreateAccount", sender: self)
