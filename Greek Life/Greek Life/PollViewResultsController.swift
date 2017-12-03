@@ -17,6 +17,11 @@ class ViewAllResults: UIViewController, UITableViewDataSource, UITableViewDelega
     var poll: [String]!
     @IBOutlet weak var TableView: UITableView!
     
+    @IBAction func Back(_ sender: Any) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.TableView.separatorStyle = UITableViewCellSeparatorStyle.none
@@ -50,7 +55,7 @@ class ViewResultsControllerCell: UITableViewCell {
     
     @IBOutlet weak var Option: UIButton!
     @IBOutlet weak var Names: UILabel!
-    
+ 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -70,6 +75,10 @@ class ViewResultsController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var TableView: UITableView!
     var tempIndexPath = 0
 
+    @IBAction func Back(_ sender: Any) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.TableView.separatorStyle = UITableViewCellSeparatorStyle.none

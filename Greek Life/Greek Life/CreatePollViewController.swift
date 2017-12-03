@@ -28,6 +28,12 @@ class CreatePollViewController: UIViewController {
     var NumberOfOptons = 1
     var Options:[UITextField] = []
     var OptionsLbl: [UILabel] = []
+    
+    @IBAction func Cancel(_ sender: Any) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
+    
     @IBAction func AddButton(_ sender: Any) { //Function that controls adding an option
         let newestOption = Options[NumberOfOptons-1]
         let newOriginY = newestOption.frame.origin.y + newestOption.frame.size.height + 10
@@ -61,12 +67,14 @@ class CreatePollViewController: UIViewController {
             let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default)
             emptyQ.addAction(okAction)
             self.present(emptyQ, animated: true, completion: nil)
+            return
         }
         else if Option1.text == "" {
             let AtLeastOne = UIAlertController(title: "Alert!", message: "You must have at least one option", preferredStyle: UIAlertControllerStyle.alert)
             let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default)
             AtLeastOne.addAction(okAction)
             self.present(AtLeastOne, animated: true, completion: nil)
+            return
         }
         else {
             var isValid = false
@@ -87,9 +95,9 @@ class CreatePollViewController: UIViewController {
                 let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default)
                 AtLeastOne.addAction(okAction)
                 self.present(AtLeastOne, animated: true, completion: nil)
+                return
+                }
             }
-        }
-        
         }
     
     @IBAction func DeleteOption(_ sender: Any) {
@@ -153,12 +161,15 @@ class CreatePollViewController: UIViewController {
         ref.child("PollOptions").updateChildValues(ThePollOptionKey)
         self.activityIndicator.stopAnimating();
         UIApplication.shared.endIgnoringInteractionEvents();
+        self.presentingViewController?.dismiss(animated: true)
         }
         else {
             let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
             print("Internet Connection not Available!")
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
         }
     }
 

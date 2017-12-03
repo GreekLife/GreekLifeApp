@@ -223,7 +223,12 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisWeek: UIButton!
     @IBOutlet weak var ThisMonth: UIButton!
-
+    
+    
+    @IBAction func BackHome(_ sender: Any) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
     @IBAction func Newest(_ sender: Any) {
         thisMonthClicked = false
         thisWeekClicked = false

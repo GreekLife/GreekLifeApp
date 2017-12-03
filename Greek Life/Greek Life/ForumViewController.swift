@@ -119,6 +119,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         performSegue(withIdentifier: "WritePost", sender: self)
     }
     
+    @IBAction func BackHome(_ sender: Any) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
     
     @IBAction func Deleting(_ sender: Any) {
         if deleting == true {

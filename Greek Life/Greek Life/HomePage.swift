@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class HomePageCell: UITableViewCell {
     
@@ -39,11 +40,63 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var Profile: UIButton!
     @IBOutlet weak var GoogleDrive: UIButton!
     @IBOutlet weak var Info: UIButton!
+    @IBAction func Signout(_ sender: Any) {
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+            print("Signed out");
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+        self.presentingViewController?.dismiss(animated: true)
+    }
+    
+    func buttonClicked(sender: UIButton)
+    {
+        switch sender.tag {
+        case 2:
+          //  performSegue(withIdentifier: "InstantMessaging", sender: self)
+            break;
+        case 3:
+            performSegue(withIdentifier: "Forum", sender: self)
+            break;
+        case 4:
+            performSegue(withIdentifier: "Calendar", sender: self)
+            break;
+        case 5:
+            performSegue(withIdentifier: "Poll", sender: self)
+            break;
+        case 6:
+            performSegue(withIdentifier: "Members", sender: self)
+            break;
+        case 7:
+          //  performSegue(withIdentifier: "Profile", sender: self)
+            break;
+        case 8:
+           // performSegue(withIdentifier: "GoogleDrive", sender: self)
+            break;
+        case 9:
+            performSegue(withIdentifier: "Info", sender: self)
+            break;
+        default: ()
+            break;
+        }
+    }
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Add targets
+        InstantMessaging.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        Forum.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        Calendar.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        Poll.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        Members.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        Profile.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        GoogleDrive.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+        Info.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
+
         //Styles
         InstantMessaging.layer.borderColor = UIColor.white.cgColor
         InstantMessaging.layer.borderWidth = 1
