@@ -92,15 +92,17 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = InnerTable.dequeueReusableCell(withIdentifier: "InnerCell") as! InnerPollTableViewCell
+        
         cell.OptionText.isEditable = false
         cell.OptionText.isScrollEnabled = false
         cell.OptionText.isSelectable = false
         cell.OptionText.textAlignment = .justified
         cell.OptionText.layer.cornerRadius = 5
         cell.OptionText.layer.borderWidth = 0.8
-        cell.OptionText.layer.borderColor = UIColor.black.cgColor
+        cell.OptionText.layer.borderColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1).cgColor
         cell.VoteBtn.layer.borderWidth = 0.8
         cell.VoteBtn.layer.cornerRadius = cell.VoteBtn.frame.width/2
+        cell.VoteBtn.layer.borderColor = UIColor(displayP3Red: 212/255, green: 175/255, blue: 55/255, alpha: 1).cgColor
         cell.VoteBtn.backgroundColor = .clear
         let name = "\(self.first) \(self.last)"
 
@@ -304,6 +306,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         self.view.backgroundColor = UIColor.lightGray
         self.TableView.allowsSelection = false
+        
         //Get poll info for each existing poll
         if Reachability.isConnectedToNetwork() {
         GetListOfPolls() {(success) in
