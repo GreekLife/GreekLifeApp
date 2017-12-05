@@ -40,6 +40,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var Profile: UIButton!
     @IBOutlet weak var GoogleDrive: UIButton!
     @IBOutlet weak var Info: UIButton!
+    
+    let defaults:UserDefaults = UserDefaults.standard
+    
     @IBAction func Signout(_ sender: Any) {
         let firebaseAuth = Auth.auth()
         do {
@@ -48,6 +51,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         } catch let signOutError as NSError {
             print ("Error signing out: %@", signOutError)
         }
+        defaults.set(nil, forKey: "Password")
         self.presentingViewController?.dismiss(animated: true)
     }
     

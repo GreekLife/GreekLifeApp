@@ -1110,9 +1110,10 @@
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Docs/Logos/Logo3Generic.png" translatesAutoresizingMaskIntoConstraints="NO" id="ZDt-5Q-NkE">
-                                <rect key="frame" x="94" y="28" width="189" height="164"/>
+                                <rect key="frame" x="106" y="28" width="164" height="164"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="164" id="28R-UZ-AxB"/>
+                                    <constraint firstAttribute="width" secondItem="ZDt-5Q-NkE" secondAttribute="height" multiplier="1:1" id="ET2-hB-eva"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -1124,14 +1125,14 @@
                             <constraint firstItem="yuK-1h-iW7" firstAttribute="centerY" secondItem="fd7-58-aDQ" secondAttribute="centerY" id="FSp-k8-bp6"/>
                             <constraint firstItem="ovU-nD-tde" firstAttribute="trailing" secondItem="fd7-58-aDQ" secondAttribute="trailingMargin" id="HrN-Z0-cyf"/>
                             <constraint firstAttribute="bottom" secondItem="Axx-Vz-mRZ" secondAttribute="bottom" constant="20" symbolic="YES" id="Je5-CF-Amt"/>
-                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="leading" secondItem="zyw-Kc-Y1r" secondAttribute="leading" constant="27" id="JiX-Ho-m9N"/>
-                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="leading" secondItem="fd7-58-aDQ" secondAttribute="leadingMargin" constant="78" id="KbG-qF-mbb"/>
-                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="trailing" secondItem="zyw-Kc-Y1r" secondAttribute="trailing" constant="-25" id="T4g-WN-crL"/>
+                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="leading" secondItem="zyw-Kc-Y1r" secondAttribute="leading" constant="39" id="JiX-Ho-m9N"/>
+                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="leading" secondItem="fd7-58-aDQ" secondAttribute="leadingMargin" constant="90" id="KbG-qF-mbb"/>
+                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="trailing" secondItem="zyw-Kc-Y1r" secondAttribute="trailing" constant="-38" id="T4g-WN-crL"/>
                             <constraint firstItem="ovU-nD-tde" firstAttribute="leading" secondItem="zg0-04-Mdp" secondAttribute="trailing" constant="27" id="UIf-bg-4g1"/>
                             <constraint firstItem="Axx-Vz-mRZ" firstAttribute="centerX" secondItem="4rH-FW-hVr" secondAttribute="centerX" id="VIy-Cr-QAL"/>
                             <constraint firstItem="zg0-04-Mdp" firstAttribute="top" secondItem="4rH-FW-hVr" secondAttribute="bottom" constant="1" id="VY5-Wq-f7J"/>
                             <constraint firstItem="aND-CW-Lgs" firstAttribute="centerX" secondItem="fd7-58-aDQ" secondAttribute="centerX" id="XUC-r9-fAu"/>
-                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="centerX" secondItem="fd7-58-aDQ" secondAttribute="centerX" constant="1" id="Yu8-jf-j1V"/>
+                            <constraint firstItem="ZDt-5Q-NkE" firstAttribute="centerX" secondItem="fd7-58-aDQ" secondAttribute="centerX" constant="0.5" id="Yu8-jf-j1V"/>
                             <constraint firstItem="4rH-FW-hVr" firstAttribute="centerX" secondItem="zyw-Kc-Y1r" secondAttribute="centerX" id="dis-qU-DeR"/>
                             <constraint firstItem="zg0-04-Mdp" firstAttribute="leading" secondItem="fd7-58-aDQ" secondAttribute="leadingMargin" id="fOm-hx-WuV"/>
                             <constraint firstItem="zyw-Kc-Y1r" firstAttribute="top" secondItem="ZDt-5Q-NkE" secondAttribute="bottom" constant="44" id="np7-QD-QyC"/>
