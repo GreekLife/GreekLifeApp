@@ -37,7 +37,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Login: UIButton!
     
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
-    
+    let defaults:UserDefaults = UserDefaults.standard
     var ref: DatabaseReference!
     var email:String = ""
     
@@ -148,7 +148,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         CodeBox4.text = ""
     }
     
-    @IBAction func Login(_ sender: Any) {
+    @IBAction func Login(_ sender: Any?) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
@@ -240,6 +240,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
             if(user != nil){
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
+                self.defaults.set(self.Username.text!, forKey: "Username")
+                self.defaults.set(self.Password.text!, forKey: "Password")
+                self.Password.text = ""
                 self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
             }
             else {
@@ -257,6 +260,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let username = defaults.string(forKey: "Username") {
+            self.Username.text = username
+            if let password = defaults.string(forKey: "Password") {
+                self.Password.text = password
+                self.Login(nil)
+            }
+        }
         LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
         CodeBox1.delegate = self
         CodeBox2.delegate = self
