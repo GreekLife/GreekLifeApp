@@ -18,13 +18,11 @@ struct LoggedIn {
 
 
 class LoginController: UIViewController, UITextFieldDelegate {
-    @IBOutlet weak var BackgroundPic: UIImageView!
     @IBOutlet weak var Username: UITextField!
-    @IBOutlet weak var Password_Icon: UIImageView!
-    @IBOutlet weak var User_Icon: UIImageView!
     @IBOutlet weak var Title_Pic: UIImageView!
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
+    @IBOutlet weak var SubView: UIView!
     
     @IBOutlet weak var CodeView: UIView!
     @IBOutlet weak var CodeBox1: UITextField!
@@ -36,24 +34,25 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var CancelCode: UIButton!
     
     @IBOutlet weak var EnterCode: UIButton!
+    @IBOutlet weak var Login: UIButton!
     
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     
     var ref: DatabaseReference!
     var email:String = ""
-
-    @IBOutlet weak var BlurBackground: UIVisualEffectView!
     
     @IBOutlet weak var text: UITextField!
     @IBOutlet weak var ForgotPassword: UIButton!
     @IBOutlet weak var CreateAccount: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
+        CreateAccount.isHidden = true
+        ForgotPassword.isHidden = true
+        SubView.isHidden = true
         Errors.layer.borderColor = UIColor.clear.cgColor
         Errors.layer.borderWidth = 0
         Errors.isHidden = false
         text.isHidden = false
-        BlurBackground.isHidden = false
-        BlurBackground.effect = UIBlurEffect(style: UIBlurEffectStyle.dark)
+        text.text = ""
         EnterCode.layer.cornerRadius = 5
         CodeView.isHidden = false
         CancelCode.isHidden = false
@@ -135,11 +134,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     
     @IBAction func CancelCode(_ sender: Any) {
+        CreateAccount.isHidden = false
+        ForgotPassword.isHidden = false
+        SubView.isHidden = false
         Errors.isHidden = true
         text.isHidden = true
         CancelCode.isHidden = true
         EnterCode.isHidden = true
-        BlurBackground.isHidden = true
         CodeView.isHidden = true
         CodeBox1.text = ""
         CodeBox2.text = ""
@@ -262,39 +263,24 @@ class LoginController: UIViewController, UITextFieldDelegate {
         CodeBox3.delegate = self
         CodeBox4.delegate = self
         
-        let pic = BackgroundPic;
-        pic?.image = UIImage(named: "Docs/School.png");
-        pic?.alpha = 0.3;
-        
         //self.addBackground(imageName: "AEPiDocs/School.png", contextMode: .scaleAspectFit);
+        Username.layer.borderColor = UIColor.black.cgColor
+        Username.layer.borderWidth = 1
+        Username.layer.cornerRadius = 5
         
-        Username.alpha = 0.4;
-        Username.backgroundColor = .black;
-        Username.backgroundColor?.withAlphaComponent(0.3);
-        let userplace = NSAttributedString(string: "Username", attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 1.0)]);
-        Username.attributedPlaceholder = userplace;
-        Username.textColor = .white;
+        Password.layer.borderColor = UIColor.black.cgColor
+        Password.layer.borderWidth = 1
+        Password.layer.cornerRadius = 5
         
-        Password.alpha = 0.4;
-        Password.backgroundColor = .black;
-        Password.backgroundColor?.withAlphaComponent(0.3);
-        let passwordplace = NSAttributedString(string: "Password", attributes: [NSForegroundColorAttributeName : UIColor(white: 1, alpha: 1.0)]);
-        Password.attributedPlaceholder = passwordplace;
-        Password.textColor = .white;
+        Login.layer.cornerRadius = 5
+        
+        SubView.layer.borderColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1).cgColor
+        SubView.layer.borderWidth = 3
+        SubView.layer.cornerRadius = 10
+
         
         LoginLabel.layer.cornerRadius = LoginLabel.frame.height / 2;
-        LoginLabel.alpha = 0.7
         
-        CreateAccount.layer.cornerRadius = LoginLabel.frame.height / 2;
-        CreateAccount.alpha = 0.7
-        
-        ForgotPassword.layer.cornerRadius = LoginLabel.frame.height / 2;
-        ForgotPassword.alpha = 0.7
-
-        Title_Pic.image = UIImage(named: "Docs/Logos/Letters1.png");
-
-        User_Icon.image = UIImage(named: "Docs/User_Icon.png");
-        Password_Icon.image = UIImage(named: "Docs/Password_Icon.png");
     }
     
     override func didReceiveMemoryWarning() {
