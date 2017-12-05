@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import FirebaseStorage
 
 class ForumCellTableViewCell: UITableViewCell {
     
@@ -73,13 +74,15 @@ class ForumPost: Hashable, Comparable {
     var PostDate:Double
     var PostTitle:String
     var User:String
+    var ImageURL: String
+    var Image: UIImage
     var Comments = [Comment]()
     var hashValue: Int {
         return self.uid
     }
     var Epoch:Double
     
-    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Comment]){
+    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Image: String, Epoch:Double, Comments:[Comment]){
         self.uid = uId;
         self.Post = Post;
         self.Poster = Poster;
@@ -90,6 +93,8 @@ class ForumPost: Hashable, Comparable {
         self.Epoch = Epoch;
         self.PostId = PostId;
         self.PosterId = PosterId;
+        self.ImageURL = Image
+        self.Image = UIImage(named: "Icons/Profile.png")!
     }
 }
 
@@ -247,33 +252,36 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                     if let postId = postDictionary["PostId"] as? String {
                                         if let date = postDictionary["Epoch"] as? Double {
                                             if let user = postDictionary["Username"] as? String {
-                                                if let userId = postDictionary["PosterId"] as? String {
-                                                var newComment:[Comment] = []
-                                                var x = 0
-                                                if let comments = postDictionary["Comments"] as? [String : [String:AnyObject]] {
-                                                for comm in comments {
-                                                        x = x + 1
-                                                        var commEpoch = comm.value["Epoch"] as? Double
-                                                        if commEpoch == nil {
-                                                            commEpoch = 0
+                                                if let imageURL = postDictionary["PosterImage"] as? String {
+                                                    if let userId = postDictionary["PosterId"] as? String {
+                                                        var newComment:[Comment] = []
+                                                        var x = 0
+                                                        if let comments = postDictionary["Comments"] as? [String : [String:AnyObject]] {
+                                                            for comm in comments {
+                                                                x = x + 1
+                                                                var commEpoch = comm.value["Epoch"] as? Double
+                                                                if commEpoch == nil {
+                                                                    commEpoch = 0
+                                                                }
+                                                                let commPost = comm.value["Post"] as! String
+                                                                let commPoster = comm.value["Poster"] as! String
+                                                                var commDate = ""
+                                                                if(commEpoch != 0){
+                                                                    commDate = CreateDate.getCurrentDate(epoch: commEpoch!)
+                                                                }
+                                                                let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost)
+                                                                newComment.append(newComm)
+                                                            }
                                                         }
-                                                        let commPost = comm.value["Post"] as! String
-                                                        let commPoster = comm.value["Poster"] as! String
-                                                        var commDate = ""
-                                                        if(commEpoch != 0){
-                                                         commDate = CreateDate.getCurrentDate(epoch: commEpoch!)
-                                                        }
-                                                        let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost)
-                                                        newComment.append(newComm)
+
+                                                        let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Image: imageURL, Epoch: date, Comments: newComment)
+                                                        Posts.append(newPost);
+                                                        count += 1
                                                     }
                                                 }
-                                                    let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
-                                        Posts.append(newPost);
-                                        count += 1
-                                                }
+                                            }
                                         }
-                                       }
-                                }
+                                    }
                                 }
                             }
                         }
@@ -302,17 +310,18 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 print("Internet Connection not Available!")
                 if(response != nil){
                     print(response!)
-                }
+                    }
                 return
-            }
+                }
             Postings.AllPosts = PostList
             self.numberOfCells = PostList.count
             self.SortByDate(Posts: Postings.AllPosts!)
-            self.TableView.reloadData();
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-
-    }
+                self.ReadImages() {(response) in
+                    self.TableView.reloadData();
+                    self.activityIndicator.stopAnimating();
+                    UIApplication.shared.endIgnoringInteractionEvents();
+                }
+            }
         }
         else {
             let internetError =  Banner.ErrorBanner(errorTitle:"You're not connected to the Internet")
@@ -353,6 +362,35 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
     
+    func ReadImages(completion: @escaping (Bool) -> Void) {
+        for count in 0...(Postings.AllPosts!.count - 1) {
+        if Postings.AllPosts![count].ImageURL != "Empty" {
+            let storageRef = Storage.storage().reference(forURL: Postings.AllPosts![count].ImageURL)
+            storageRef.getData(maxSize: 10000000) { (data, error) -> Void in
+        if error == nil {
+            if let pic = UIImage(data: data!) {
+                Postings.AllPosts![count].Image = pic
+                completion(true)
+            }
+            else {
+                Postings.AllPosts![count].Image = UIImage(named: "Icons/Profile.png")!
+                completion(true)
+            }
+        }
+        else {
+            print("Error Loading picture")
+            print(error!)
+            completion(false)
+            }
+        }
+      }
+        else {
+            Postings.AllPosts![count].Image = UIImage(named: "Icons/Profile.png")!
+            }
+    }
+        return
+}
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -364,6 +402,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
+        cell.PosterImage?.image = Postings.AllPosts![indexPath.row].Image
+        
         if(self.deleting == true){
             cell.DeleteButton.isHidden = false
             if(self.username == "Master"){

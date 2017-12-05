@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 struct APoll {
     static var poll: Poll!
@@ -16,11 +17,10 @@ class ViewAllResults: UIViewController, UITableViewDataSource, UITableViewDelega
     
     var poll: [String]!
     @IBOutlet weak var TableView: UITableView!
-    
+
     @IBAction func Back(_ sender: Any) {
         self.presentingViewController?.dismiss(animated: true)
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,7 +104,7 @@ class ViewResultsController: UIViewController, UITableViewDelegate, UITableViewD
         if segue.identifier == "ViewOptionResults" {
             let AllResults = segue.destination as? ViewAllResults
             var names:[String] = []
-            for name in APoll.poll.UpVotes[tempIndexPath] {
+            for name in APoll.poll.UpVoteNames[tempIndexPath] {
                 names.append(name)
             }
             AllResults?.poll = names

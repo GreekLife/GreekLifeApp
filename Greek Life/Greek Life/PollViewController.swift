@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseStorage
 
 struct Poll: Comparable {
     
@@ -30,6 +31,9 @@ struct Poll: Comparable {
     var VoteBtn: [UIButton]
     var OptionTxt: [UITextView]
     var Drawn: Bool
+    var ImageURL: String
+    var Image: UIImage
+    var UpVoteNames: [[String]]
     
     public init() {
         self.PollId = ""
@@ -37,6 +41,7 @@ struct Poll: Comparable {
         self.Poster = ""
         self.PollTitle = ""
         self.Options = []
+        self.UpVoteNames = [[]]
         self.UpVotes = [[]]
         self.Placing = []
         self.PercentLbl = []
@@ -44,9 +49,11 @@ struct Poll: Comparable {
         self.OptionTxt = []
         self.Drawn = false
         self.PosterId = ""
+        self.ImageURL = "Empty"
+        self.Image = UIImage(named: "Icons/Profile.png")!
     }
     
-    public init(pollId: String, PosterId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
+    public init(pollId: String, ImageURL: String, PosterId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
     {
         self.PollId = pollId
         self.Epoch = Epoch
@@ -60,6 +67,9 @@ struct Poll: Comparable {
         self.OptionTxt = []
         self.Drawn = false
         self.PosterId = PosterId
+        self.ImageURL = ImageURL
+        self.Image = UIImage(named: "Icons/Profile.png")!
+        self.UpVoteNames = [[]]
     }
     
     
@@ -92,7 +102,6 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = InnerTable.dequeueReusableCell(withIdentifier: "InnerCell") as! InnerPollTableViewCell
-        
         cell.OptionText.isEditable = false
         cell.OptionText.isScrollEnabled = false
         cell.OptionText.isSelectable = false
@@ -104,10 +113,9 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         cell.VoteBtn.layer.cornerRadius = cell.VoteBtn.frame.width/2
         cell.VoteBtn.layer.borderColor = UIColor(displayP3Red: 212/255, green: 175/255, blue: 55/255, alpha: 1).cgColor
         cell.VoteBtn.backgroundColor = .clear
-        let name = "\(self.first) \(self.last)"
 
         for voter in Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row] {
-            if voter == name {
+            if voter == UserId {
                 cell.VoteBtn.backgroundColor = .lightGray
             }
         }
@@ -134,7 +142,7 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         let strVal = (cell.PercentLbl.text!).prefix(upTo: percentIndex!)
         let value = Int(strVal)
         
-        if placings.max() == placings.min() && placings.max() == value {
+        if (placings.max() == placings.min()) && (placings.max() == value) {
             cell.PercentLbl.textColor = .purple
         }
         else if value == placings.max() {
@@ -145,21 +153,19 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         }
     }
         self.rowHeight = cell.OptionText.frame.origin.y + cell.OptionText.frame.size.height
-        
         return cell
     }
     
     func UpVoteOption(button: UIButton) {
-        let name = "\(self.first) \(self.last)"
         if Reachability.isConnectedToNetwork() == true {
         self.InnerPollRef = Database.database().reference()
         InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
-            if snapshot.hasChild(name){
-                FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").child(name).removeValue()
+            if snapshot.hasChild(self.UserId){
+                FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").child(self.UserId).removeValue()
             }
             else {
                 let name = "\(self.first) \(self.last)"
-                self.InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").updateChildValues([name:name])
+                self.InnerPollRef.child("PollOptions").child(button.accessibilityLabel!).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])
             }
         })
         }
@@ -168,8 +174,10 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
             print("Internet Connection not Available!")
         }
     }
+
     
-    
+    var PollRef: DatabaseReference!
+
     @IBOutlet weak var PollerPicture: UIImageView!
     @IBOutlet weak var Poster: UILabel!
     @IBOutlet weak var Poll: UITextView!
@@ -195,6 +203,7 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     func setUpTable(){
         InnerTable?.delegate = self
         InnerTable?.dataSource = self
+        
   }
 }
 
@@ -220,7 +229,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var oldestClicked = false
     var thisWeekClicked = false
     var thisMonthClicked = false
-
+    
     @IBOutlet weak var Newest: UIButton!
     @IBOutlet weak var Oldest: UIButton!
     @IBOutlet weak var ThisWeek: UIButton!
@@ -300,7 +309,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.TableView.reloadData()
         self.TableView.scrollToRow(at: indexPath as IndexPath, at: UITableViewScrollPosition.top, animated: true)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
@@ -315,6 +324,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                 self.view.addSubview(BadPostRequest)
                 print("Internet Connection not Available!")
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
                 return
             }
             Polling.ListOfPolls = mergeSorting.mergeSort(Polling.ListOfPolls)
@@ -324,6 +335,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                         BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                         self.view.addSubview(BadPostRequest)
                         print("Internet Connection not Available!")
+                        self.activityIndicator.stopAnimating();
+                        UIApplication.shared.endIgnoringInteractionEvents();
                         return
                     }
                 //Calculate Percentages --
@@ -352,8 +365,15 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                             PollNumber += 1
                     }//--
                     //Create elements for options
-                    Polling.fetched = true
+                    self.ReadImages() {(response) in
+                        Polling.fetched = true
                         self.TableView.reloadData()
+                        self.activityIndicator.stopAnimating();
+                        UIApplication.shared.endIgnoringInteractionEvents();
+                    }
+
+                    
+
             } // --
         }  // Finished Accumulating Data
         }
@@ -362,9 +382,9 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
             print("Internet Connection not Available!")
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
         }
-        self.activityIndicator.stopAnimating();
-        UIApplication.shared.endIgnoringInteractionEvents();
     }
         func GetListOfPolls(completion: @escaping (Bool) -> Void) {
             PollRef = Database.database().reference()
@@ -381,12 +401,17 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                         if let Title = pollDictionary["Title"] as? String {
                                             if let Options = pollDictionary["Options"] as? [String] {
                                                 if let PosterId = pollDictionary["PosterId"] as? String {
-                                                    var retrievedPoll = Poll(pollId: Id, PosterId: PosterId, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
+                                                    if let imageURL = pollDictionary["ImageURL"] as? String {
+                                                    
+                                                            var retrievedPoll = Poll(pollId: Id, ImageURL: imageURL, PosterId: PosterId, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
                                                 for _ in retrievedPoll.Options {
                                                     retrievedPoll.UpVotes.append([])
+                                                    retrievedPoll.UpVoteNames.append([])
                                                     retrievedPoll.Placing.append("0%")
                                                 }
                                                 Polling.ListOfPolls.append(retrievedPoll)
+                                                    
+                                                }
                                                 }
                                             }
                                         }
@@ -407,7 +432,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func CalculateUpVotes(completion: @escaping (Bool) -> Void) {
         PollRef = Database.database().reference()
-        PollRef.child("PollOptions").observe(.value, with: { (snapshot) in
+        PollRef.child("PollOptions").observe( .value, with: { (snapshot) in
             self.refreshPollUpvotes()
             let snapshot = snapshot.children
             for snap in snapshot {
@@ -429,7 +454,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                 var pollCount = 0
                                 for poll in Polling.ListOfPolls {
                                     if poll.PollId == childSnapshot.key {
-                                        Polling.ListOfPolls[pollCount].UpVotes[num! - 1].append(name.value) //search for the poll id instead of using indexes on list of polls
+                                        Polling.ListOfPolls[pollCount].UpVotes[num! - 1].append(name.key) //search for the poll id instead of using indexes on list of polls
+                                        Polling.ListOfPolls[pollCount].UpVoteNames[num! - 1].append(name.value)
                                     }
                                     pollCount += 1
                                   }
@@ -458,6 +484,35 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             refresh += 1
         }
     }
+    
+    func ReadImages(completion: @escaping (Bool) -> Void) {
+        for count in 0...(Polling.ListOfPolls.count - 1) {
+            if Polling.ListOfPolls[count].ImageURL != "Empty" {
+                let storageRef = Storage.storage().reference(forURL: Polling.ListOfPolls[count].ImageURL)
+                storageRef.getData(maxSize: 10000000) { (data, error) -> Void in
+                    if error == nil {
+                        if let pic = UIImage(data: data!) {
+                            Polling.ListOfPolls[count].Image = pic
+                            completion(true)
+                        }
+                        else {
+                            Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Profile.png")!
+                            completion(true)
+                        }
+                    }
+                    else {
+                        print("Error Loading picture")
+                        print(error!)
+                        completion(false)
+                    }
+                }
+            }
+            else {
+                Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Profile.png")!
+            }
+        }
+    }
+        
     
     func DeleteSelectedPoll(button: UIButton) {
         if Reachability.isConnectedToNetwork() == true {
@@ -504,6 +559,9 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if Polling.fetched == false {
+            return 0
+        }
         return Polling.ListOfPolls.count
     }
     
@@ -542,7 +600,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 cell.isHidden = true
             }
         }
-        
         Polling.OuterIndex = indexPath.row
         let date = CreateDate.getTimeSince(epoch: Polling.ListOfPolls[indexPath.row].Epoch)
         cell.PollerPicture.layer.cornerRadius = cell.PollerPicture.frame.size.width/2
@@ -555,7 +612,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         GenericTools.FrameToFitTextView(View: cell.Poll)
         
         cell.PollDate.text = date
-        cell.PollerPicture.image = UIImage(named: "Docs/user_icon.png")
+        cell.PollerPicture.image = Polling.ListOfPolls[indexPath.row].Image
         cell.Poster.text = Polling.ListOfPolls[indexPath.row].Poster
         
         cell.InnerTable.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 10
@@ -603,7 +660,5 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Polling.RowHeight
     }
-    
-    
 
 }

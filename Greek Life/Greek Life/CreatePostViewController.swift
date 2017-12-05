@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseStorage
 
 class CreatePostViewController: UIViewController {
     
@@ -18,6 +19,8 @@ class CreatePostViewController: UIViewController {
     @IBOutlet weak var WritePost: UIButton!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     let user = LoggedIn.User["Username"] as! String
+    let name = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
+    let image = LoggedIn.User["Image"] as! String
     var CreatePostRef: DatabaseReference!
 
     @IBAction func BackToForum(_ sender: Any) {
@@ -48,9 +51,29 @@ class CreatePostViewController: UIViewController {
         self.PostTitle.layer.borderColor = UIColor.black.cgColor
         self.PostTitle.layer.cornerRadius = 5
 
-        self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
-        self.PosterName.text = self.user
-        // Do any additional setup after loading the view.
+        self.PosterName.text = self.name
+        
+        if self.image != "Empty" {
+            let storageRef = Storage.storage().reference(forURL: self.image)
+            storageRef.getData(maxSize: 10000000) { (data, error) -> Void in
+                if error == nil {
+                    if let pic = UIImage(data: data!) {
+                        self.PosterImage.image = pic
+                    }
+                    else {
+                        self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
+                    }
+                }
+                else {
+                    print("Error Loading picture")
+                    self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
+                    print(error!)
+                }
+            }
+        }
+        else {
+            self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -99,6 +122,7 @@ class CreatePostViewController: UIViewController {
         let FirstName = LoggedIn.User["First Name"] as! String
         let LastName = LoggedIn.User["Last Name"] as! String
         let posterId = LoggedIn.User["UserID"] as! String
+        let posterImageURL = LoggedIn.User["Image"] as! String
         var Name = FirstName + " " + LastName
         if(self.user == "Master"){
             Name = Name + " (Master)"
@@ -117,7 +141,8 @@ class CreatePostViewController: UIViewController {
                 "Epoch": Epoch,
                 "Username": self.user,
                 "PostId": postId,
-                "PosterId": posterId
+                "PosterId": posterId,
+                "PosterImage": posterImageURL
                 ] as [String : Any]
             PostData(newPostData: Post){(success, error) in
                 guard success else{

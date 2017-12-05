@@ -127,8 +127,9 @@ class CreatePollViewController: UIViewController {
         for option in Options {
             ArrayOfOptions.append(option.text!)
         }
+        let imageURL = LoggedIn.User["Image"] as! String
 
-        let newPoll = Poll(pollId: postId, PosterId: UserId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
+        let newPoll = Poll(pollId: postId, ImageURL: imageURL, PosterId: UserId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
         return newPoll
     }
     
@@ -144,7 +145,8 @@ class CreatePollViewController: UIViewController {
             "Poster" : poll.Poster,
             "Title" : poll.PollTitle,
             "Options": poll.Options,
-            "PosterId": poll.PosterId
+            "PosterId": poll.PosterId,
+            "ImageURL": poll.ImageURL
         ]
         let ThePollKey = [poll.PollId : ThePoll]
         ref = Database.database().reference()

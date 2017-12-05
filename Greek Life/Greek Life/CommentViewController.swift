@@ -82,6 +82,8 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         ReadCommentsForPost()
+        self.TableView.allowsSelection = false
+        
 
         //---Add styles---//
             }
