@@ -5,7 +5,8 @@ target 'Greek Life' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
 	pod ‘Firebase’
 	pod 'Firebase/Database'
-	pod 'Firebase/Auth'
+	pod 'Firebase/Auth’
+	pod ‘Firebase/Storage’
 	pod 'IQKeyboardManagerSwift'
   use_frameworks!
 
@@ -15,6 +16,7 @@ target 'Greek Life' do
 	pod ‘Firebase’	
 	pod 'Firebase/Database'
 	pod 'Firebase/Auth'
+	pod ‘Firebase/Storage’
     inherit! :search_paths
     # Pods for testing
   end

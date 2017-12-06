@@ -28,9 +28,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -44,9 +42,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -60,9 +56,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -76,9 +70,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -92,9 +84,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -108,9 +98,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -124,9 +112,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -140,9 +126,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -156,9 +140,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -188,9 +170,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -204,9 +184,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
-            endingLineNumber = "481"
-            landmarkName = "getPosts(completion:)"
-            landmarkType = "7">
+            endingLineNumber = "481">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -693,7 +671,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "79"
             endingLineNumber = "79"
-            landmarkName = "LoginAlert(problem:)"
+            landmarkName = "EnterCode(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -789,7 +767,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "131"
             endingLineNumber = "131"
-            landmarkName = "validateEmail()"
+            landmarkName = "textFieldDidBeginEditing(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -805,7 +783,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "106"
             endingLineNumber = "106"
-            landmarkName = "getEmail(name:completion:)"
+            landmarkName = "textFieldDidEndEditing(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -884,7 +862,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "220"
-            endingLineNumber = "220">
+            endingLineNumber = "220"
+            landmarkName = "getEmail(name:completion:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -915,7 +895,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "260"
             endingLineNumber = "260"
-            landmarkName = "Newest(_:)"
+            landmarkName = "getPosts(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -931,7 +911,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "259"
             endingLineNumber = "259"
-            landmarkName = "Newest(_:)"
+            landmarkName = "getPosts(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -947,7 +927,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "258"
             endingLineNumber = "258"
-            landmarkName = "Newest(_:)"
+            landmarkName = "getPosts(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -995,7 +975,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "323"
             endingLineNumber = "323"
-            landmarkName = "ThisWeek(_:)"
+            landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

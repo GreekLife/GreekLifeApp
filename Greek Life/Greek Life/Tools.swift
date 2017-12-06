@@ -23,6 +23,18 @@ public class GenericTools {
         newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         View.frame = newFrame
     }
+    
+    class func ResizeImage(image: UIImage, newWidth: CGFloat) -> UIImage {
+        
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+        image.draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
 }
 
 public class mergeSorting {
@@ -114,6 +126,33 @@ public class CreateDate {
         formater.dateFormat = "MMM dd YYYY, hh:mm"
         let dateString = formater.string(from: date as Date)
         return dateString
+    }
+}
+
+//Jon's Better Version of CreateDate
+public class theFormatter
+{
+    class func timeStringFromDate(_ date:Date)->String
+    {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter.string(from:date)
+    }
+    
+    class func dateStringFromDate(_ date:Date)->String
+    {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter.string(from:date)
+    }
+    
+    class func jonahStringFromDate(_ date:Date)->String
+    {
+        let formater = DateFormatter()
+        formater.dateFormat = "MMM dd YYYY, hh:mm"
+        return formater.string(from: date)
     }
 }
 
