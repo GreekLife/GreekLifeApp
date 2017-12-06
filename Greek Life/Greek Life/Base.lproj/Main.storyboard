@@ -2744,10 +2744,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="oO0-SK-Of4">
-                                                    <rect key="frame" x="32" y="33.5" width="317" height="288"/>
+                                                    <rect key="frame" x="32" y="33.5" width="317" height="273"/>
                                                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" secondItem="oO0-SK-Of4" secondAttribute="height" multiplier="331:301" id="UFQ-2X-LD0"/>
+                                                        <constraint firstAttribute="height" constant="273" id="7EA-J9-o7M"/>
+                                                        <constraint firstAttribute="width" constant="317" id="RGt-Uz-cNs"/>
+                                                        <constraint firstAttribute="width" secondItem="oO0-SK-Of4" secondAttribute="height" multiplier="331:301" constant="16.790697674418595" id="UFQ-2X-LD0"/>
+                                                        <constraint firstAttribute="width" secondItem="oO0-SK-Of4" secondAttribute="height" multiplier="317:273" id="r7Q-Zp-9aP"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -2770,17 +2773,31 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WGA-96-OVW">
+                                                    <rect key="frame" x="49" y="323.5" width="46" height="24"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="46" id="P5R-Ia-Mn5"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                                    <state key="normal" title="Delete">
+                                                        <color key="titleColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="trailingMargin" secondItem="oO0-SK-Of4" secondAttribute="trailing" constant="11" id="1id-fC-ZQz"/>
+                                                <constraint firstItem="WGA-96-OVW" firstAttribute="top" secondItem="oO0-SK-Of4" secondAttribute="bottom" constant="17" id="7L3-Ai-N0X"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="U3w-76-das" secondAttribute="trailing" constant="10" id="Bgg-i2-iNj"/>
                                                 <constraint firstItem="9gs-NX-pX7" firstAttribute="top" secondItem="mjv-DC-Gxf" secondAttribute="topMargin" constant="6.5" id="Bva-xf-Bjv"/>
                                                 <constraint firstItem="oO0-SK-Of4" firstAttribute="leading" secondItem="mjv-DC-Gxf" secondAttribute="leadingMargin" constant="17" id="F0j-NW-yP5"/>
                                                 <constraint firstItem="oO0-SK-Of4" firstAttribute="top" secondItem="9gs-NX-pX7" secondAttribute="bottom" id="Nmz-Og-s4r"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="oO0-SK-Of4" secondAttribute="trailing" constant="11" id="Oxh-my-4FS"/>
                                                 <constraint firstItem="U3w-76-das" firstAttribute="leading" secondItem="9gs-NX-pX7" secondAttribute="trailing" id="Ugx-6s-RDM"/>
                                                 <constraint firstItem="U3w-76-das" firstAttribute="top" secondItem="mjv-DC-Gxf" secondAttribute="topMargin" constant="8" id="Xhs-FC-Ki1"/>
+                                                <constraint firstItem="WGA-96-OVW" firstAttribute="leading" secondItem="mjv-DC-Gxf" secondAttribute="leadingMargin" constant="34" id="cnJ-Q7-iby"/>
                                                 <constraint firstItem="9gs-NX-pX7" firstAttribute="leading" secondItem="mjv-DC-Gxf" secondAttribute="leadingMargin" constant="17" id="gBw-i6-lh9"/>
+                                                <constraint firstItem="oO0-SK-Of4" firstAttribute="leading" secondItem="mjv-DC-Gxf" secondAttribute="leadingMargin" constant="17" id="q1X-oj-Xbp"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -2788,6 +2805,7 @@
                                             <outlet property="Comment" destination="oO0-SK-Of4" id="o0f-wv-y8m"/>
                                             <outlet property="CommentDate" destination="U3w-76-das" id="Bws-0f-K7s"/>
                                             <outlet property="CommenterName" destination="9gs-NX-pX7" id="mpg-zX-kpb"/>
+                                            <outlet property="Delete" destination="WGA-96-OVW" id="SMe-7M-QK5"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -2829,8 +2847,8 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" id="Eqq-9E-Cum">
-                                        <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Leave comment..." textAlignment="natural" minimumFontSize="17" id="8pQ-EY-rjK">
-                                            <rect key="frame" x="59" y="7" width="300" height="30"/>
+                                        <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Leave comment..." textAlignment="natural" minimumFontSize="10" id="8pQ-EY-rjK">
+                                            <rect key="frame" x="61.5" y="7" width="250" height="30"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>

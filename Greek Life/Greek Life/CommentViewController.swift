@@ -15,6 +15,7 @@ class CommentTableViewCell: UITableViewCell {
     @IBOutlet weak var CommentDate: UILabel!
     @IBOutlet weak var CommenterName: UILabel!
     @IBOutlet weak var Comment: UITextView!
+    @IBOutlet weak var Delete: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,6 +36,8 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var ref: DatabaseReference!
     var CommentList:[Comment] = []
     let user = LoggedIn.User["Username"] as! String
+    let userName = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
+    let userId = LoggedIn.User["UserID"] as! String
 
     @IBAction func BackToForum(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -53,17 +56,22 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         let PostWords = components.filter { !$0.isEmpty }
         if comment == "" {
             let emptyError = UIAlertController(title: "Empty Comment", message: "Your Comment cannot be empty", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
             self.present(emptyError, animated: true, completion: nil)
         }
         else if PostWords.count > 200 {
             let emptyError = UIAlertController(title: "Too Large", message: "Your Comment cannot be larger than 200 words!", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
             self.present(emptyError, animated: true, completion: nil)
         }
         else {
             let NewComment = [
                 "Post": comment!,
-                "Poster": self.user,
-                "Epoch": date
+                "Poster": self.userName,
+                "Epoch": date,
+                "PosterId": userId
                 ] as [String : Any]
             PostData(newPostData: NewComment, completion: { (success, error) in
                 self.CommentBox.text = ""
@@ -104,9 +112,11 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                      if let comment = postDictionary["Post"] as? String {
                         if let commenter = postDictionary["Poster"] as? String {
                             if let commentDate = postDictionary["Epoch"] as? Double {
+                                if let commenterId = postDictionary["PosterId"] as? String {
                             let pDate = CreateDate.getCurrentDate(epoch: commentDate)
-                              let aComment = Comment(Poster: commenter, PostDate: pDate, PostEpoch: commentDate, Post: comment)
+                                let aComment = Comment(Poster: commenter, PostDate: pDate, PostEpoch: commentDate, Post: comment, PosterId: commenterId)
                                 self.CommentList.append(aComment)
+                        }
                       }
                     }
                   }
@@ -120,6 +130,11 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
             print("Could not retrieve object from database");
         }
     }
+    
+    @objc func DeleteBtn(button: UIButton) {
+        //delete it
+    }
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CommentCell", for: indexPath) as! CommentTableViewCell
         if(indexPath.row == 0){
@@ -132,8 +147,15 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             GenericTools.FrameToFitTextView(View: cell.Comment)
             self.rowHeight = cell.Comment.frame.origin.y + cell.Comment.frame.size.height
-            
+            cell.Delete.isHidden = true
+
             return cell
+        }
+        if CommentList[indexPath.row - 1].PosterId != self.userId {
+            cell.Delete.isHidden = true
+        }
+        else {
+            cell.Delete.addTarget(self, action: #selector(DeleteBtn(button:)), for: .touchUpInside)
         }
 
         //--Set Content--//

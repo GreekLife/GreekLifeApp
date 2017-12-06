@@ -48,12 +48,14 @@ class Comment: Comparable {
     var PostDate:String
     var Post:String
     var PostEpoch:Double
+    var PosterId: String
     
-    init(Poster:String, PostDate:String, PostEpoch:Double, Post:String){
+    init(Poster:String, PostDate:String, PostEpoch:Double, Post:String, PosterId: String){
         self.Poster = Poster;
         self.PostDate = PostDate;
         self.Post = Post;
         self.PostEpoch = PostEpoch;
+        self.PosterId = PosterId
     }
 }
 
@@ -265,11 +267,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                                 }
                                                                 let commPost = comm.value["Post"] as! String
                                                                 let commPoster = comm.value["Poster"] as! String
+                                                                let commPosterId = comm.value["PosterId"] as! String
                                                                 var commDate = ""
                                                                 if(commEpoch != 0){
                                                                     commDate = CreateDate.getCurrentDate(epoch: commEpoch!)
                                                                 }
-                                                                let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost)
+                                                                let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost, PosterId: commPosterId)
                                                                 newComment.append(newComm)
                                                             }
                                                         }
