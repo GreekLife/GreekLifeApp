@@ -34,7 +34,6 @@
 		6DCAFF2A1F9AC46F00D1311E /* Greek_LifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */; };
 		6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD95E691F9D306400894B0F /* Tools.swift */; };
 		6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */; };
-		6DF4D1311FA287EF00EA86E8 /* HomepageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF4D1301FA287EF00EA86E8 /* HomepageViewController.swift */; };
 		6DF4D1331FA28F5400EA86E8 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = 6DF4D1321FA28F5400EA86E8 /* Icons */; };
 		6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF68DB61FACD989006E0B76 /* CommentViewController.swift */; };
 		6DF7DC5E1FBA118700155E23 /* PollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF7DC5D1FBA118700155E23 /* PollViewController.swift */; };
@@ -98,7 +97,6 @@
 		6DCAFF2B1F9AC46F00D1311E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6DD95E691F9D306400894B0F /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePollViewController.swift; sourceTree = "<group>"; };
-		6DF4D1301FA287EF00EA86E8 /* HomepageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomepageViewController.swift; sourceTree = "<group>"; };
 		6DF4D1321FA28F5400EA86E8 /* Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Icons; sourceTree = "<group>"; };
 		6DF68DB61FACD989006E0B76 /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		6DF7DC5D1FBA118700155E23 /* PollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollViewController.swift; sourceTree = "<group>"; };
@@ -183,7 +181,6 @@
 				6DCAFF151F9AC46F00D1311E /* Info.plist */,
 				6D9A88801F9BCE820051B71F /* LoginController.swift */,
 				6DD95E691F9D306400894B0F /* Tools.swift */,
-				6DF4D1301FA287EF00EA86E8 /* HomepageViewController.swift */,
 				6D2E2E3C1FA67B0D001BF8D0 /* ForumViewController.swift */,
 				6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */,
 				6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */,
@@ -556,7 +553,6 @@
 				6D1896671FB6C4FB0087C3EC /* ChapterInfoViewController.swift in Sources */,
 				6DAC82A61FB2954F00D468B1 /* CalendarViewController.swift in Sources */,
 				6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */,
-				6DF4D1311FA287EF00EA86E8 /* HomepageViewController.swift in Sources */,
 				6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */,
 				6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */,
 				6DF7DC5E1FBA118700155E23 /* PollViewController.swift in Sources */,

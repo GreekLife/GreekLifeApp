@@ -42,7 +42,7 @@ class ChapterInfoViewController: UIViewController {
     override func viewDidLoad() {
       super.viewDidLoad()
         ReadMaster()
-        Image.image = UIImage(named: "Docs/Logos/Letters1.png")
+        Image.image = UIImage(named: "Docs/Logos/Logo4.png")
         LoadConfiguration.loadConfig()
         ChapterName.text = Configuration.Config!["ChapterName"] as? String ?? "" + " Chapter"
         FoundingDate.text = Configuration.Config!["FoundingDate"] as? String ?? ""

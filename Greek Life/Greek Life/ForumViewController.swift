@@ -47,15 +47,17 @@ class Comment: Comparable {
     var Poster:String
     var PostDate:String
     var Post:String
+    var CommentId: String
     var PostEpoch:Double
     var PosterId: String
     
-    init(Poster:String, PostDate:String, PostEpoch:Double, Post:String, PosterId: String){
+    init(Poster:String, PostDate:String, PostEpoch:Double, Post:String, PosterId: String, CommentId: String){
         self.Poster = Poster;
         self.PostDate = PostDate;
         self.Post = Post;
         self.PostEpoch = PostEpoch;
         self.PosterId = PosterId
+        self.CommentId = CommentId
     }
 }
 
@@ -78,13 +80,13 @@ class ForumPost: Hashable, Comparable {
     var User:String
     var ImageURL: String
     var Image: UIImage
-    var Comments = [Comment]()
+    var Comments: [Int]
     var hashValue: Int {
         return self.uid
     }
     var Epoch:Double
     
-    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Image: String, Epoch:Double, Comments:[Comment]){
+    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Image: String, Epoch:Double, Comments:[Int]){
         self.uid = uId;
         self.Post = Post;
         self.Poster = Poster;
@@ -131,12 +133,15 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     
+    @IBOutlet weak var DeleteBtn: UIBarButtonItem!
     @IBAction func Deleting(_ sender: Any) {
         if deleting == true {
             deleting = false
+            self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
         }
         else {
             deleting = true
+            self.DeleteBtn.tintColor = .red
         }
         self.TableView.reloadData()
     }
@@ -256,24 +261,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                             if let user = postDictionary["Username"] as? String {
                                                 if let imageURL = postDictionary["PosterImage"] as? String {
                                                     if let userId = postDictionary["PosterId"] as? String {
-                                                        var newComment:[Comment] = []
+                                                        var newComment:[Int] = []
                                                         var x = 0
                                                         if let comments = postDictionary["Comments"] as? [String : [String:AnyObject]] {
-                                                            for comm in comments {
+                                                            for _ in comments {
                                                                 x = x + 1
-                                                                var commEpoch = comm.value["Epoch"] as? Double
-                                                                if commEpoch == nil {
-                                                                    commEpoch = 0
-                                                                }
-                                                                let commPost = comm.value["Post"] as! String
-                                                                let commPoster = comm.value["Poster"] as! String
-                                                                let commPosterId = comm.value["PosterId"] as! String
-                                                                var commDate = ""
-                                                                if(commEpoch != 0){
-                                                                    commDate = CreateDate.getCurrentDate(epoch: commEpoch!)
-                                                                }
-                                                                let newComm = Comment(Poster: commPoster, PostDate: commDate, PostEpoch: commEpoch!, Post: commPost, PosterId: commPosterId)
-                                                                newComment.append(newComm)
+                                                                newComment.append(x)
                                                             }
                                                         }
 
@@ -359,10 +352,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var buttonIdentifier: String = ""
     func DeleteSelectedPollInternal(action: UIAlertAction) {
-        if action.title == "Delete"{
             FirebaseDatabase.Database.database().reference(withPath: "Forum").child(self.buttonIdentifier).removeValue()
+            self.deleting = false
+            self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
             self.TableView.reloadData()
-        }
     }
     
     func ReadImages(completion: @escaping (Bool) -> Void) {
@@ -405,25 +398,19 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
+        cell.PosterImage?.contentMode = .scaleToFill
         cell.PosterImage?.image = Postings.AllPosts![indexPath.row].Image
         
         if(self.deleting == true){
             cell.DeleteButton.isHidden = false
-            if(self.username == "Master"){
-                cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-                cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-                cell.Post.text = Postings.AllPosts![indexPath.row].Post
-                let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-                cell.PostDate.text = date
+            cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
+            cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
+            cell.Post.text = Postings.AllPosts![indexPath.row].Post
+            let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
+            cell.PostDate.text = date
+            if self.username == "Master" || Postings.AllPosts![indexPath.row].PosterId == self.userId {
                 cell.DeleteButton.accessibilityLabel = Postings.AllPosts![indexPath.row].PostId
                 cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
-            }
-            else if(Postings.AllPosts![indexPath.row].PosterId == self.userId){
-                cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
-                cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
-                cell.Post.text = Postings.AllPosts![indexPath.row].Post
-                let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
-                cell.PostDate.text = date
             }
             else {
                 cell.isHidden = true
@@ -463,7 +450,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
         cell.NumberOfComments.text = "\(Postings.AllPosts![indexPath.row].Comments.count) Comments"
-        return(cell)
+        return cell
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

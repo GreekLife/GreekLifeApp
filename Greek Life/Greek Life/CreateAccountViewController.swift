@@ -124,6 +124,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     var pickedImage: UIImage!
     
     let positionOptions = ["Brother", "Alumni", "Pledge", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
+    var existingBrotherNames: [String] = []
     
     @IBOutlet weak var Create: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
@@ -134,9 +135,23 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             self.present(empty, animated: true, completion: nil)
             return
         }
+        if FirstName.text! == "Master" || LastName.text! == "Master" || BrotherName.text! == "Master" || FirstName.text! == "master" || LastName.text! == "master" || BrotherName.text! == "master" {
+            let masterNotAllowed = UIAlertController(title: "Warning!", message: "You can not use the name Master in your profile.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            masterNotAllowed.addAction(okAction)
+            self.present(masterNotAllowed, animated: true, completion: nil)
+            return
+        }
+        
         //validate birthday
         //validate grad date
-        //validate position
+        if existingBrotherNames.index(of: BrotherName.text!) != nil { //Needs to be tested
+            let invalid = UIAlertController(title: "Invalid", message: "The brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            invalid.addAction(okAction)
+            self.present(invalid, animated: true, completion: nil)
+            return
+        }
         if positionOptions.index(of: Position.text!) == nil {
             let invalid = UIAlertController(title: "Invalid", message: "Invalid position", preferredStyle: UIAlertControllerStyle.alert)
             let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
@@ -154,7 +169,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         var image = "Empty"
         if self.pickedImage != nil {
             image = NewUser.userID
-            let storageRef = Storage.storage().reference().child(image)
+            let storageRef = Storage.storage().reference().child("ProfilePictures/\(image)")
             if let uploadData = UIImagePNGRepresentation(self.pickedImage!){
                 storageRef.putData(uploadData, metadata: nil, completion:{ (metadata, error) in
                     if error != nil {
@@ -230,10 +245,25 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         dismiss(animated: true, completion: nil)
     }
     
-    
+    func getBrotherNames() {
+            ref = Database.database().reference()
+            self.ref.child("Users").observe(.value, with: { (snapshot) in
+                for snap in snapshot.children{
+                    if let childSnapshot = snap as? DataSnapshot
+                    {
+                        if let postDictionary = childSnapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                            if let brotherName = postDictionary["BrotherName"] as? String {
+                            self.existingBrotherNames.append(brotherName)
+                            }
+                        }
+                    }
+                }
+        })
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        getBrotherNames()
         Create.layer.cornerRadius = 5
         ImageButton.layer.borderColor = UIColor.black.cgColor
         ImageButton.layer.borderWidth = 1

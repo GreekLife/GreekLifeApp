@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 class MasterControllsViewController: UIViewController {
     
@@ -57,6 +58,12 @@ class MasterControllsViewController: UIViewController {
     @IBAction func SendNotification(_ sender: Any) {
     }
     
+    @IBAction func PostNews(_ sender: Any) {
+        performSegue(withIdentifier: "PostNews", sender: self)
+
+    }
+    
+    
 }
 
 class KickPrototypeCell: UITableViewCell {
@@ -64,10 +71,101 @@ class KickPrototypeCell: UITableViewCell {
     @IBOutlet weak var Name: UILabel!
 }
 
+class PostNews: UIViewController {
+    
+    @IBOutlet weak var News: UITextView!
+    @IBOutlet weak var Post: UIButton!
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
+    let user = LoggedIn.User["Username"] as! String
+    let name = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
+    var CreatePostRef: DatabaseReference!
+
+    @IBAction func PostNews(_ sender: Any) {
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator, view: self.view);
+        let components = News.text.components(separatedBy: .whitespacesAndNewlines)
+        let PostWords = components.filter { !$0.isEmpty }
+        
+        let valid = validate(words: PostWords.count)
+        
+        if(valid == true)
+        {
+            UploadPost()
+        }
+        
+    }
+    
+     func validate(words:Int)->Bool{
+        if(words < 10) {
+            let emptyError = UIAlertController(title: "Too Small", message: "Post must be at least 10 words", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
+            self.present(emptyError, animated: true, completion: nil)
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            return false
+        }
+        else if(words > 400){
+            let emptyError = UIAlertController(title: "Too Large", message: "Post must be no more than 400 words", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            emptyError.addAction(okAction)
+            self.present(emptyError, animated: true, completion: nil)
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            return false
+        }
+    
+        return true
+    }
+    
+    func UploadPost(){
+        let Epoch = Date().timeIntervalSince1970
+        let Posting = News.text
+        let postId = UUID().uuidString
+        
+        //let Picture = LoggedIn.User["Picture"]
+        if(Posting != nil){
+            let Post = [
+                "Post": Posting!,
+                "Epoch": Epoch,
+                "PostId": postId,
+                ] as [String : Any]
+            PostData(newPostData: Post){(success, error) in
+                guard success else{
+                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not post.")
+                    BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                    self.view.addSubview(BadPostRequest)
+                    print("Internet Connection not Available!")
+                    return
+                }
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
+                self.performSegue(withIdentifier: "PostNews", sender: self)
+            }
+        }
+    }
+    
+    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
+        CreatePostRef = Database.database().reference()
+        let pID = newPostData["PostId"] as! String
+        self.CreatePostRef.child("News").child(pID).setValue(newPostData)
+        completion(true, nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        News.text = ""
+        News.layer.cornerRadius = 10
+        News.layer.borderWidth = 1
+        Post.layer.cornerRadius = 5
+    }
+    
+}
+
 class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var ref: DatabaseReference!
     var memberList:[String] = []
+    var memberId:[String] = []
 
     @IBOutlet weak var TableView: UITableView!
     
@@ -75,7 +173,7 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return memberList.count
     }
     @IBAction func Back(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+        self.presentingViewController?.dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,8 +190,19 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.delete) {
-            //code to delete member id
+            let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly kick this member?", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Kick", style: UIAlertActionStyle.default, handler: KickMember)
+            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            verify.addAction(destructorAction)
+            self.present(verify, animated: true, completion: nil)
+            tempIndex = indexPath.row
         }
+    }
+    var tempIndex = 0
+    func KickMember(action: UIAlertAction) {
+        FirebaseDatabase.Database.database().reference(withPath: "Users").child(self.memberId[tempIndex]).removeValue()
+        tempIndex = 0
     }
     
     override func viewDidLoad() {
@@ -103,14 +212,21 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         //Code that executes if another child is added in as a User in the Firebase Database
         ref.child("Users").observe(.value, with: { (snapshot) in
             for snap in snapshot.children {
+                self.memberId.removeAll()
+                self.memberList.removeAll()
                 if let childsnap = snap as? DataSnapshot
                 {
                     if let dictionary = childsnap.value as? [String:AnyObject], dictionary.count > 0 {
                         let first = dictionary["First Name"] as? String ?? ""
                         let last = dictionary["Last Name"] as? String ?? ""
-                        let name = "\(first) \(last)"
-
+                        let id = dictionary["UserID"] as? String ?? ""
+                        let username = dictionary["Username"] as? String ?? ""
+                        let name = "\(first) \(last) (\(username))"
+                        
+                        if username != "Master" {
+                        self.memberId.append(id)
                         self.memberList.append(name)
+                        }
                     }
                     self.TableView.reloadData()
 

@@ -11,7 +11,7 @@ import FirebaseDatabase
 
 class CreatePollViewController: UIViewController {
 
-    @IBOutlet weak var Question: UITextField!
+    @IBOutlet weak var Question: UITextView!
     @IBOutlet weak var AddNewOption: UIButton!
     @IBOutlet weak var CreatePoll: UIButton!
     @IBOutlet weak var Option1: UITextField!
@@ -180,6 +180,7 @@ class CreatePollViewController: UIViewController {
         super.viewDidLoad()
         self.Option1.textColor = UIColor.black
         self.Option1.backgroundColor = UIColor.clear
+        Question.layer.cornerRadius = 5
         Options.append(self.Option1)
         OptionsLbl.append(self.DefaultOptionLbl)
         let screenWidth = screensize.width

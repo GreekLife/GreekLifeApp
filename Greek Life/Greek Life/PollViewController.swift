@@ -100,6 +100,10 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         return self.rowHeight
     }
     
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = InnerTable.dequeueReusableCell(withIdentifier: "InnerCell") as! InnerPollTableViewCell
         cell.OptionText.isEditable = false
@@ -137,20 +141,11 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         GenericTools.FrameToFitTextView(View: cell.OptionText)
         cell.VoteBtn.setTitle(String(Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row].count), for: .normal)
         cell.PercentLbl.text = Polling.ListOfPolls[Polling.OuterIndex].Placing[indexPath.row]
+        cell.PercentLbl.frame.origin.y = cell.VoteBtn.frame.origin.y
         if Polling.fetched == true {
         let percentIndex = cell.PercentLbl.text?.index(of: "%")
         let strVal = (cell.PercentLbl.text!).prefix(upTo: percentIndex!)
         let value = Int(strVal)
-        
-        if (placings.max() == placings.min()) && (placings.max() == value) {
-            cell.PercentLbl.textColor = .purple
-        }
-        else if value == placings.max() {
-            cell.PercentLbl.textColor = .green
-        }
-        else if value == placings.min() {
-            cell.PercentLbl.textColor =  .red
-        }
     }
         self.rowHeight = cell.OptionText.frame.origin.y + cell.OptionText.frame.size.height
         return cell
@@ -298,13 +293,17 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.TableView.reloadData()
         
     }
+    
+    @IBOutlet weak var DeleteBtn: UIBarButtonItem!
     @IBOutlet weak var TableView: UITableView!
     @IBAction func DeletePoll(_ sender: Any) {
         if deleteState == true {
             deleteState = false
+            self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
         }
         else {
-        deleteState = true
+            deleteState = true
+            self.DeleteBtn.tintColor = .red
         }
         self.TableView.reloadData()
         self.TableView.scrollToRow(at: indexPath as IndexPath, at: UITableViewScrollPosition.top, animated: true)
@@ -538,6 +537,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         if action.title == "Delete"{
             FirebaseDatabase.Database.database().reference(withPath: "Polls").child(self.buttonIdentifier).removeValue()
             FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.buttonIdentifier).removeValue()
+            self.deleteState = false
+            self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
             self.TableView.reloadData()
         }
     }
@@ -567,18 +568,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          Polling.OuterIndex = 0
-        //Get expected height of table
-        var size: CGFloat = 0
-        for option in Polling.ListOfPolls[indexPath.row].Options {
-            let newText = UITextView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-            newText.text = option
-            GenericTools.FrameToFitTextView(View: newText)
-            size += newText.frame.size.height
-            }
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
         cell.isHidden = false
-        
         if deleteState == true {
             if UserId != Polling.ListOfPolls[indexPath.row].PosterId && self.User != "Master" {
                 cell.isHidden = true
@@ -606,7 +597,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.InnerTable.separatorStyle = UITableViewCellSeparatorStyle.none
         cell.InnerTable.isScrollEnabled = false
         cell.InnerTable.allowsSelection = false
-        cell.InnerTable.frame.size.height = size + CGFloat(Polling.ListOfPolls[indexPath.row].Options.count * 3)
 
         cell.Poll.text = Polling.ListOfPolls[indexPath.row].PollTitle
         GenericTools.FrameToFitTextView(View: cell.Poll)
@@ -614,10 +604,20 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.PollDate.text = date
         cell.PollerPicture.image = Polling.ListOfPolls[indexPath.row].Image
         cell.Poster.text = Polling.ListOfPolls[indexPath.row].Poster
+        cell.InnerTable.reloadData()
+        //Get expected height of table
+        var size: CGFloat = 0
+        for option in Polling.ListOfPolls[indexPath.row].Options {
+            let newText = UITextView(frame: CGRect(x: 0, y: 0, width: 238, height: 0))
+            newText.text = option
+            GenericTools.FrameToFitTextView(View: newText)
+            size += newText.frame.size.height
+        }
         
+        cell.InnerTable.frame.size.height = size + CGFloat(Polling.ListOfPolls[indexPath.row].Options.count * 3)
         cell.InnerTable.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 10
-        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 15
-        cell.PollResults.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 15
+        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
+        cell.PollResults.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
         cell.SendReminder.frame.origin.y = cell.PollResults.frame.origin.y
         cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
         Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
@@ -627,10 +627,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell.SendReminder.isHidden = false
         }
         
-        cell.InnerTable.reloadData()
-        
         if self.deleteState == true {
-        
             if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.User == "Master" {
         cell.DeleteButton.isHidden = false
         cell.DeleteButton.layer.cornerRadius = 5
@@ -644,7 +641,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
         else {
-            
             cell.DeleteButton.isHidden = true
         }
         

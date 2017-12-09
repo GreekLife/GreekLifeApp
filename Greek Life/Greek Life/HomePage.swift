@@ -8,26 +8,83 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseDatabase
+
+class News: Comparable {
+    
+    static func ==(lhs: News, rhs: News) -> Bool {
+        return lhs.postId == rhs.postId
+    }
+    static func < (lhs: News, rhs: News) -> Bool {
+        return lhs.Epoch > rhs.Epoch
+    }
+    
+    var Epoch: Double
+    var Post: String
+    var postId: String
+    
+    init(Epoch: Double, Post: String, Id: String) {
+        self.Epoch = Epoch
+        self.Post = Post
+        self.postId = Id
+    }
+}
 
 class HomePageCell: UITableViewCell {
     
     @IBOutlet weak var news: UITextView!
-    
+    @IBOutlet weak var newsDate: UILabel!
+    @IBOutlet weak var Delete: UIButton!
     
 }
 
 class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return self.NewsPosts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! HomePageCell
-        cell.news.text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+        if username != "Master" {
+            cell.Delete.isHidden = true
+        }
+        else {
+            cell.Delete.accessibilityValue = self.NewsPosts[indexPath.row].postId
+            cell.Delete.addTarget(self, action: #selector(deleteNews(button:)), for: .touchUpInside)
+        }
+        cell.news.text = self.NewsPosts[indexPath.row].Post
+        let date = CreateDate.getTimeSince(epoch: self.NewsPosts[indexPath.row].Epoch)
+        cell.newsDate.text = date
+        GenericTools.FrameToFitTextView(View: cell.news)
+        self.newsHeight = cell.news.frame.origin.y + cell.news.frame.size.height
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 180
+        return self.newsHeight
+    }
+    
+    var buttonIdentifier = ""
+    func deleteNews(button: UIButton) {
+        if Reachability.isConnectedToNetwork() == true {
+            self.buttonIdentifier = button.accessibilityValue!
+            let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: deleteNewsInternal)
+            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            verify.addAction(destructorAction)
+            self.present(verify, animated: true, completion: nil)
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
+            error.backgroundColor = UIColor.black.withAlphaComponent(1)
+            self.view.addSubview(error)
+            print("Internet Connection not Available!")
+        }
+    }
+    
+    func deleteNewsInternal(action: UIAlertAction) {
+        FirebaseDatabase.Database.database().reference(withPath: "News").child(self.buttonIdentifier).removeValue()
+        self.TableView.reloadData()
     }
     
     
@@ -40,9 +97,19 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var Profile: UIButton!
     @IBOutlet weak var GoogleDrive: UIButton!
     @IBOutlet weak var Info: UIButton!
+    @IBOutlet weak var TableView: UITableView!
+    @IBOutlet weak var MasterControls: UIBarButtonItem!
     
+    var newsHeight: CGFloat = 0
+    var ref: DatabaseReference!
     let defaults:UserDefaults = UserDefaults.standard
+    let username = LoggedIn.User["Username"] as! String
     
+    var NewsPosts: [News] = []
+    
+    @IBAction func MasterControls(_ sender: Any) {
+        performSegue(withIdentifier: "MasterControls", sender: self)
+    }
     @IBAction func Signout(_ sender: Any) {
         let firebaseAuth = Auth.auth()
         do {
@@ -87,10 +154,53 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func ReadNews(completion: @escaping (Bool) -> Void){
+        ref = Database.database().reference()
+        self.ref.child("News").observe(.value, with: { (snapshot) in
+            self.NewsPosts.removeAll()
+            for snap in snapshot.children{
+                if let childSnapshot = snap as? DataSnapshot
+                {
+                  if let postDictionary = childSnapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                    if let post = postDictionary["Post"] as? String {
+                        if let postId = postDictionary["PostId"] as? String {
+                            if let date = postDictionary["Epoch"] as? Double {
+                                let news = News(Epoch: date, Post: post, Id: postId)
+                               self.NewsPosts.append(news)
+                   }
+                  }
+                 }
+                }
+               }
+             }
+            completion(true);
+            })
+            { (error) in
+            print("Could not retrieve object from database");
+            completion(false)
+        }
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
+       self.TableView.allowsSelection = false
+        self.ReadNews(){(success) in
+            guard success else {
+                let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not get posts from database.")
+                BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                self.view.addSubview(BadPostRequest)
+                print("Internet Connection not Available!")
+                return
+            }
+            self.NewsPosts = mergeSorting.mergeSort(self.NewsPosts)
+            self.TableView.reloadData()
+        }
         
+        if (LoggedIn.User["Username"] as! String) != "Master" {
+            MasterControls.isEnabled = false
+            MasterControls.image = UIImage(named: "")
+        }
         //Add targets
         InstantMessaging.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
         Forum.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)

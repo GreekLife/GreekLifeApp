@@ -154,7 +154,7 @@ class CreatePostViewController: UIViewController {
                 }
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
-                self.performSegue(withIdentifier: "BackToForum", sender: self)
+                self.performSegue(withIdentifier: "WritePost", sender: self)
             }
         }
     }
