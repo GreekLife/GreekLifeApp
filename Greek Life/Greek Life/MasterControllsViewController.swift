@@ -139,7 +139,7 @@ class PostNews: UIViewController {
                 }
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
-                self.performSegue(withIdentifier: "PostNews", sender: self)
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }

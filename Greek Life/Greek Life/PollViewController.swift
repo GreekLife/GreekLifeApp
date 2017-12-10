@@ -118,11 +118,6 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         cell.Vote.layer.borderColor = UIColor(displayP3Red: 212/255, green: 175/255, blue: 55/255, alpha: 1).cgColor
         cell.Vote.backgroundColor = .clear
 
-        for voter in Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row] {
-            if voter == UserId {
-                cell.Vote.layer.backgroundColor = UIColor.lightGray.cgColor
-            }
-        }
         var placings:[Int] = []
         if Polling.fetched == true {
         for votes in Polling.ListOfPolls[Polling.OuterIndex].Placing {
