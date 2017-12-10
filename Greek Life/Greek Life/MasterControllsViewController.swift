@@ -93,6 +93,9 @@ class PostNews: UIViewController {
         }
         
     }
+    @IBAction func Back(_ sender: Any) {
+        self.presentingViewController?.dismiss(animated: true)
+    }
     
      func validate(words:Int)->Bool{
         if(words < 10) {
@@ -211,9 +214,9 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         //Code that executes if another child is added in as a User in the Firebase Database
         ref.child("Users").observe(.value, with: { (snapshot) in
+            self.memberId.removeAll()
+            self.memberList.removeAll()
             for snap in snapshot.children {
-                self.memberId.removeAll()
-                self.memberList.removeAll()
                 if let childsnap = snap as? DataSnapshot
                 {
                     if let dictionary = childsnap.value as? [String:AnyObject], dictionary.count > 0 {

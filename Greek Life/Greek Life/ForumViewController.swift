@@ -18,7 +18,7 @@ class ForumCellTableViewCell: UITableViewCell {
     @IBOutlet weak var PosterName: UILabel!
     @IBOutlet weak var PosterImage: UIImageView!
     @IBOutlet weak var PostDate: UILabel!
-    @IBOutlet weak var NumberOfComments: UILabel!
+    @IBOutlet weak var NumberOfComments: UIButton!
     @IBOutlet weak var DeleteButton: UIButton!
     
     
@@ -294,7 +294,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
-        UIApplication.shared.endIgnoringInteractionEvents();
+        self.TableView.allowsSelection = false
         self.view.backgroundColor = UIColor.lightGray
         self.view.backgroundColor?.withAlphaComponent(0.2)
         if Reachability.isConnectedToNetwork(){
@@ -348,6 +348,14 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             print("Internet Connection not Available!")
         }
         
+    }
+
+    @objc func ViewComments(button: UIButton) {
+        let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
+        let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
+        let indexPath = tbl.indexPath(for: cell)
+        Postings.myIndex = indexPath!.row
+        self.performSegue(withIdentifier: "ForumComments", sender: self)
     }
     
     var buttonIdentifier: String = ""
@@ -448,14 +456,9 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
             self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
         }
-        
-        cell.NumberOfComments.text = "\(Postings.AllPosts![indexPath.row].Comments.count) Comments"
+        cell.NumberOfComments.setTitle("\(Postings.AllPosts![indexPath.row].Comments.count) Comments", for: .normal)
+        cell.NumberOfComments.addTarget(self, action: #selector(ViewComments(button:)), for: .touchUpInside)
         return cell
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Postings.myIndex = indexPath.row
-        self.performSegue(withIdentifier: "ForumComments", sender: self)
     }
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
