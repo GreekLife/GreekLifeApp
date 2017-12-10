@@ -98,7 +98,7 @@ class ForumPost: Hashable, Comparable {
         self.PostId = PostId;
         self.PosterId = PosterId;
         self.ImageURL = Image
-        self.Image = UIImage(named: "Icons/Profile.png")!
+        self.Image = UIImage(named: "Icons/Placeholder.png")!
     }
 }
 
@@ -269,7 +269,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                                 newComment.append(x)
                                                             }
                                                         }
-
                                                         let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Image: imageURL, Epoch: date, Comments: newComment)
                                                         Posts.append(newPost);
                                                         count += 1
@@ -312,10 +311,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Postings.AllPosts = PostList
             self.numberOfCells = PostList.count
             self.SortByDate(Posts: Postings.AllPosts!)
-                self.ReadImages() {(response) in
-                    self.TableView.reloadData();
-                    self.activityIndicator.stopAnimating();
-                    UIApplication.shared.endIgnoringInteractionEvents();
+            self.ReadImages() {(response) in
+                self.TableView.reloadData();
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
                 }
             }
         }
@@ -369,7 +368,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                 completion(true)
             }
             else {
-                Postings.AllPosts![count].Image = UIImage(named: "Icons/Profile.png")!
+                Postings.AllPosts![count].Image = UIImage(named: "Icons/Placeholder.png")!
                 completion(true)
             }
         }
@@ -381,7 +380,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
       }
         else {
-            Postings.AllPosts![count].Image = UIImage(named: "Icons/Profile.png")!
+            Postings.AllPosts![count].Image = UIImage(named: "Icons/Placeholder.png")!
             }
     }
         return

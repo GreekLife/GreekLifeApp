@@ -61,18 +61,18 @@ class CreatePostViewController: UIViewController {
                         self.PosterImage.image = pic
                     }
                     else {
-                        self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
+                        self.PosterImage.image = UIImage(named: "Icons/Placeholder.png")
                     }
                 }
                 else {
                     print("Error Loading picture")
-                    self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
+                    self.PosterImage.image = UIImage(named: "Icons/Placeholder.png")
                     print(error!)
                 }
             }
         }
         else {
-            self.PosterImage.image = UIImage(named: "Docs/user_icon.png")
+            self.PosterImage.image = UIImage(named: "Icons/Placeholder.png")
         }
     }
 

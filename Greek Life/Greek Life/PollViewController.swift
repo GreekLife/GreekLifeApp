@@ -50,7 +50,7 @@ struct Poll: Comparable {
         self.Drawn = false
         self.PosterId = ""
         self.ImageURL = "Empty"
-        self.Image = UIImage(named: "Icons/Profile.png")!
+        self.Image = UIImage(named: "Icons/Placeholder.png")!
     }
     
     public init(pollId: String, ImageURL: String, PosterId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
@@ -68,7 +68,7 @@ struct Poll: Comparable {
         self.Drawn = false
         self.PosterId = PosterId
         self.ImageURL = ImageURL
-        self.Image = UIImage(named: "Icons/Profile.png")!
+        self.Image = UIImage(named: "Icons/Placeholder.png")!
         self.UpVoteNames = [[]]
     }
     
@@ -471,7 +471,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                             completion(true)
                         }
                         else {
-                            Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Profile.png")!
+                            Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Placeholder.png")!
                             completion(true)
                         }
                     }
@@ -483,7 +483,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             else {
-                Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Profile.png")!
+                Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Placeholder.png")!
             }
         }
     }
