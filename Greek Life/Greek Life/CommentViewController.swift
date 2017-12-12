@@ -29,19 +29,25 @@ class CommentTableViewCell: UITableViewCell {
     }
     
 }
-class CommentViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class CommentViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate {
     var rowHeight:CGFloat = 0
     var ref: DatabaseReference!
     var CommentList:[Comment] = []
     let user = LoggedIn.User["Username"] as! String
     let userName = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
     let userId = LoggedIn.User["UserID"] as! String
-    
+    var OriginalTextHeight:CGFloat = 0
+    var OriginalTextY:CGFloat = 0
+    var OriginalViewY:CGFloat = 0
+    var OriginalViewHeight:CGFloat = 0
+    var OriginalTableHeight:CGFloat = 0
     var InteractedCommentIndex = 0
     
     @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var LeaveComment: UIButton!
     @IBOutlet weak var CommentBox: UITextView!
+    @IBOutlet weak var CommentView: UIView!
+    @IBOutlet weak var Toolbar: UIToolbar!
     
     @IBAction func BackToForum(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -74,9 +80,16 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                 "PosterId": userId,
                 "CommentId": postId
                 ] as [String : Any]
-            PostData(newPostData: NewComment, completion: { (success, error) in
+            
+            self.PostData(newPostData: NewComment){(success) in
                 self.CommentBox.text = ""
-            })
+                self.CommentBox.frame.origin.y = self.OriginalTextY
+                self.CommentBox.frame.size.height = self.OriginalTextHeight
+                self.CommentView.frame.size.height = self.OriginalViewHeight
+                self.CommentView.frame.origin.y = self.OriginalViewY
+                self.view.endEditing(true)
+
+            }
             
         }
     }
@@ -86,19 +99,58 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         ReadCommentsForPost()
         self.TableView.allowsSelection = false
         self.CommentBox.layer.cornerRadius = 10
+        self.CommentBox.delegate = self
+        
+         OriginalTextHeight = CommentBox.frame.size.height
+         OriginalTextY = CommentBox.frame.origin.y
+         OriginalViewY = CommentView.frame.origin.y
+         OriginalViewHeight = CommentView.frame.size.height
+         OriginalTableHeight = TableView.frame.size.height
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+     func textViewDidChange(_ textView: UITextView) {
+        let fixedWidth = textView.frame.size.width
+        let oldHeight = textView.frame.size.height
+        if oldHeight <= 2.5*OriginalTextHeight {
+        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        let newFrame = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+        textView.frame.size = newFrame
+        let heightChange = newSize.height - oldHeight
+        self.CommentView.frame.origin.y -= heightChange
+        self.CommentView.frame.size.height += heightChange
+        NewTextHeight = textView.frame.size.height
+        NewTextY = textView.frame.origin.y
+        NewViewY = self.CommentView.frame.origin.y
+        NewViewHeight = self.CommentView.frame.size.height
+        self.TableView.frame.size.height = self.CommentView.frame.origin.y - (self.Toolbar.frame.size.height + self.Toolbar.frame.origin.y)
+            if oldHeight != newSize.height {
+                HeightChanged = true
+            }
+        }
+    }
+    
+    var NewTextHeight:CGFloat = 0
+    var NewTextY:CGFloat = 0
+    var NewViewY:CGFloat = 0
+    var NewViewHeight:CGFloat = 0
+    var HeightChanged = false
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if HeightChanged == true {
+        self.CommentView.frame.size.height = NewViewHeight
+        self.CommentView.frame.origin.y = NewViewY
+        self.CommentBox.frame.size.height = NewTextHeight
+        self.CommentBox.frame.origin.y = NewTextY
+        self.TableView.frame.size.height = self.OriginalTableHeight
+        }
     }
     
     //---Write comment data to database---//
-    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
+    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool) -> Void){
         ref = Database.database().reference()
         let commentId = newPostData["CommentId"] as! String
         self.ref.child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(commentId).setValue(newPostData)
-        completion(true, nil)
+        completion(true)
     }
     
     public func ReadCommentsForPost() {

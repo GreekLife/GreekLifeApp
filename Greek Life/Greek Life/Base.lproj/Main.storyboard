@@ -2684,12 +2684,10 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gTC-ne-FxE">
                                 <rect key="frame" x="0.0" y="624" width="375" height="43"/>
                                 <subviews>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DBW-yK-Vp4">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DBW-yK-Vp4">
                                         <rect key="frame" x="87" y="4" width="273" height="34"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="34" id="IV7-WT-lTb"/>
-                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
@@ -2709,14 +2707,10 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="DBW-yK-Vp4" secondAttribute="bottom" constant="5" id="38q-Fm-hk5"/>
                                     <constraint firstAttribute="bottom" secondItem="7yO-cs-TEg" secondAttribute="bottom" constant="7" id="7je-cD-37d"/>
-                                    <constraint firstItem="DBW-yK-Vp4" firstAttribute="top" secondItem="gTC-ne-FxE" secondAttribute="top" constant="4" id="Pn4-tR-wCM"/>
                                     <constraint firstItem="7yO-cs-TEg" firstAttribute="leading" secondItem="gTC-ne-FxE" secondAttribute="leading" constant="8" id="QYC-As-SXK"/>
                                     <constraint firstItem="7yO-cs-TEg" firstAttribute="top" secondItem="gTC-ne-FxE" secondAttribute="top" constant="6" id="U3c-4T-KRh"/>
-                                    <constraint firstAttribute="trailing" secondItem="DBW-yK-Vp4" secondAttribute="trailing" constant="15" id="cq9-nv-jPi"/>
                                     <constraint firstAttribute="height" constant="43" id="gUY-nx-Mhg"/>
-                                    <constraint firstItem="DBW-yK-Vp4" firstAttribute="leading" secondItem="7yO-cs-TEg" secondAttribute="trailing" constant="33" id="qcX-7g-sCs"/>
                                 </constraints>
                             </view>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="CEr-FM-QjY">
@@ -2750,9 +2744,11 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="CommentBox" destination="DBW-yK-Vp4" id="hv1-eF-vsc"/>
+                        <outlet property="CommentBox" destination="DBW-yK-Vp4" id="mfE-aH-ROa"/>
+                        <outlet property="CommentView" destination="gTC-ne-FxE" id="nXc-ng-Mdw"/>
                         <outlet property="LeaveComment" destination="7yO-cs-TEg" id="TCw-YX-98p"/>
                         <outlet property="TableView" destination="AL8-h0-O2T" id="q5z-kN-8UC"/>
+                        <outlet property="Toolbar" destination="CEr-FM-QjY" id="zvs-sb-xOt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OIR-C9-4jU" userLabel="First Responder" sceneMemberID="firstResponder"/>

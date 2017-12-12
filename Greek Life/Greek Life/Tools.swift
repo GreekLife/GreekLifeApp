@@ -17,9 +17,7 @@ public class GenericTools {
     //--Directly applies edit to passed view--//
     class func FrameToFitTextView(View: UITextView){
         let fixedWidth = View.frame.size.width
-        //View.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         let newSize = View.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-        //var newFrame = View.frame
         let newFrame = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         View.frame.size = newFrame
     }
