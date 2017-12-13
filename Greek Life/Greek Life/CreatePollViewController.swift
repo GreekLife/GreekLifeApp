@@ -150,7 +150,9 @@ class CreatePollViewController: UIViewController {
         ]
         let ThePollKey = [poll.PollId : ThePoll]
         ref = Database.database().reference()
+        let pId = ThePoll["PostId"] as! String
         ref.child("Polls").updateChildValues(ThePollKey)
+        ref.child("Polls/PollIds/\(pId)").setValue(pId)
         let ThePollOptionKey = [poll.PollId :
             [
                 "\"0\"" :
