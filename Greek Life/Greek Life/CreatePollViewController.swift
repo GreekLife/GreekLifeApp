@@ -161,6 +161,7 @@ class CreatePollViewController: UIViewController {
             ]
         ]
         ref.child("PollOptions").updateChildValues(ThePollOptionKey)
+        ref.child("Polls/PollIds").setValue(ThePoll["PostId"])
         self.activityIndicator.stopAnimating();
         UIApplication.shared.endIgnoringInteractionEvents();
         self.presentingViewController?.dismiss(animated: true)

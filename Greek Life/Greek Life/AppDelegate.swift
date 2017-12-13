@@ -9,9 +9,11 @@
 import UIKit
 import Firebase
 import IQKeyboardManagerSwift
+import UserNotifications
+
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
@@ -20,7 +22,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         FirebaseApp.configure();
         IQKeyboardManager.sharedManager().enable = true
+        if #available(iOS 10.0, *) {
+            let center = UNUserNotificationCenter.current()
+            center.delegate = self
+            center.requestAuthorization(options: [UNAuthorizationOptions.sound ], completionHandler: { (granted, error) in
+                if error == nil{
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            })
+        } else {
+            let settings  = UIUserNotificationSettings(types: [UIUserNotificationType.alert , UIUserNotificationType.badge ,                    UIUserNotificationType.sound], categories: nil)
+            UIApplication.shared.registerUserNotificationSettings(settings)
+            application.registerForRemoteNotifications()
+        }
+        
         return true
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        var token = ""
+        for i in 0..<deviceToken.count {
+            token = token + String(format: "%02.2hhx", arguments: [deviceToken[i]])
+        }
+        print(token) //send ths to server to to be processed by script
+    }
+ 
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        print(error) //person said no to notifications
+    }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        //Recieved push while app is in foreground
+        print(userInfo)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

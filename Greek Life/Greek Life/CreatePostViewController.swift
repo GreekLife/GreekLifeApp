@@ -162,6 +162,7 @@ class CreatePostViewController: UIViewController {
         CreatePostRef = Database.database().reference()
         let pID = newPostData["PostId"] as! String
         self.CreatePostRef.child("Forum").child(pID).setValue(newPostData)
+        self.CreatePostRef.child("Forum/ForumIds").setValue(newPostData["PostId"])
         completion(true, nil)
     }
 
