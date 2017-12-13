@@ -158,7 +158,7 @@ class CreatePollViewController: UIViewController {
                 "\"0\"" :
                     [
                         "Names" :
-                            ["Empty" : "Empty"]
+                            ["PT7KP7eO53fFT9RQUCfG4DMcD002" : "PT7KP7eO53fFT9RQUCfG4DMcD002"] //This needs to be replaced wth generic master id
                 ]
             ]
         ]

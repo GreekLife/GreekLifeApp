@@ -16,6 +16,7 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let defaults:UserDefaults = UserDefaults.standard
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -49,15 +50,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Called when APNs has assigned the device a unique token
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let ref = Database.database().reference()
         let deviceTokenString = deviceToken.reduce("", {$0 + String(format: "%02X", $1)})
-        let user: [String: Any] = [
-            "Id": deviceTokenString,
-            "UserId": "Unknown",
-            "Username": "Unknown"
-        ]
-        ref.child("NotificationIds/IOS/deviceTokenString").setValue(user)
-        // Print it to console
+        self.defaults.set(deviceTokenString, forKey: "NotificationId")
         print("APNs device token: \(deviceTokenString)")
         
         // Persist it in your backend in case it's new

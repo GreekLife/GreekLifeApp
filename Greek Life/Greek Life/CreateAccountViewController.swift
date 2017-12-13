@@ -119,12 +119,13 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     @IBOutlet weak var ImageButton: UIButton!
     
     var ref: DatabaseReference!
-    
+    let defaults:UserDefaults = UserDefaults.standard
     let imagePicker = UIImagePickerController()
     var pickedImage: UIImage!
     
     let positionOptions = ["Brother", "Alumni", "Pledge", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
     var existingBrotherNames: [String] = []
+    var notifId = ""
     
     @IBOutlet weak var Create: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
@@ -197,7 +198,8 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         "Username": username,
                         "Email": NewUser.email,
                         "Image": image,
-                        "UserID": NewUser.userID
+                        "UserID": NewUser.userID,
+                        "NotificationId": self.notifId
                     ]
                     
                     self.CreateProfile(newPostData: newUserData) {(success ,error) in
@@ -264,6 +266,9 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     override func viewDidLoad() {
         super.viewDidLoad()
         getBrotherNames()
+        if let notifId = defaults.string(forKey: "NotificationId") {
+            self.notifId = notifId
+        }
         Create.layer.cornerRadius = 5
         ImageButton.layer.borderColor = UIColor.black.cgColor
         ImageButton.layer.borderWidth = 1

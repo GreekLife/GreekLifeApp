@@ -1732,6 +1732,90 @@
             </objects>
             <point key="canvasLocation" x="-5471.1999999999998" y="-0.44977511244377816"/>
         </scene>
+        <!--Custom Notification-->
+        <scene sceneID="ntT-U9-SBy">
+            <objects>
+                <viewController id="dOw-RG-zzW" customClass="CustomNotification" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6C3-cV-z9d"/>
+                        <viewControllerLayoutGuide type="bottom" id="Mrb-L8-cV6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="hJ9-ot-yNw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dl3-I3-jvY">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem title="Done" id="JgC-x3-gdM">
+                                        <connections>
+                                            <action selector="Done:" destination="dOw-RG-zzW" id="5Rd-5y-pkt"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                                <color key="barTintColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
+                            </toolbar>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write a short customized push notification. Let them know it's from their master" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r2d-3E-UWL">
+                                <rect key="frame" x="42" y="99" width="291" height="81"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="291" id="5iO-hE-Vlh"/>
+                                    <constraint firstAttribute="height" constant="81" id="ERW-Ex-X8e"/>
+                                    <constraint firstAttribute="width" secondItem="r2d-3E-UWL" secondAttribute="height" multiplier="97:27" id="FdT-sx-PxT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.68505100389999996" green="0.077100153369999994" blue="0.078404459499999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter custom notification" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vz5-Cl-h1l">
+                                <rect key="frame" x="42" y="260" width="291" height="30"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Qiu-Ca-Hbb"/>
+                                    <constraint firstAttribute="width" constant="291" id="hB9-IP-xgu"/>
+                                    <constraint firstAttribute="width" secondItem="Vz5-Cl-h1l" secondAttribute="height" multiplier="97:10" id="m4h-EL-Iwd"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G7y-wE-nIS">
+                                <rect key="frame" x="42" y="418" width="291" height="30"/>
+                                <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="291" id="OKw-vH-nMw"/>
+                                    <constraint firstAttribute="height" constant="30" id="fa4-w6-Cjx"/>
+                                    <constraint firstAttribute="width" secondItem="G7y-wE-nIS" secondAttribute="height" multiplier="97:10" id="frF-75-Vse"/>
+                                </constraints>
+                                <state key="normal" title="Send">
+                                    <color key="titleColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </state>
+                                <connections>
+                                    <action selector="SendNotification:" destination="dOw-RG-zzW" eventType="touchUpInside" id="ik0-hK-Rfv"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="dl3-I3-jvY" firstAttribute="leading" secondItem="hJ9-ot-yNw" secondAttribute="leading" id="2g3-V6-xpw"/>
+                            <constraint firstItem="G7y-wE-nIS" firstAttribute="centerY" secondItem="hJ9-ot-yNw" secondAttribute="centerY" constant="99.5" id="BUo-dP-0mm"/>
+                            <constraint firstItem="dl3-I3-jvY" firstAttribute="top" secondItem="6C3-cV-z9d" secondAttribute="bottom" id="MwA-b2-Nxt"/>
+                            <constraint firstItem="r2d-3E-UWL" firstAttribute="centerY" secondItem="hJ9-ot-yNw" secondAttribute="centerY" constant="-194" id="TGc-nh-3Rg"/>
+                            <constraint firstItem="Vz5-Cl-h1l" firstAttribute="centerY" secondItem="hJ9-ot-yNw" secondAttribute="centerY" constant="-58.5" id="UB8-VT-o5a"/>
+                            <constraint firstAttribute="trailing" secondItem="dl3-I3-jvY" secondAttribute="trailing" id="WgL-4Y-4k3"/>
+                            <constraint firstItem="G7y-wE-nIS" firstAttribute="centerX" secondItem="hJ9-ot-yNw" secondAttribute="centerX" id="fVt-4d-lub"/>
+                            <constraint firstItem="Vz5-Cl-h1l" firstAttribute="centerX" secondItem="hJ9-ot-yNw" secondAttribute="centerX" id="sFY-jJ-3Ag"/>
+                            <constraint firstItem="r2d-3E-UWL" firstAttribute="centerX" secondItem="hJ9-ot-yNw" secondAttribute="centerX" id="v2A-Iv-gzO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="Notification" destination="Vz5-Cl-h1l" id="dr5-mN-MQL"/>
+                        <outlet property="SendNotification" destination="G7y-wE-nIS" id="eh2-fB-kgp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iLs-b3-aGT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-6970.3999999999996" y="850.52473763118451"/>
+        </scene>
         <!--Post News-->
         <scene sceneID="FZ4-zC-e5Z">
             <objects>
@@ -1969,6 +2053,7 @@
                         <outlet property="SendNotif" destination="Tdv-gY-Gpk" id="yf6-U6-p4X"/>
                         <segue destination="8es-0V-9g3" kind="presentation" identifier="KickBrother" id="2cH-BD-4Kk"/>
                         <segue destination="N5l-PS-W1s" kind="presentation" identifier="PostNews" id="bRt-5Q-Mx2"/>
+                        <segue destination="dOw-RG-zzW" kind="presentation" identifier="CustomNotif" id="zb5-Bc-IaF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ri4-J1-Vbb" userLabel="First Responder" sceneMemberID="firstResponder"/>
