@@ -154,7 +154,7 @@ class CreatePostViewController: UIViewController {
                 }
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
-                self.performSegue(withIdentifier: "WritePost", sender: self)
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -162,6 +162,7 @@ class CreatePostViewController: UIViewController {
         CreatePostRef = Database.database().reference()
         let pID = newPostData["PostId"] as! String
         self.CreatePostRef.child("Forum").child(pID).setValue(newPostData)
+        self.CreatePostRef.child("Forum/ForumIds").child(pID).setValue(pID)
         completion(true, nil)
     }
 

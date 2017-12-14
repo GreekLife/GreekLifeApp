@@ -56,6 +56,7 @@ class MasterControllsViewController: UIViewController {
         performSegue(withIdentifier: "KickBrother", sender: self)
     }
     @IBAction func SendNotification(_ sender: Any) {
+        performSegue(withIdentifier: "CustomNotif", sender: self)
     }
     
     @IBAction func PostNews(_ sender: Any) {
@@ -238,5 +239,51 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         })
     
     
+    }
+}
+
+class CustomNotification: UIViewController {
+    
+    @IBOutlet weak var Notification: UITextField!
+    @IBOutlet weak var SendNotification: UIButton!
+    @IBAction func SendNotification(_ sender: Any) {
+        if(Notification.text != "") {
+            var old = ""
+        Database.database().reference().child("GeneralMessage/Master").observe(.value, with: { (snapshot) in
+            old = snapshot.value as! String
+            if self.Notification.text! != old {
+                Database.database().reference().child("GeneralMessage/Master").setValue(self.Notification.text!)
+                let verify = UIAlertController(title: "Sent!", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                verify.addAction(okAction)
+                self.present(verify, animated: true, completion: nil)
+                self.Notification.text = ""
+                return
+            }
+            else {
+                let verify = UIAlertController(title: "Failed to send!", message: "Your message must be different than the last one.", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                verify.addAction(okAction)
+                self.present(verify, animated: true, completion: nil)
+                return
+            }
+         })
+        }
+        else {
+             let verify = UIAlertController(title: "Alert!", message: "You can't send an empty notification.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            self.present(verify, animated: true, completion: nil)
+            return
+        }
+        
+    }
+    @IBAction func Done(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        SendNotification.layer.cornerRadius = 10
     }
 }

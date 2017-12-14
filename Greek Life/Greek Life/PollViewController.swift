@@ -800,14 +800,15 @@ class PollVoting: UIViewController {
     
     func UpVoteOption(button: UIButton) {
         if Reachability.isConnectedToNetwork() == true {
+            let name = "\(self.first) \(self.last)"
             let ref = Database.database().reference()
+            ref.child("PollOptions").child(self.PollViewed.PollId).child("\"0\"/Names").updateChildValues([self.UserId : self.UserId])
             ref.child("PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
                 if snapshot.hasChild(self.UserId){
                     FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").child(self.UserId).removeValue()
                     button.backgroundColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1)
                 }
                 else {
-                    let name = "\(self.first) \(self.last)"
                     ref.child("PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])
                     button.backgroundColor = UIColor(displayP3Red: 255/255, green: 224/255, blue: 0/255, alpha: 1)
                 }

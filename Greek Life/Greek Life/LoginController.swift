@@ -40,11 +40,23 @@ class LoginController: UIViewController, UITextFieldDelegate {
     let defaults:UserDefaults = UserDefaults.standard
     var ref: DatabaseReference!
     var email:String = ""
+    var NotifId = ""
     
     @IBOutlet weak var text: UITextField!
     @IBOutlet weak var ForgotPassword: UIButton!
     @IBOutlet weak var CreateAccount: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
+        if let notifId = defaults.string(forKey: "NotificationId") {
+            self.NotifId = notifId
+        }
+        else {
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            let alert = UIAlertController(title: "Notifications", message: "You must accept notifications to sign in", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         CreateAccount.isHidden = true
         ForgotPassword.isHidden = true
         SubView.isHidden = true
@@ -149,6 +161,17 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func Login(_ sender: Any?) {
+        if let notifId = defaults.string(forKey: "NotificationId") {
+            self.NotifId = notifId
+        }
+        else {
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            let alert = UIAlertController(title: "Notifications", message: "You must accept notifications to sign in", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
@@ -243,6 +266,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 self.defaults.set(self.Username.text!, forKey: "Username")
                 self.defaults.set(self.Password.text!, forKey: "Password")
                 self.Password.text = ""
+                let user: [String: Any] = [
+                    "Id": self.NotifId,
+                    "UserId": LoggedIn.User["UserID"] as! String,
+                    "Username": LoggedIn.User["Username"] as! String
+                ]
+                Database.database().reference().child("NotificationIds/IOS/\(self.NotifId)").setValue(user)
+                // Print it to console
                 self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
             }
             else {

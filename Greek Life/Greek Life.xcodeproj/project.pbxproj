@@ -17,7 +17,7 @@
 		6D39D94F1FB28093001CE6D8 /* MemberCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */; };
 		6D42ED641FCA0473003FFB07 /* CreatePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */; };
 		6D5005EC1FC3D151007C21B5 /* PollViewResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */; };
-		6D62954E1FE2053300EE92CA /* MessengerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D62954D1FE2053200EE92CA /* MessengerViewController.swift */; };
+		6D70983D1FE0CB2800BFDD97 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D70983C1FE0CB2800BFDD97 /* UserNotifications.framework */; };
 		6D806DAC1FAAB53F00D80CC2 /* MainConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */; };
 		6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */; };
 		6D806DB01FAABD2500D80CC2 /* Docs in Resources */ = {isa = PBXBuildFile; fileRef = 6D806DAF1FAABD2500D80CC2 /* Docs */; };
@@ -77,7 +77,8 @@
 		6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCollectionViewCell.swift; sourceTree = "<group>"; };
 		6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostViewController.swift; sourceTree = "<group>"; };
 		6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollViewResultsController.swift; sourceTree = "<group>"; };
-		6D62954D1FE2053200EE92CA /* MessengerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessengerViewController.swift; sourceTree = "<group>"; };
+		6D70983B1FE0CAA000BFDD97 /* Greek Life.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Greek Life.entitlements"; sourceTree = "<group>"; };
+		6D70983C1FE0CB2800BFDD97 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = MainConfig.plist; sourceTree = "<group>"; };
 		6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6D806DAF1FAABD2500D80CC2 /* Docs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Docs; sourceTree = "<group>"; };
@@ -112,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D70983D1FE0CB2800BFDD97 /* UserNotifications.framework in Frameworks */,
 				F8097DCECAAF0F3DE317CE9F /* Pods_Greek_Life.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,6 +140,7 @@
 		3886404CA024B5D4BE9B6A12 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6D70983C1FE0CB2800BFDD97 /* UserNotifications.framework */,
 				2CBFC2FC5943F408FDB76E4F /* Pods_Greek_Life.framework */,
 				D733E150940496D98BD83622 /* Pods_Greek_LifeTests.framework */,
 				28671ACEC86852828460720F /* Pods_Greek_LifeUITests.framework */,
@@ -170,6 +173,7 @@
 		6DCAFF061F9AC46F00D1311E /* Greek Life */ = {
 			isa = PBXGroup;
 			children = (
+				6D70983B1FE0CAA000BFDD97 /* Greek Life.entitlements */,
 				6DF4D1321FA28F5400EA86E8 /* Icons */,
 				6D95B7AB1F9AC72D004EC3A3 /* GoogleService-Info.plist */,
 				6D806DAF1FAABD2500D80CC2 /* Docs */,
@@ -192,7 +196,6 @@
 				6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */,
 				6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */,
 				6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */,
-				6D62954D1FE2053200EE92CA /* MessengerViewController.swift */,
 				6DF7DC5D1FBA118700155E23 /* PollViewController.swift */,
 				6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */,
 				6D8352121FCF7E07007C495D /* CreateAccountViewController.swift */,
@@ -310,8 +313,13 @@
 				TargetAttributes = {
 					6DCAFF031F9AC46F00D1311E = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = LMRS4J25GR;
+						DevelopmentTeam = ASQJ3L7765;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					6DCAFF191F9AC46F00D1311E = {
 						CreatedOnToolsVersion = 8.3.3;
@@ -556,7 +564,6 @@
 				6D1896671FB6C4FB0087C3EC /* ChapterInfoViewController.swift in Sources */,
 				6DAC82A61FB2954F00D468B1 /* CalendarViewController.swift in Sources */,
 				6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */,
-				6D62954E1FE2053300EE92CA /* MessengerViewController.swift in Sources */,
 				6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */,
 				6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */,
 				6DF7DC5E1FBA118700155E23 /* PollViewController.swift in Sources */,
@@ -738,10 +745,12 @@
 			baseConfigurationReference = 54075C3988D567332DE403D0 /* Pods-Greek Life.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = LMRS4J25GR;
+				CODE_SIGN_ENTITLEMENTS = "Greek Life/Greek Life.entitlements";
+				DEVELOPMENT_TEAM = ASQJ3L7765;
 				INFOPLIST_FILE = "Greek Life/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "GL.Greek-Life";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.GL.Greek-Life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -752,10 +761,12 @@
 			baseConfigurationReference = 38B7D48EC2D33636B0CD21CB /* Pods-Greek Life.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = LMRS4J25GR;
+				CODE_SIGN_ENTITLEMENTS = "Greek Life/Greek Life.entitlements";
+				DEVELOPMENT_TEAM = ASQJ3L7765;
 				INFOPLIST_FILE = "Greek Life/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "GL.Greek-Life";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.GL.Greek-Life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
