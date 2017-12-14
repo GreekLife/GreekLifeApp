@@ -748,6 +748,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Greek Life/Greek Life.entitlements";
 				DEVELOPMENT_TEAM = ASQJ3L7765;
 				INFOPLIST_FILE = "Greek Life/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.GL.Greek-Life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -763,6 +764,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Greek Life/Greek Life.entitlements";
 				DEVELOPMENT_TEAM = ASQJ3L7765;
 				INFOPLIST_FILE = "Greek Life/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.GL.Greek-Life";
 				PRODUCT_NAME = "$(TARGET_NAME)";
