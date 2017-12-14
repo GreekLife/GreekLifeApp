@@ -17,9 +17,18 @@ class Messenger: NSObject {
 //***********************************//
 class MessengerViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
+    
+    //Top toolbar
+    @IBAction func backBTN(_ sender: Any)
+    {
+        presentingViewController?.dismiss(animated: true)
+    }
+    
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return 10
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -44,14 +53,30 @@ class MessengerViewController: UIViewController, UITableViewDelegate, UITableVie
 
 
 
-//***********************************//
-//  Messenger View Controller Class  //
+  //***********************************//
+ //   Settings View Controller Class  //
 //***********************************//
 class ChatSettingsViewController:UIViewController
 {
+    @IBAction func doneBTN(_ sender: Any)
+    {
+        presentingViewController?.dismiss(animated: true)
+    }
     
 }
 
+  //*******************************//
+ //   Chat View Controller Class  //
+//*******************************//
+class ChatViewController:UIViewController
+{
+    @IBAction func backBTN(_ sender: Any)
+    {
+        presentingViewController?.dismiss(animated: true)
+    }
+    
+    //2676
+}
 
 
 
