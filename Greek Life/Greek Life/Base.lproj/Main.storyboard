@@ -1642,6 +1642,7 @@
                         <segue destination="b3r-Ks-YnZ" kind="presentation" identifier="Forum" id="1rG-SP-ycZ"/>
                         <segue destination="DFt-iE-ymE" kind="presentation" identifier="Members" id="s3o-h5-wV2"/>
                         <segue destination="hdG-rV-OS5" kind="presentation" identifier="Info" id="lg0-jt-43Z"/>
+                        <segue destination="0I8-cZ-P0K" kind="presentation" identifier="InstantMessaging" id="CDF-V7-Klc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r49-Zd-0mz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -3080,7 +3081,7 @@
             </objects>
             <point key="canvasLocation" x="1234.4000000000001" y="1069.1154422788607"/>
         </scene>
-         <!--MessengerViewController-->
+        <!--MessengerViewController-->
         <scene sceneID="DXx-43-yeA">
             <objects>
                 <viewController title="MessengerViewController" id="0I8-cZ-P0K" customClass="MessengerViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">

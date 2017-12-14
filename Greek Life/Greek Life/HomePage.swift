@@ -126,7 +126,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     {
         switch sender.tag {
         case 2:
-          //  performSegue(withIdentifier: "InstantMessaging", sender: self)
+            performSegue(withIdentifier: "InstantMessaging", sender: self)
             break;
         case 3:
             performSegue(withIdentifier: "Forum", sender: self)

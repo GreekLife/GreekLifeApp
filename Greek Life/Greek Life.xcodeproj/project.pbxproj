@@ -17,6 +17,7 @@
 		6D39D94F1FB28093001CE6D8 /* MemberCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */; };
 		6D42ED641FCA0473003FFB07 /* CreatePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */; };
 		6D5005EC1FC3D151007C21B5 /* PollViewResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */; };
+		6D62954E1FE2053300EE92CA /* MessengerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D62954D1FE2053200EE92CA /* MessengerViewController.swift */; };
 		6D806DAC1FAAB53F00D80CC2 /* MainConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */; };
 		6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */; };
 		6D806DB01FAABD2500D80CC2 /* Docs in Resources */ = {isa = PBXBuildFile; fileRef = 6D806DAF1FAABD2500D80CC2 /* Docs */; };
@@ -76,6 +77,7 @@
 		6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCollectionViewCell.swift; sourceTree = "<group>"; };
 		6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostViewController.swift; sourceTree = "<group>"; };
 		6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollViewResultsController.swift; sourceTree = "<group>"; };
+		6D62954D1FE2053200EE92CA /* MessengerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessengerViewController.swift; sourceTree = "<group>"; };
 		6D806DAB1FAAB53F00D80CC2 /* MainConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = MainConfig.plist; sourceTree = "<group>"; };
 		6D806DAD1FAAB5F200D80CC2 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6D806DAF1FAABD2500D80CC2 /* Docs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Docs; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				6D39D94E1FB28093001CE6D8 /* MemberCollectionViewCell.swift */,
 				6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */,
 				6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */,
+				6D62954D1FE2053200EE92CA /* MessengerViewController.swift */,
 				6DF7DC5D1FBA118700155E23 /* PollViewController.swift */,
 				6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */,
 				6D8352121FCF7E07007C495D /* CreateAccountViewController.swift */,
@@ -553,6 +556,7 @@
 				6D1896671FB6C4FB0087C3EC /* ChapterInfoViewController.swift in Sources */,
 				6DAC82A61FB2954F00D468B1 /* CalendarViewController.swift in Sources */,
 				6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */,
+				6D62954E1FE2053300EE92CA /* MessengerViewController.swift in Sources */,
 				6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */,
 				6D806DAE1FAAB5F200D80CC2 /* Configuration.swift in Sources */,
 				6DF7DC5E1FBA118700155E23 /* PollViewController.swift in Sources */,
