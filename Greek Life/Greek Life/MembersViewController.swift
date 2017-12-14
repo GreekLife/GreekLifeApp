@@ -8,6 +8,14 @@
 
 import UIKit
 
+class MemberCollectionViewCell: UICollectionViewCell {
+    @IBOutlet weak var MemberImage: UIImageView!
+    @IBOutlet weak var MemberName: UILabel!
+    @IBOutlet weak var MemberSpecialty: UILabel!
+    
+}
+
+
 class MembersViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
     override func viewDidLoad() {
