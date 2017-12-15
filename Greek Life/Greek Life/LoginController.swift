@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseStorage
 
 struct LoggedIn {
     static var User: [String: Any] = [:]
@@ -46,6 +47,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var ForgotPassword: UIButton!
     @IBOutlet weak var CreateAccount: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
+        NewUser.edit = false
         if let notifId = defaults.string(forKey: "NotificationId") {
             self.NotifId = notifId
         }
@@ -105,7 +107,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             }
         }) {(error) in
             print(error.localizedDescription)
-            print("Could not read code from database")
+            GenericTools.Logger(data: "\n Error entering code to create an account!")
             self.Errors.text = "An error occured"
             let delay = DispatchTime.now() + 3 
             DispatchQueue.main.asyncAfter(deadline: delay) {
@@ -178,7 +180,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
         }
         else{
             if Reachability.isConnectedToNetwork(){
-                print("Internet Connection Succesful!")
                 validateUsername();
             }else{
                 let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
@@ -187,7 +188,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 internetError.textAlignment = .center
                 internetError.text = "You're not connected to the internet"
                 self.view.addSubview(internetError)
-                print("Internet Connection not Available!")
+                GenericTools.Logger(data: "\n Internet Connection not Available!")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 internetError.isHidden = true
                 }
@@ -201,6 +202,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
         self.getEmail(name: Username.text!){(success, response, error) in
             guard success, let tempEmail = response as? String else{
                 self.LoginAlert(problem: "Incorrect");
+                GenericTools.Logger(data: "\n couldn't log in: \(String(describing: error))")
+
                 return;
             }
             self.email = tempEmail
@@ -235,7 +238,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     func getEmail(name: String, completion: @escaping (Bool, Any?, Error?) -> Void){
         ref = Database.database().reference()
-        self.ref.child("Users").observe(.value, with: { (snapshot) in
+        self.ref.child("Users").observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:[String:Any]] {
                 for (key, _ ) in user {
                     if (user[key]!["Username"] as! String) == name || (user[key]!["Email"] as! String) == name {
@@ -253,7 +256,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 completion(false, nil, nil)
             }
         }){ (error) in
-            print("Could not retrieve object from database");
+            GenericTools.Logger(data: "\n Could not connect to firebase auth to validate entry")
             completion(false, nil, nil)
         }
     }
@@ -271,16 +274,18 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     "UserId": LoggedIn.User["UserID"] as! String,
                     "Username": LoggedIn.User["Username"] as! String
                 ]
-                Database.database().reference().child("NotificationIds/IOS/\(self.NotifId)").setValue(user)
-                // Print it to console
+                Database.database().reference().child("NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
+                    GenericTools.Logger(data: "\n Could not add notification id to list: \(error)")
+
+                }
                 self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
             }
             else {
                 if let myError = Error?.localizedDescription{
-                    debugPrint(myError);
+                    GenericTools.Logger(data: "\n Could not authenticate: \(myError)")
                 }
                 else {
-                    debugPrint("ERROR");
+                    GenericTools.Logger(data: "\n Could not authenticate")
                 }
                 LoggedIn.User = [:];
                 self.LoginAlert(problem: "Invalid");
@@ -322,12 +327,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
         LoginLabel.layer.cornerRadius = LoginLabel.frame.height / 2;
         
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 
 }
 
@@ -346,10 +345,10 @@ class ForgotPassword: UIViewController {
         else {
             Auth.auth().sendPasswordReset(withEmail: Email.text!) { error in
                 if error != nil {
-                let alert = UIAlertController(title: "Invalid", message: "Account could not be reset", preferredStyle: UIAlertControllerStyle.alert)
+                let alert = UIAlertController(title: "Error", message: "Account could not be reset", preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
-                print(error!)
+                GenericTools.Logger(data: "\n Could not undergo reset password process \(error!)")
                 }
                 else {
                     self.dismiss(animated: true, completion: nil)
@@ -369,9 +368,5 @@ class ForgotPassword: UIViewController {
         ResetPassword.layer.cornerRadius = 5
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 }
 

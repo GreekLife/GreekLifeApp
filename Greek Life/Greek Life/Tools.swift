@@ -33,6 +33,17 @@ public class GenericTools {
         
         return newImage!
     }
+    
+    class func Logger(data: String) {
+          print(data)
+//        let path = Bundle.main.path(forResource: "Log", ofType: "txt")
+//        let fileURL = URL(fileURLWithPath: path!)
+//        do {
+//            try text.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
+//        } catch {
+//            print("error")
+//        }
+    }
 }
 
 public class mergeSorting {

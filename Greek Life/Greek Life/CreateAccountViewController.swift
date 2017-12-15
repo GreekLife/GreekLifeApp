@@ -15,6 +15,7 @@ import FirebaseStorage
 struct NewUser {
     static var email = ""
     static var userID = ""
+    static var edit = false
 }
 
 class AccountDetails: UIViewController {
@@ -118,6 +119,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     @IBOutlet weak var Birthday: UITextField!
     @IBOutlet weak var ImageButton: UIButton!
     
+    @IBOutlet weak var Cancel: UIButton!
     var ref: DatabaseReference!
     let defaults:UserDefaults = UserDefaults.standard
     let imagePicker = UIImagePickerController()
@@ -127,6 +129,9 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     var existingBrotherNames: [String] = []
     var notifId = ""
     
+    @IBAction func Cancel(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     @IBOutlet weak var Create: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
         if FirstName.text! == "" || LastName.text! == "" || BrotherName.text! == "" || School.text! == "" || Degree.text! == "" || GradDate.text! == "" || Birthday.text! == "" {
@@ -136,29 +141,36 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             self.present(empty, animated: true, completion: nil)
             return
         }
-        if FirstName.text! == "Master" || LastName.text! == "Master" || BrotherName.text! == "Master" || FirstName.text! == "master" || LastName.text! == "master" || BrotherName.text! == "master" {
-            let masterNotAllowed = UIAlertController(title: "Warning!", message: "You can not use the name Master in your profile.", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-            masterNotAllowed.addAction(okAction)
-            self.present(masterNotAllowed, animated: true, completion: nil)
-            return
+        if (LoggedIn.User["Username"] as? String) == nil || (LoggedIn.User["Username"] as? String) != "Master" {
+            if FirstName.text! == "Master" || LastName.text! == "Master" || BrotherName.text! == "Master" || FirstName.text! == "master" || LastName.text! == "master" || BrotherName.text! == "master" {
+                let masterNotAllowed = UIAlertController(title: "Warning!", message: "You can not use the name Master in your profile.", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                masterNotAllowed.addAction(okAction)
+                self.present(masterNotAllowed, animated: true, completion: nil)
+                return
+            }
         }
         
         //validate birthday
         //validate grad date
-        if existingBrotherNames.index(of: BrotherName.text!) != nil { //Needs to be tested
-            let invalid = UIAlertController(title: "Invalid", message: "The brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-            invalid.addAction(okAction)
-            self.present(invalid, animated: true, completion: nil)
-            return
+        if (LoggedIn.User["Username"] as? String) == nil { //This is invalid and should be fixed
+            if existingBrotherNames.index(of: BrotherName.text!) != nil { //Needs to be tested
+                let invalid = UIAlertController(title: "Invalid", message: "The brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                invalid.addAction(okAction)
+                self.present(invalid, animated: true, completion: nil)
+                return
+            }
         }
-        if positionOptions.index(of: Position.text!) == nil {
-            let invalid = UIAlertController(title: "Invalid", message: "Invalid position", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-            invalid.addAction(okAction)
-            self.present(invalid, animated: true, completion: nil)
-            return
+        
+        if (LoggedIn.User["Username"] as? String) != "Master" {
+            if positionOptions.index(of: Position.text!) == nil {
+                let invalid = UIAlertController(title: "Invalid", message: "Invalid position", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                invalid.addAction(okAction)
+                self.present(invalid, animated: true, completion: nil)
+                return
+            }
         }
         if self.pickedImage == nil {
             let invalid = UIAlertController(title: "Picture", message: "Please post a picture along with your profile details", preferredStyle: UIAlertControllerStyle.alert)
@@ -169,9 +181,14 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         }
         var image = "Empty"
         if self.pickedImage != nil {
+            if NewUser.edit == false {
             image = NewUser.userID
-            let storageRef = Storage.storage().reference().child("ProfilePictures/\(image)")
-            if let uploadData = UIImagePNGRepresentation(self.pickedImage!){
+            }
+            else {
+                image = LoggedIn.User["UserID"] as! String
+            }
+            let storageRef = Storage.storage().reference().child("ProfilePictures/\(image).jpg")
+            if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
                 storageRef.putData(uploadData, metadata: nil, completion:{ (metadata, error) in
                     if error != nil {
                         print(error!)
@@ -186,6 +203,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                     else {
                         username = self.BrotherName.text!
                     }
+                    if NewUser.edit == false {
                     let newUserData = [
                         "BrotherName": self.BrotherName.text!,
                         "Degree": self.Degree.text!,
@@ -194,28 +212,69 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         "School": self.School.text!,
                         "GraduationDate": self.GradDate.text!,
                         "Birthday": self.Birthday.text!,
-                        "Postition": self.Position.text!,
+                        "Position": self.Position.text!,
                         "Username": username,
                         "Email": NewUser.email,
                         "Image": image,
                         "UserID": NewUser.userID,
-                        "NotificationId": self.notifId
-                    ]
+                        "NotificationId": self.notifId,
+                        "Validated": false
+                        ] as [String : Any]
                     
-                    self.CreateProfile(newPostData: newUserData) {(success ,error) in
+                        self.CreateProfile(newPostData: newUserData) {(success ,error) in
                         self.performSegue(withIdentifier: "ProfileCreated", sender: self)
+                    }
+                    }
+                    else {
+                        var changedUser = ""
+                        var validated = false
+                        if LoggedIn.User["Username"] as! String == "Master" {
+                            changedUser = "Master"
+                            validated = true
+                        }
+                        else {
+                            changedUser = self.BrotherName.text!
+                        }
+                        let updatedData = [
+                            "BrotherName": self.BrotherName.text!,
+                            "Degree": self.Degree.text!,
+                            "First Name": self.FirstName.text!,
+                            "Last Name": self.LastName.text!,
+                            "School": self.School.text!,
+                            "GraduationDate": self.GradDate.text!,
+                            "Birthday": self.Birthday.text!,
+                            "Position": self.Position.text!,
+                            "Username": changedUser,
+                            "Email": LoggedIn.User["Email"] as! String,
+                            "Image": image,
+                            "UserID": LoggedIn.User["UserID"] as! String,
+                            "NotificationId": self.notifId,
+                            "Validated": validated
+                            ] as [String : Any]
+                        
+                        self.CreateProfile(newPostData: updatedData) {(success ,error) in
+                            self.dismiss(animated: true, completion: nil)
+                        }
                     }
                 
                 })
                 
             }
-        }
+         }
     }
     
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
+        var id = ""
+        if LoggedIn.User["Username"] as! String == "Master" {
+             id = "Master"
+        }
+        else {
+             id = LoggedIn.User["UserID"] as! String
+        }
         ref = Database.database().reference()
-        ref.child("Users").child(NewUser.userID).setValue(newPostData)
+        ref.child("Users").child(id).setValue(newPostData)
         completion(true, nil)
+
     }
     
     @IBAction func GetImage(_ sender: Any) {
@@ -278,6 +337,31 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         imagePicker.delegate = self
 
         Position.inputView = pickerView
+        
+        if NewUser.edit == true {
+            if LoggedIn.User["Username"] as? String == "Master" {
+                Position.isUserInteractionEnabled = false
+            }
+            Cancel.isHidden = false
+            FirstName.text = LoggedIn.User["First Name"] as? String
+            LastName.text = LoggedIn.User["Last Name"] as? String
+            BrotherName.text = LoggedIn.User["BrotherName"] as? String
+            School.text = LoggedIn.User["School"] as? String
+            Degree.text = LoggedIn.User["Degree"] as? String
+            GradDate.text = LoggedIn.User["GraduationDate"] as? String
+            Birthday.text = LoggedIn.User["Birthday"] as? String
+            Position.text = LoggedIn.User["Position"] as? String
+            for member in mMembers.MemberList {
+                if member.id == (LoggedIn.User["UserID"] as? String) {
+                    ImageButton.setBackgroundImage(member.picture, for: .normal)
+                    ImageButton.setTitle("", for: .normal)
+                    self.pickedImage = member.picture
+                }
+            }
+            
+            
+            Create.setTitle("Update Profile", for: .normal)
+        }
 
         // Do any additional setup after loading the view.
     }

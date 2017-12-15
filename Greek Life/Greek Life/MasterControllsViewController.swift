@@ -36,8 +36,7 @@ class MasterControllsViewController: UIViewController {
             self.CurrentCode.text = code
             
         }) {(error) in
-            print(error.localizedDescription)
-            print("Could not read code from database")
+            GenericTools.Logger(data: "\n Could not read generated tree: \(error)")
         }
         
     }
@@ -50,10 +49,14 @@ class MasterControllsViewController: UIViewController {
 
         let newCode = "\(val1)\(val2)\(val3)\(val4)"
         ref = Database.database().reference()
-        ref.child("CreateAccount").child("GeneratedKey").setValue(newCode)
+        ref.child("CreateAccount").child("GeneratedKey").setValue(newCode){ (error) in
+            GenericTools.Logger(data: "\n Error generating key: \(error)")
+        }
     }
     @IBAction func KickAMember(_ sender: Any) {
         performSegue(withIdentifier: "KickBrother", sender: self)
+        ListType.kick = true
+        ListType.validate = false
     }
     @IBAction func SendNotification(_ sender: Any) {
         performSegue(withIdentifier: "CustomNotif", sender: self)
@@ -64,12 +67,23 @@ class MasterControllsViewController: UIViewController {
 
     }
     
+    @IBAction func ValidateUser(_ sender: Any) {
+        performSegue(withIdentifier: "KickBrother", sender: self)
+        ListType.kick = false
+        ListType.validate = true
+    }
+    
     
 }
 
 class KickPrototypeCell: UITableViewCell {
     
     @IBOutlet weak var Name: UILabel!
+}
+
+struct ListType {
+   static var kick = false
+   static var validate = false
 }
 
 class PostNews: UIViewController {
@@ -126,7 +140,6 @@ class PostNews: UIViewController {
         let Posting = News.text
         let postId = UUID().uuidString
         
-        //let Picture = LoggedIn.User["Picture"]
         if(Posting != nil){
             let Post = [
                 "Post": Posting!,
@@ -138,7 +151,7 @@ class PostNews: UIViewController {
                     let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not post.")
                     BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                     self.view.addSubview(BadPostRequest)
-                    print("Internet Connection not Available!")
+                    GenericTools.Logger(data: "\n Could not post \(String(describing: error))")
                     return
                 }
                 self.activityIndicator.stopAnimating();
@@ -151,7 +164,9 @@ class PostNews: UIViewController {
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         CreatePostRef = Database.database().reference()
         let pID = newPostData["PostId"] as! String
-        self.CreatePostRef.child("News").child(pID).setValue(newPostData)
+        self.CreatePostRef.child("News").child(pID).setValue(newPostData){ (error) in
+            GenericTools.Logger(data: "\n Couldn't post news: \(error)")
+        }
         completion(true, nil)
     }
     
@@ -168,8 +183,9 @@ class PostNews: UIViewController {
 class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var ref: DatabaseReference!
-    var memberList:[String] = []
+    var memberList:[Member] = []
     var memberId:[String] = []
+
 
     @IBOutlet weak var TableView: UITableView!
     
@@ -182,10 +198,13 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "KickCell", for: indexPath) as! KickPrototypeCell
-        cell.Name.text = memberList[indexPath.row]
-         cell.isSelected = false
-        cell.selectionStyle = .none
+        cell.Name.text = "\(memberList[indexPath.row].first) \(memberList[indexPath.row].last)"
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        mMembers.memberObj = memberList[indexPath.row]
+        performSegue(withIdentifier: "ValidateUser", sender: self)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -193,6 +212,7 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if ListType.kick == true {
         if (editingStyle == UITableViewCellEditingStyle.delete) {
             let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly kick this member?", preferredStyle: UIAlertControllerStyle.alert)
             let okAction = UIAlertAction(title: "Kick", style: UIAlertActionStyle.default, handler: KickMember)
@@ -201,43 +221,34 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
             verify.addAction(destructorAction)
             self.present(verify, animated: true, completion: nil)
             tempIndex = indexPath.row
+            }
         }
     }
     var tempIndex = 0
     func KickMember(action: UIAlertAction) {
-        FirebaseDatabase.Database.database().reference(withPath: "Users").child(self.memberId[tempIndex]).removeValue()
+        FirebaseDatabase.Database.database().reference(withPath: "Users").child(self.memberId[tempIndex]).removeValue(){ (error) in
+            GenericTools.Logger(data: "\n Could not kick user: \(error)")
+        }
+        GenericTools.Logger(data: "\n kicked user:")
         tempIndex = 0
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        ref = Database.database().reference()
-        
-        //Code that executes if another child is added in as a User in the Firebase Database
-        ref.child("Users").observe(.value, with: { (snapshot) in
-            self.memberId.removeAll()
-            self.memberList.removeAll()
-            for snap in snapshot.children {
-                if let childsnap = snap as? DataSnapshot
-                {
-                    if let dictionary = childsnap.value as? [String:AnyObject], dictionary.count > 0 {
-                        let first = dictionary["First Name"] as? String ?? ""
-                        let last = dictionary["Last Name"] as? String ?? ""
-                        let id = dictionary["UserID"] as? String ?? ""
-                        let username = dictionary["Username"] as? String ?? ""
-                        let name = "\(first) \(last) (\(username))"
-                        
-                        if username != "Master" {
-                        self.memberId.append(id)
-                        self.memberList.append(name)
-                        }
-                    }
-                    self.TableView.reloadData()
-
+        if ListType.validate == true {
+            for mem in mMembers.MemberList {
+                if mem.status == false {
+                    memberList.append(mem)
                 }
             }
-        })
-    
+            self.TableView.reloadData()
+        }
+        else {
+            for mem in mMembers.MemberList {
+                    memberList.append(mem)
+            }
+            self.TableView.reloadData()
+        }
     
     }
 }
@@ -267,7 +278,9 @@ class CustomNotification: UIViewController {
                 self.present(verify, animated: true, completion: nil)
                 return
             }
-         })
+        }){ (error) in
+            GenericTools.Logger(data: "\n Error sending custom notification: \(error)")
+            }
         }
         else {
              let verify = UIAlertController(title: "Alert!", message: "You can't send an empty notification.", preferredStyle: UIAlertControllerStyle.alert)

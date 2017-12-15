@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import FirebaseStorage
 
 class News: Comparable {
     
@@ -78,12 +79,17 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
-            print("Internet Connection not Available!")
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5){
+            error.removeFromSuperview()
+            }
+            GenericTools.Logger(data: "\n Internet Connection not Available!")
         }
     }
     
     func deleteNewsInternal(action: UIAlertAction) {
-        FirebaseDatabase.Database.database().reference(withPath: "News").child(self.buttonIdentifier).removeValue()
+        FirebaseDatabase.Database.database().reference(withPath: "News").child(self.buttonIdentifier).removeValue(){ (error) in
+            GenericTools.Logger(data: "\n Error writing news: \(error)")
+        }
         self.TableView.reloadData()
     }
     
@@ -114,9 +120,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let firebaseAuth = Auth.auth()
         do {
             try firebaseAuth.signOut()
-            print("Signed out");
+            GenericTools.Logger(data: "\n Succesfully signed out")
         } catch let signOutError as NSError {
-            print ("Error signing out: %@", signOutError)
+            GenericTools.Logger(data: "\n Error signing out: \(signOutError)")
         }
         defaults.set(nil, forKey: "Password")
         self.presentingViewController?.dismiss(animated: true)
@@ -141,7 +147,8 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             performSegue(withIdentifier: "Members", sender: self)
             break;
         case 7:
-          //  performSegue(withIdentifier: "Profile", sender: self)
+            NewUser.edit = true
+            performSegue(withIdentifier: "PersonalProfile", sender: self)
             break;
         case 8:
            // performSegue(withIdentifier: "GoogleDrive", sender: self)
@@ -166,7 +173,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                         if let postId = postDictionary["PostId"] as? String {
                             if let date = postDictionary["Epoch"] as? Double {
                                 let news = News(Epoch: date, Post: post, Id: postId)
-                               self.NewsPosts.append(news)
+                                self.NewsPosts.append(news)
                    }
                   }
                  }
@@ -174,9 +181,8 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                }
              }
             completion(true);
-            })
-            { (error) in
-            print("Could not retrieve object from database");
+            }){ (error) in
+                GenericTools.Logger(data: "\n Error reading news from database: \(error)")
             completion(false)
         }
     }
@@ -190,7 +196,10 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not get posts from database.")
                 BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                 self.view.addSubview(BadPostRequest)
-                print("Internet Connection not Available!")
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5){
+                    BadPostRequest.removeFromSuperview()
+                }
+                GenericTools.Logger(data: "\n Could not get posts from database!")
                 return
             }
             self.NewsPosts = mergeSorting.mergeSort(self.NewsPosts)
@@ -229,13 +238,102 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         Info.layer.borderColor = UIColor.white.cgColor
         Info.layer.borderWidth = 1
 
-        // Do any additional setup after loading the view.
+        self.getUsers(){(response) in
+            if !response {
+                let error = Banner.ErrorBanner(errorTitle: "Could not connect to database")
+                error.backgroundColor = UIColor.black.withAlphaComponent(1)
+                self.view.addSubview(error)
+                let when = DispatchTime.now() + 5
+                DispatchQueue.main.asyncAfter(deadline: when){
+                    error.removeFromSuperview()
+                }
+                GenericTools.Logger(data: "\n Internet Connection not Available!")
+            }
+            else {
+                self.getPics(){(response) in
+                    if !response {
+                        let error = Banner.ErrorBanner(errorTitle: "Could not connect to database")
+                        error.backgroundColor = UIColor.black.withAlphaComponent(1)
+                        self.view.addSubview(error)
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5){
+                            error.removeFromSuperview()
+                        }
+                        GenericTools.Logger(data: "\n Internet Connection not Available!")
+                    }
+                }
+            }
+        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func getPics(completion: @escaping (Bool) -> Void) {
+        for index in 0...(mMembers.MemberList.count - 1) {
+            if mMembers.MemberList[index].imageURL != "Empty" {
+            Storage.storage().reference(forURL: mMembers.MemberList[index].imageURL).getData(maxSize: 10000000) { (data, error) -> Void in
+                if error == nil {
+                    if let pic = UIImage(data: data!) {
+                        mMembers.MemberList[index].picture = pic
+                        completion(true)
+                    }
+                    else {
+                        mMembers.MemberList[index].picture = UIImage(named: "Icons/Placeholder.png")!
+                        GenericTools.Logger(data: "\n Error get url data of member \(mMembers.MemberList[index].id)")
+                        completion(true)
+                    }
+                }
+                else {
+                    GenericTools.Logger(data: "\n Error reading image url of member \(mMembers.MemberList[index].id): \(error!)")
+                }
+            }
+          }
+        }
     }
-
+    
+    func getUsers(completion: @escaping (Bool) -> Void){
+        Database.database().reference().child("Users").observe(.value, with: { (snapshot) in
+            mMembers.MemberList.removeAll()
+            for snap in snapshot.children{
+                if let childSnapshot = snap as? DataSnapshot
+                {
+                    if let user = childSnapshot.value as? [String:AnyObject] , user.count > 0{
+                        if let brotherName = user["BrotherName"] as? String {
+                            if let first = user["First Name"] as? String {
+                                if let last = user["Last Name"] as? String {
+                                    if let degree = user["Degree"] as? String {
+                                        if let status = user["Validated"] as? Bool {
+                                            if let birthday = user["Birthday"] as? String {
+                                                if let email = user["Email"] as? String {
+                                                    if let grad = user["GraduationDate"] as? String {
+                                                        if let position = user["Position"] as? String {
+                                                            if let school = user["School"] as? String {
+                                                                if let id = user["UserID"] as? String {
+                                                                    if let image = user["Image"] as? String {
+                                                                        let imageHolder = UIImage(named: "Icons/Placeholder.png")
+                                                                        let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, status: status, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id)
+                                                                        
+                                                                        mMembers.MemberList.append(member)
+                                                                        completion(true)
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    completion(false)
+                    
+                }
+            }
+        }){ (error) in
+            GenericTools.Logger(data: "\n Error getting Users: \(error)")
+        }
+    }
 
 }
+

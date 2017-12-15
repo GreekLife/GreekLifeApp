@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "/Users/jonahelbaz/Desktop/Fraternity_IOS/GreekLife",
+    "ignore": [
+      "firebase.json",
+      "Greek Life",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

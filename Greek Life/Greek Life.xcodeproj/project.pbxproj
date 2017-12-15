@@ -33,6 +33,7 @@
 		6DCAFF1F1F9AC46F00D1311E /* Greek_LifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF1E1F9AC46F00D1311E /* Greek_LifeTests.swift */; };
 		6DCAFF2A1F9AC46F00D1311E /* Greek_LifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */; };
 		6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD95E691F9D306400894B0F /* Tools.swift */; };
+		6DDA63AA1FE48AA7002B9952 /* Log.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6DDA63A91FE48AA6002B9952 /* Log.txt */; };
 		6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */; };
 		6DF4D1331FA28F5400EA86E8 /* Icons in Resources */ = {isa = PBXBuildFile; fileRef = 6DF4D1321FA28F5400EA86E8 /* Icons */; };
 		6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF68DB61FACD989006E0B76 /* CommentViewController.swift */; };
@@ -97,6 +98,7 @@
 		6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Greek_LifeUITests.swift; sourceTree = "<group>"; };
 		6DCAFF2B1F9AC46F00D1311E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6DD95E691F9D306400894B0F /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
+		6DDA63A91FE48AA6002B9952 /* Log.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Log.txt; sourceTree = SOURCE_ROOT; };
 		6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePollViewController.swift; sourceTree = "<group>"; };
 		6DF4D1321FA28F5400EA86E8 /* Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Icons; sourceTree = "<group>"; };
 		6DF68DB61FACD989006E0B76 /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */,
 				6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */,
 				6D5005EB1FC3D151007C21B5 /* PollViewResultsController.swift */,
+				6DDA63A91FE48AA6002B9952 /* Log.txt */,
 				6DF7DC5D1FBA118700155E23 /* PollViewController.swift */,
 				6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */,
 				6D8352121FCF7E07007C495D /* CreateAccountViewController.swift */,
@@ -364,6 +367,7 @@
 				6D806DAC1FAAB53F00D80CC2 /* MainConfig.plist in Resources */,
 				6DCAFF111F9AC46F00D1311E /* Assets.xcassets in Resources */,
 				6DCAFF0F1F9AC46F00D1311E /* Main.storyboard in Resources */,
+				6DDA63AA1FE48AA7002B9952 /* Log.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
