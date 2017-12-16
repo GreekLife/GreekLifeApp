@@ -54,9 +54,8 @@ class MasterControllsViewController: UIViewController {
         }
     }
     @IBAction func KickAMember(_ sender: Any) {
-        performSegue(withIdentifier: "KickBrother", sender: self)
         ListType.kick = true
-        ListType.validate = false
+        performSegue(withIdentifier: "KickBrother", sender: self)
     }
     @IBAction func SendNotification(_ sender: Any) {
         performSegue(withIdentifier: "CustomNotif", sender: self)
@@ -68,9 +67,8 @@ class MasterControllsViewController: UIViewController {
     }
     
     @IBAction func ValidateUser(_ sender: Any) {
-        performSegue(withIdentifier: "KickBrother", sender: self)
         ListType.kick = false
-        ListType.validate = true
+        performSegue(withIdentifier: "KickBrother", sender: self)
     }
     
     
@@ -83,7 +81,6 @@ class KickPrototypeCell: UITableViewCell {
 
 struct ListType {
    static var kick = false
-   static var validate = false
 }
 
 class PostNews: UIViewController {
@@ -193,7 +190,7 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return memberList.count
     }
     @IBAction func Back(_ sender: Any) {
-        self.presentingViewController?.dismiss(animated: true)
+        self.dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -235,7 +232,9 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if ListType.validate == true {
+        memberList = []
+        memberId = []
+        if ListType.kick == false {
             for mem in mMembers.MemberList {
                 if mem.status == false {
                     memberList.append(mem)

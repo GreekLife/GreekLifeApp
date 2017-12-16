@@ -118,6 +118,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     @IBOutlet weak var GradDate: UITextField!
     @IBOutlet weak var Birthday: UITextField!
     @IBOutlet weak var ImageButton: UIButton!
+    @IBOutlet weak var emailEdit: UITextField!
     
     @IBOutlet weak var Cancel: UIButton!
     var ref: DatabaseReference!
@@ -245,12 +246,16 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "Birthday": self.Birthday.text!,
                             "Position": self.Position.text!,
                             "Username": changedUser,
-                            "Email": LoggedIn.User["Email"] as! String,
+                            "Email": self.emailEdit.text!,
                             "Image": image,
                             "UserID": LoggedIn.User["UserID"] as! String,
                             "NotificationId": self.notifId,
                             "Validated": validated
                             ] as [String : Any]
+                        
+                        Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
+                            GenericTools.Logger(data: "Could not update email")
+                        }
                         
                         self.CreateProfile(newPostData: updatedData) {(success ,error) in
                             self.dismiss(animated: true, completion: nil)
@@ -342,7 +347,10 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             if LoggedIn.User["Username"] as? String == "Master" {
                 Position.isUserInteractionEnabled = false
             }
+            emailEdit.isHidden = false
             Cancel.isHidden = false
+            emailEdit.layer.cornerRadius = 5
+            emailEdit.text = LoggedIn.User["Email"] as? String
             FirstName.text = LoggedIn.User["First Name"] as? String
             LastName.text = LoggedIn.User["Last Name"] as? String
             BrotherName.text = LoggedIn.User["BrotherName"] as? String

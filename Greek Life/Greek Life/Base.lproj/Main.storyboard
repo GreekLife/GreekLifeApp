@@ -2579,6 +2579,21 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bjx-Kr-gr3">
+                                <rect key="frame" x="23" y="552" width="329" height="30"/>
+                                <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="bjx-Kr-gr3" secondAttribute="height" multiplier="329:30" id="3He-9C-vbW"/>
+                                    <constraint firstAttribute="height" constant="30" id="Xzj-3y-p0x"/>
+                                    <constraint firstAttribute="width" constant="329" id="mAL-Y8-pTW"/>
+                                </constraints>
+                                <state key="normal" title="Create Account">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="CreateAccount:" destination="MvD-bz-Z13" eventType="touchUpInside" id="fXx-cr-gjG"/>
+                                </connections>
+                            </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6Fm-CR-Oti">
                                 <rect key="frame" x="171" y="154" width="182" height="30"/>
                                 <constraints>
@@ -2697,21 +2712,17 @@
                                     <action selector="Cancel:" destination="MvD-bz-Z13" eventType="touchUpInside" id="zr1-qZ-52c"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bjx-Kr-gr3">
-                                <rect key="frame" x="23" y="552" width="329" height="30"/>
-                                <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
+                            <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1vn-P4-I3U">
+                                <rect key="frame" x="24" y="451" width="241" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="bjx-Kr-gr3" secondAttribute="height" multiplier="329:30" id="3He-9C-vbW"/>
-                                    <constraint firstAttribute="height" constant="30" id="Xzj-3y-p0x"/>
-                                    <constraint firstAttribute="width" constant="329" id="mAL-Y8-pTW"/>
+                                    <constraint firstAttribute="width" secondItem="1vn-P4-I3U" secondAttribute="height" multiplier="241:30" id="NtJ-R4-2zd"/>
+                                    <constraint firstAttribute="width" constant="241" id="PEw-1x-tLj"/>
+                                    <constraint firstAttribute="height" constant="30" id="Sez-Bg-dEz"/>
                                 </constraints>
-                                <state key="normal" title="Create Account">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="CreateAccount:" destination="MvD-bz-Z13" eventType="touchUpInside" id="fXx-cr-gjG"/>
-                                </connections>
-                            </button>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -2720,9 +2731,11 @@
                             <constraint firstItem="ZOe-jt-SmC" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-184" id="5oS-Li-p9i"/>
                             <constraint firstItem="IQC-PT-Ybb" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="310.5" id="7Dl-Jw-pWg"/>
                             <constraint firstItem="Wll-tw-S6a" firstAttribute="leading" secondItem="39T-k3-ROs" secondAttribute="leading" id="7ib-eK-jdY"/>
+                            <constraint firstItem="1vn-P4-I3U" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="CZ2-af-lnR"/>
                             <constraint firstAttribute="trailing" secondItem="Wll-tw-S6a" secondAttribute="trailing" id="EzS-Sn-vnh"/>
                             <constraint firstItem="uUT-yv-mMK" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-202.5" id="FFt-io-iDi"/>
                             <constraint firstAttribute="trailing" secondItem="Wll-tw-S6a" secondAttribute="trailing" id="GXG-a3-SBw"/>
+                            <constraint firstItem="1vn-P4-I3U" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="132.5" id="ISq-0j-w4Y"/>
                             <constraint firstItem="uPX-y4-wka" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="JMu-aO-gcn"/>
                             <constraint firstItem="MdZ-Ae-N1E" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-21.5" id="M00-sB-0o7"/>
                             <constraint firstItem="1YY-c9-VUJ" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="M0k-od-gvm"/>
@@ -2760,6 +2773,7 @@
                         <outlet property="LastName" destination="6Fm-CR-Oti" id="fdE-VL-DJP"/>
                         <outlet property="Position" destination="8nT-cF-sfd" id="9v4-wf-3wz"/>
                         <outlet property="School" destination="MdZ-Ae-N1E" id="u9T-1x-kcu"/>
+                        <outlet property="emailEdit" destination="1vn-P4-I3U" id="wFC-gg-gPV"/>
                         <segue destination="h99-D2-BKj" kind="show" identifier="ProfileCreated" id="UrQ-kY-g70"/>
                     </connections>
                 </viewController>
