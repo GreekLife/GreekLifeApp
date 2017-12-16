@@ -14,10 +14,46 @@ import MapKit
   //*******************//
  //  Calendar Struct  //
 //*******************//
-struct Calendar {
+struct theCalendar {
+    let userCalendar = Calendar.current
+    //UI Stuff
+    var monthViewing:Int
+    var yearViewing:Int
+    mutating func initUI(){
+        self.monthViewing = userCalendar.component(.month, from: Date.init())
+        self.yearViewing = userCalendar.component(.year, from: Date.init())
+    }
     //Calendar Fields
     var eventList:[String:[String:Any]]
     var settings:[String:Any]
+    var sectionedEventList:[Int:[Int:[Int:[String:[String:Any]]]]]
+    ////////////////////////YY///MM///DD///epoch///Detail:Val///
+    
+    
+    mutating func organizeEvents ()
+    {
+        
+        for event in eventList
+        {
+            let dateDate = Date.init(timeIntervalSince1970: Double(event.key)!)
+            let year:Int = userCalendar.component(.year, from: dateDate)
+            let month:Int = userCalendar.component(.month, from: dateDate)
+            let day:Int = userCalendar.component(.day, from: dateDate)
+            if sectionedEventList[year]?[month]?[day] != nil {
+                sectionedEventList[year]![month]![day]![event.key] = event.value
+            }
+            else if sectionedEventList[year]?[month] != nil{
+                sectionedEventList[year]![month]![day] = [event.key:event.value]
+            }
+            else if sectionedEventList[year] != nil{
+                sectionedEventList[year]![month] = [day:[event.key:event.value]]
+            }
+            else {
+                sectionedEventList[year] = [month:[day:[event.key:event.value]]]
+            }
+        }
+        print(sectionedEventList)
+    }
     
     //General Gregorian Rules and Tools
     func isLeapYear(_ year:Int) -> Bool{
@@ -48,6 +84,37 @@ struct Calendar {
             return 31
         }
     }
+    func monthToString(_ month:Int) -> String
+    {
+        switch month {
+        case 1:
+            return "January"
+        case 2:
+            return "February"
+        case 3:
+            return "March"
+        case 4:
+            return "April"
+        case 5:
+            return "May"
+        case 6:
+            return "June"
+        case 7:
+            return "July"
+        case 8:
+            return "August"
+        case 9:
+            return "September"
+        case 10:
+            return "October"
+        case 11:
+            return "November"
+        case 12:
+            return "December"
+        default:
+            return "That's not a month"
+        }
+    }
     
 }
 
@@ -58,9 +125,7 @@ struct Calendar {
 
 class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
-    //-------------------//
-    //  Calendar Model   //
-    //-------------------//
+    
 
     //Database References
     let dataRef:DatabaseReference = Database.database().reference()
@@ -70,9 +135,15 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //Current Snapshots of Database
     var calendarSnapshot:DataSnapshot?
     var calendarSettingsSnapshot:DataSnapshot?
-    //location Calendar Instace
-    var calendar:Calendar = Calendar(eventList: [:], settings: [:])
     
+    //-------------------//
+    //  Calendar Model   //
+    //-------------------//
+    
+    //theCalendar Struct Instance
+    var calendar:theCalendar = theCalendar(monthViewing: 0, yearViewing: 0, eventList: [:], settings: [:], sectionedEventList: [:])
+    
+    //Calendar Initialization (Fetching data from DB)
     func initCalendar()
     {
         if Reachability.isConnectedToNetwork(){
@@ -82,7 +153,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 {
                     self.calendar.eventList = eventList
                     print("we got the calendar boyyz")
-                    self.calendarTable.reloadData()
+                    self.reloadCalendar()
                 }
                 else{print("Can't find the calendar")}
             }){ (error) in
@@ -102,7 +173,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         }
         else{print ("Not connected to network!")}
     }
-    
+    //General function to edit events in the DB
     func editEvent (
         title:String,
         date:Date,
@@ -148,18 +219,21 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //View Lifecycle Things
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.calendar.initUI()
         initCalendar()
         calendarDataHandle = dataRef.child("Calendar").observe(.value, with: {(calendarSnapshot) in
             self.calendar.eventList = (calendarSnapshot.value as? [String : [String : Any]])!
-            self.calendarTable.reloadData()
+            self.reloadCalendar()
         })
         
     }
+    //To and From other Views
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         //For Viewing an Event
         if segue.identifier == "displayEventViewSegue"
         {
+            self.reloadCalendar()
             let displayEventView = segue.destination as? DisplayEventViewController
             let eventData:[String:Any] = Array(calendar.eventList.values)[(sender as! Int)]
             displayEventView?.eventData = eventData
@@ -188,8 +262,25 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     //Table View Controller Functions
+    func reloadCalendar(){
+        
+        
+        self.calendar.organizeEvents()
+        self.calendarTable.reloadData()
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
+            return calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.count
+        }else{
+            return 0
+        }
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return calendar.eventList.count
+        if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
+            return Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!)[section].value.count
+        }else{
+            return 0
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -197,16 +288,21 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         
         if let eventCell = eventCell as? EventCell
         {
-            eventCell.eventTitle.text = Array(calendar.eventList.values)[indexPath.row]["title"] as? String
-            eventCell.eventDateTime.text = CreateDate.getCurrentDate(epoch: Double(Array(calendar.eventList.keys)[indexPath.row])!)
+            eventCell.eventTitle.text =
+                Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["title"] as? String
+            eventCell.eventDateTime.text =
+                CreateDate.getCurrentDate(epoch: Double(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["date"] as! Double))
         }
         return eventCell
     }
+    
     //To view an event in the DisplayEventViewController
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         performSegue(withIdentifier: "displayEventViewSegue", sender: indexPath.row)
     }
+    
+    
 }
   //********************//
  //  Event Cell Class  //
@@ -217,7 +313,6 @@ class EventCell: UITableViewCell
     
     @IBOutlet weak var eventTitle: UILabel!
     @IBOutlet weak var eventDateTime: UILabel!
-    @IBOutlet weak var eventLocation: MKMapView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
