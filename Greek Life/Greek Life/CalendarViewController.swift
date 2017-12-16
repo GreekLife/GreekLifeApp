@@ -14,10 +14,37 @@ import MapKit
   //*******************//
  //  Calendar Struct  //
 //*******************//
-struct Calendar {
+struct theCalendar {
     //Calendar Fields
     var eventList:[String:[String:Any]]
     var settings:[String:Any]
+    var sectionedEventList:[Int:[Int:[Int:[String:[String:Any]]]]]
+    ////////////////////////YY///MM///DD///epoch///Detail:Val////
+    
+    mutating func organizeEvents ()
+    {
+        let userCalendar = Calendar.current
+        for event in eventList
+        {
+            let dateDate = Date.init(timeIntervalSince1970: Double(event.key)!)
+            let year:Int = userCalendar.component(.year, from: dateDate)
+            let month:Int = userCalendar.component(.month, from: dateDate)
+            let day:Int = userCalendar.component(.day, from: dateDate)
+            if sectionedEventList[year]?[month]?[day] != nil {
+                sectionedEventList[year]![month]![day]![event.key] = event.value
+            }
+            else if sectionedEventList[year]?[month] != nil{
+                sectionedEventList[year]![month]![day] = [event.key:event.value]
+            }
+            else if sectionedEventList[year] != nil{
+                sectionedEventList[year]![month] = [day:[event.key:event.value]]
+            }
+            else {
+                sectionedEventList[year] = [month:[day:[event.key:event.value]]]
+            }
+        }
+        print(sectionedEventList)
+    }
     
     //General Gregorian Rules and Tools
     func isLeapYear(_ year:Int) -> Bool{
@@ -71,7 +98,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     var calendarSnapshot:DataSnapshot?
     var calendarSettingsSnapshot:DataSnapshot?
     //location Calendar Instace
-    var calendar:Calendar = Calendar(eventList: [:], settings: [:])
+    var calendar:theCalendar = theCalendar(eventList: [:], settings: [:], sectionedEventList: [:])
     
     func initCalendar()
     {
@@ -82,7 +109,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 {
                     self.calendar.eventList = eventList
                     print("we got the calendar boyyz")
-                    self.calendarTable.reloadData()
+                    self.reloadCalendar()
                 }
                 else{print("Can't find the calendar")}
             }){ (error) in
@@ -151,7 +178,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         initCalendar()
         calendarDataHandle = dataRef.child("Calendar").observe(.value, with: {(calendarSnapshot) in
             self.calendar.eventList = (calendarSnapshot.value as? [String : [String : Any]])!
-            self.calendarTable.reloadData()
+            self.reloadCalendar()
         })
         
     }
@@ -160,6 +187,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         //For Viewing an Event
         if segue.identifier == "displayEventViewSegue"
         {
+            self.reloadCalendar()
             let displayEventView = segue.destination as? DisplayEventViewController
             let eventData:[String:Any] = Array(calendar.eventList.values)[(sender as! Int)]
             displayEventView?.eventData = eventData
@@ -188,6 +216,10 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     //Table View Controller Functions
+    func reloadCalendar(){
+        self.calendar.organizeEvents()
+        self.calendarTable.reloadData()
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return calendar.eventList.count
     }
@@ -202,11 +234,14 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         }
         return eventCell
     }
+    
     //To view an event in the DisplayEventViewController
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         performSegue(withIdentifier: "displayEventViewSegue", sender: indexPath.row)
     }
+    
+    
 }
   //********************//
  //  Event Cell Class  //
