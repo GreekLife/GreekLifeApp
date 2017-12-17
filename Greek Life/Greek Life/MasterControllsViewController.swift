@@ -17,6 +17,10 @@ class MasterControllsViewController: UIViewController {
     @IBOutlet weak var GenerateNewCode: UIButton!
     @IBOutlet weak var KickAMember: UIButton!
     @IBOutlet weak var SendNotif: UIButton!
+    @IBOutlet weak var TempBan: UIButton!
+    @IBOutlet weak var PostNews: UIButton!
+    @IBOutlet weak var Validate: UIButton!
+    @IBOutlet weak var Code: UILabel!
     
     var ref: DatabaseReference!
 
@@ -25,6 +29,10 @@ class MasterControllsViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        TempBan.layer.cornerRadius = 5
+        Validate.layer.cornerRadius = 5
+        Code.layer.cornerRadius = 5
+        PostNews.layer.cornerRadius = 5
         CurrentCode.layer.cornerRadius = 5
         GenerateNewCode.layer.cornerRadius = 5
         KickAMember.layer.cornerRadius = 5
@@ -69,6 +77,10 @@ class MasterControllsViewController: UIViewController {
     @IBAction func ValidateUser(_ sender: Any) {
         ListType.kick = false
         performSegue(withIdentifier: "KickBrother", sender: self)
+    }
+    @IBAction func TempBan(_ sender: Any) {
+        performSegue(withIdentifier: "TempBan", sender: self)
+
     }
     
     
@@ -299,3 +311,98 @@ class CustomNotification: UIViewController {
         SendNotification.layer.cornerRadius = 10
     }
 }
+
+class BanCell: UITableViewCell {
+    @IBOutlet weak var Name: UILabel!
+    
+}
+
+class Ban: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    @IBOutlet weak var TableView: UITableView!
+    @IBAction func Back(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BanCell", for: indexPath) as! BanCell
+        cell.Name.text = "\(mMembers.MemberList[indexPath.row].first) \(mMembers.MemberList[indexPath.row].last)"
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+            if (editingStyle == UITableViewCellEditingStyle.delete) {
+                selectedIndex = indexPath.row
+                let verify = UIAlertController(title: "Ban", message: "How long would you like to temporarily ban this person from the app? All access will be revoked.", preferredStyle: UIAlertControllerStyle.alert)
+                let Five = UIAlertAction(title: "5 minutes", style: UIAlertActionStyle.default, handler: BanMember)
+                let Thirty = UIAlertAction(title: "30 minutes", style: UIAlertActionStyle.default, handler: BanMember)
+                let OneTwenty = UIAlertAction(title: "2 hours", style: UIAlertActionStyle.default, handler: BanMember)
+                let day = UIAlertAction(title: "1 Day", style: UIAlertActionStyle.default, handler: BanMember)
+                let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+                
+                verify.addAction(Five)
+                verify.addAction(Thirty)
+                verify.addAction(OneTwenty)
+                verify.addAction(day)
+                verify.addAction(destructorAction)
+                self.present(verify, animated: true, completion: nil)
+            }
+        }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return mMembers.MemberList.count
+    }
+    
+    var selectedIndex = 0
+    func BanMember(alert: UIAlertAction) {
+        var time = 0
+        switch alert.title {
+        case "5 minutes"?:
+            time = 5
+            break
+        case "30 minutes"?:
+            time = 30
+            break
+        case "2 hours"?:
+            time = 120
+            break
+        case "1 Day"?:
+            time = 1440
+            break
+        default:
+            time = 0
+            break
+        }
+        let value = [
+            "Blocked": true,
+            "Delay": time
+            ] as [String : Any]
+        Database.database().reference().child("Blocked/\(mMembers.MemberList[selectedIndex].id)").setValue(value) { (error) in
+            GenericTools.Logger(data: "\n Error editing time for desired block: \(error)")
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

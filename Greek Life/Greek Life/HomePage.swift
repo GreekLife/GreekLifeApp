@@ -187,9 +187,42 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func UserIsBlocked(userId: String, completion: @escaping (Bool, Any?, Bool) -> Void) {
+         Database.database().reference().child("Blocked/\(userId)").observe(.value, with: { (snapshot) in
+                    if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                        if let blocked = postDictionary["Blocked"] as? Bool {
+                            if let delay = postDictionary["Delay"] as? Int {
+                                    completion(blocked, delay, true)
+                            }
+                        }
+                    }
+         }){ (error) in
+            GenericTools.Logger(data: "\n Error reading blocked user from database: \(error)")
+            completion(false, nil, false)
+        }
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let id = LoggedIn.User["UserID"] as! String
+        self.UserIsBlocked(userId: id){(blocked, value, success) in
+            if success == true {
+                if blocked == true {
+                    let time: String! = String(describing: value)
+                    let blocked = UIAlertController(title: "Alert!", message: "Your Master has temporarily disabled your access. It will return in \(time) minutes?", preferredStyle: .alert)
+                   let presentViewController: UIViewController! = UIApplication.shared.keyWindow?.currentViewController()
+                    presentViewController.present(blocked, animated: true, completion: nil)
+                    let ban = (value as! Int) * 60
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(ban)){
+                        blocked.dismiss(animated: true, completion: nil)
+                        Database.database().reference().child("Blocked/\(id)").updateChildValues(["Blocked": false]) { (error) in
+                            GenericTools.Logger(data: "\n Error editing blocked user in database: \(error)")
+                        }
+                    }
+                }
+            }
+        }
        self.TableView.allowsSelection = false
         self.ReadNews(){(success) in
             guard success else {
@@ -310,6 +343,21 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                                         let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, status: status, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id)
                                                                         
                                                                         mMembers.MemberList.append(member)
+                                                                        
+                                                                        if id == LoggedIn.User["UserID"] as! String {
+                                                                            LoggedIn.User["BrotherName"] = member.brotherName
+                                                                            LoggedIn.User["First Name"] = member.first
+                                                                            LoggedIn.User["Last Name"] = member.last
+                                                                            LoggedIn.User["Degree"] = member.degree
+                                                                            LoggedIn.User["Validated"] = member.status
+                                                                            LoggedIn.User["Birthday"] = member.birthday
+                                                                            LoggedIn.User["Email"] = member.email
+                                                                            LoggedIn.User["GraduationDate"] = member.graduateDay
+                                                                            LoggedIn.User["Position"] = member.position
+                                                                            LoggedIn.User["School"] = member.school
+                                                                            LoggedIn.User["UserID"] = member.id
+                                                                            LoggedIn.User["Image"] = member.imageURL
+                                                                        }
                                                                         completion(true)
                                                                     }
                                                                 }

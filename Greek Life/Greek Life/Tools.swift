@@ -35,7 +35,7 @@ public class GenericTools {
     }
     
     class func Logger(data: String) {
-          print(data)
+        debugPrint(data)
 //        let path = Bundle.main.path(forResource: "Log", ofType: "txt")
 //        let fileURL = URL(fileURLWithPath: path!)
 //        do {

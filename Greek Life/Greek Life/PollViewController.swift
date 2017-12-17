@@ -31,7 +31,6 @@ struct Poll: Comparable {
     var VoteBtn: [UIButton]
     var OptionTxt: [UITextView]
     var Drawn: Bool
-    var ImageURL: String
     var Image: UIImage
     var UpVoteNames: [[String]]
     
@@ -49,11 +48,10 @@ struct Poll: Comparable {
         self.OptionTxt = []
         self.Drawn = false
         self.PosterId = ""
-        self.ImageURL = "Empty"
         self.Image = UIImage(named: "Icons/Placeholder.png")!
     }
     
-    public init(pollId: String, ImageURL: String, PosterId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
+    public init(pollId: String, PosterId: String, Epoch: Double, Poster: String, PollTitle: String, options: [String], upVotes: [[String]])
     {
         self.PollId = pollId
         self.Epoch = Epoch
@@ -67,7 +65,6 @@ struct Poll: Comparable {
         self.OptionTxt = []
         self.Drawn = false
         self.PosterId = PosterId
-        self.ImageURL = ImageURL
         self.Image = UIImage(named: "Icons/Placeholder.png")!
         self.UpVoteNames = [[]]
     }
@@ -337,15 +334,11 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                             }
                             PollNumber += 1
                     }//--
-                    //Create elements for options
-                    self.ReadImages() {(response) in
+                    
                         Polling.fetched = true
                         self.TableView.reloadData()
                         self.activityIndicator.stopAnimating();
                         UIApplication.shared.endIgnoringInteractionEvents();
-                    }
-
-                    
 
             } // --
         }  // Finished Accumulating Data
@@ -374,9 +367,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                         if let Title = pollDictionary["Title"] as? String {
                                             if let Options = pollDictionary["Options"] as? [String] {
                                                 if let PosterId = pollDictionary["PosterId"] as? String {
-                                                    if let imageURL = pollDictionary["ImageURL"] as? String {
                                                     
-                                                            var retrievedPoll = Poll(pollId: Id, ImageURL: imageURL, PosterId: PosterId, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
+                                                            var retrievedPoll = Poll(pollId: Id, PosterId: PosterId, Epoch: Epoch, Poster: Poster, PollTitle: Title, options: Options, upVotes: [])
                                                 for _ in retrievedPoll.Options {
                                                     retrievedPoll.UpVotes.append([])
                                                     retrievedPoll.UpVoteNames.append([])
@@ -384,7 +376,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                                                 }
                                                 Polling.ListOfPolls.append(retrievedPoll)
                                                     
-                                                }
                                                 }
                                             }
                                         }
@@ -460,34 +451,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    func ReadImages(completion: @escaping (Bool) -> Void) {
-        for count in 0...(Polling.ListOfPolls.count - 1) {
-            if Polling.ListOfPolls[count].ImageURL != "Empty" {
-                let storageRef = Storage.storage().reference(forURL: Polling.ListOfPolls[count].ImageURL)
-                storageRef.getData(maxSize: 10000000) { (data, error) -> Void in
-                    if error == nil {
-                        if let pic = UIImage(data: data!) {
-                            Polling.ListOfPolls[count].Image = pic
-                            completion(true)
-                        }
-                        else {
-                            Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Placeholder.png")!
-                            completion(true)
-                        }
-                    }
-                    else {
-                        print("Error Loading picture")
-                        print(error!)
-                        completion(false)
-                    }
-                }
-            }
-            else {
-                Polling.ListOfPolls[count].Image = UIImage(named: "Icons/Placeholder.png")!
-            }
-        }
-    }
-        
     
     func DeleteSelectedPoll(button: UIButton) {
         if Reachability.isConnectedToNetwork() == true {
@@ -590,7 +553,11 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         GenericTools.FrameToFitTextView(View: cell.Poll)
         
         cell.PollDate.text = date
-        cell.PollerPicture.image = Polling.ListOfPolls[indexPath.row].Image
+        for mem in mMembers.MemberList {
+            if Polling.ListOfPolls[indexPath.row].PosterId == mem.id {
+                cell.PollerPicture.image = mem.picture
+            }
+        }
         cell.Poster.text = Polling.ListOfPolls[indexPath.row].Poster
         cell.InnerTable.reloadData()
         //Get expected height of table

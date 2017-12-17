@@ -26,6 +26,7 @@ class AccountDetails: UIViewController {
     @IBOutlet weak var GoToProfile: UIButton!
     
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
+    var ref: DatabaseReference!
 
     
     @IBAction func Cancel(_ sender: Any) {
@@ -71,6 +72,34 @@ class AccountDetails: UIViewController {
                             print("Account created")
                             NewUser.email = self.Email.text!
                             NewUser.userID = (user?.uid)!
+                            let newUserData = [
+                                "BrotherName": "",
+                                "Degree": "",
+                                "First Name": "",
+                                "Last Name": "",
+                                "School": "",
+                                "GraduationDate": "",
+                                "Birthday": "",
+                                "Position": "",
+                                "Username": "",
+                                "Email": NewUser.email,
+                                "Image": "",
+                                "UserID": NewUser.userID,
+                                "NotificationId": "",
+                                "Validated": false
+                                ] as [String : Any]
+                            
+                            self.CreateProfile(newPostData: newUserData) {(success ,error) in
+                                self.activityIndicator.stopAnimating();
+                                UIApplication.shared.endIgnoringInteractionEvents();
+                            }
+                            let value = [
+                                "Blocked": false,
+                                "Delay": 0
+                                ] as [String : Any]
+                            Database.database().reference().child("Blocked/\(NewUser.userID)").setValue(value) { (error) in
+                                GenericTools.Logger(data: "\n Error initializing block value: \(error)")
+                            }
                             self.performSegue(withIdentifier: "Profile", sender: self);
                     }
                 }
@@ -100,10 +129,13 @@ class AccountDetails: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
+        ref = Database.database().reference()
+        ref.child("Users").child(NewUser.userID).setValue(newPostData)
+        completion(true, nil)
+        
     }
+    
     
 }
 
@@ -125,6 +157,8 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     let defaults:UserDefaults = UserDefaults.standard
     let imagePicker = UIImagePickerController()
     var pickedImage: UIImage!
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
+
     
     let positionOptions = ["Brother", "Alumni", "Pledge", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
     var existingBrotherNames: [String] = []
@@ -180,6 +214,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             self.present(invalid, animated: true, completion: nil)
             return
         }
+        ActivityWheel.CreateActivity(activityIndicator: activityIndicator, view: self.view);
         var image = "Empty"
         if self.pickedImage != nil {
             if NewUser.edit == false {
@@ -223,6 +258,8 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         ] as [String : Any]
                     
                         self.CreateProfile(newPostData: newUserData) {(success ,error) in
+                            self.activityIndicator.stopAnimating();
+                            UIApplication.shared.endIgnoringInteractionEvents();
                         self.performSegue(withIdentifier: "ProfileCreated", sender: self)
                     }
                     }
@@ -255,10 +292,22 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         
                         Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
                             GenericTools.Logger(data: "Could not update email")
+                            self.activityIndicator.stopAnimating();
+                            UIApplication.shared.endIgnoringInteractionEvents();
+                            let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                            invalid.addAction(okAction)
+                            self.present(invalid, animated: true, completion: nil)
                         }
                         
                         self.CreateProfile(newPostData: updatedData) {(success ,error) in
+                            self.activityIndicator.stopAnimating();
+                            UIApplication.shared.endIgnoringInteractionEvents();
                             self.dismiss(animated: true, completion: nil)
+                            let invalid = UIAlertController(title: "Error", message: "Could not update account", preferredStyle: UIAlertControllerStyle.alert)
+                            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                            invalid.addAction(okAction)
+                            self.present(invalid, animated: true, completion: nil)
                         }
                     }
                 
@@ -270,11 +319,16 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         var id = ""
-        if LoggedIn.User["Username"] as! String == "Master" {
+        if LoggedIn.User["Username"] != nil {
+            if LoggedIn.User["Username"] as? String == "Master" {
              id = "Master"
+            }
+            else {
+                id = LoggedIn.User["UserID"] as! String
+            }
         }
         else {
-             id = LoggedIn.User["UserID"] as! String
+            id = NewUser.userID
         }
         ref = Database.database().reference()
         ref.child("Users").child(id).setValue(newPostData)

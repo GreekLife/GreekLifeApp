@@ -78,7 +78,6 @@ class ForumPost: Hashable, Comparable {
     var PostDate:Double
     var PostTitle:String
     var User:String
-    var ImageURL: String
     var Image: UIImage
     var Comments: [Int]
     var hashValue: Int {
@@ -86,7 +85,7 @@ class ForumPost: Hashable, Comparable {
     }
     var Epoch:Double
     
-    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Image: String, Epoch:Double, Comments:[Int]){
+    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Int]){
         self.uid = uId;
         self.Post = Post;
         self.Poster = Poster;
@@ -97,7 +96,6 @@ class ForumPost: Hashable, Comparable {
         self.Epoch = Epoch;
         self.PostId = PostId;
         self.PosterId = PosterId;
-        self.ImageURL = Image
         self.Image = UIImage(named: "Icons/Placeholder.png")!
     }
 }
@@ -259,7 +257,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                     if let postId = postDictionary["PostId"] as? String {
                                         if let date = postDictionary["Epoch"] as? Double {
                                             if let user = postDictionary["Username"] as? String {
-                                                if let imageURL = postDictionary["PosterImage"] as? String {
                                                     if let userId = postDictionary["PosterId"] as? String {
                                                         var newComment:[Int] = []
                                                         var x = 0
@@ -269,11 +266,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                                 newComment.append(x)
                                                             }
                                                         }
-                                                        let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Image: imageURL, Epoch: date, Comments: newComment)
+                                                        let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
                                                         Posts.append(newPost);
                                                         count += 1
                                                     }
-                                                }
                                             }
                                         }
                                     }
@@ -311,11 +307,9 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             Postings.AllPosts = PostList
             self.numberOfCells = PostList.count
             self.SortByDate(Posts: Postings.AllPosts!)
-            self.ReadImages() {(response) in
                 self.TableView.reloadData();
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
-                }
             }
         }
         else {
@@ -365,39 +359,6 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             self.TableView.reloadData()
     }
     
-    func ReadImages(completion: @escaping (Bool) -> Void) {
-        for count in 0...(Postings.AllPosts!.count - 1) {
-        if Postings.AllPosts![count].ImageURL != "Empty" {
-            let storageRef = Storage.storage().reference(forURL: Postings.AllPosts![count].ImageURL)
-            storageRef.getData(maxSize: 10000000) { (data, error) -> Void in
-        if error == nil {
-            if let pic = UIImage(data: data!) {
-                Postings.AllPosts![count].Image = pic
-                completion(true)
-            }
-            else {
-                Postings.AllPosts![count].Image = UIImage(named: "Icons/Placeholder.png")!
-                completion(true)
-            }
-        }
-        else {
-            print("Error Loading picture")
-            print(error!)
-            completion(false)
-            }
-        }
-      }
-        else {
-            Postings.AllPosts![count].Image = UIImage(named: "Icons/Placeholder.png")!
-            }
-    }
-        return
-}
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.numberOfCells
@@ -405,8 +366,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
-        cell.PosterImage?.contentMode = .scaleToFill
-        cell.PosterImage?.image = Postings.AllPosts![indexPath.row].Image
+        cell.PosterImage.contentMode = .scaleToFill
+        for mem in mMembers.MemberList {
+            if mem.id == Postings.AllPosts![indexPath.row].PosterId {
+            cell.PosterImage.image = mem.picture
+            }
+        }
         
         if(self.deleting == true){
             cell.DeleteButton.isHidden = false

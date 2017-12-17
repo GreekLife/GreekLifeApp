@@ -52,35 +52,12 @@ class CreatePostViewController: UIViewController {
         self.PostTitle.layer.cornerRadius = 5
 
         self.PosterName.text = self.name
-        
-        if self.image != "Empty" {
-            let storageRef = Storage.storage().reference(forURL: self.image)
-            storageRef.getData(maxSize: 10000000) { (data, error) -> Void in
-                if error == nil {
-                    if let pic = UIImage(data: data!) {
-                        self.PosterImage.image = pic
-                    }
-                    else {
-                        self.PosterImage.image = UIImage(named: "Icons/Placeholder.png")
-                    }
-                }
-                else {
-                    print("Error Loading picture")
-                    self.PosterImage.image = UIImage(named: "Icons/Placeholder.png")
-                    print(error!)
-                }
+        for mem in mMembers.MemberList {
+            if mem.id == (LoggedIn.User["UserID"] as! String) {
+                self.PosterImage.image = mem.picture
             }
         }
-        else {
-            self.PosterImage.image = UIImage(named: "Icons/Placeholder.png")
-        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 
     func validate(words:Int)->Bool{
         if(words < 20) {

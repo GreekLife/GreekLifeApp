@@ -127,9 +127,7 @@ class CreatePollViewController: UIViewController {
         for option in Options {
             ArrayOfOptions.append(option.text!)
         }
-        let imageURL = LoggedIn.User["Image"] as! String
-
-        let newPoll = Poll(pollId: postId, ImageURL: imageURL, PosterId: UserId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
+        let newPoll = Poll(pollId: postId, PosterId: UserId, Epoch: Epoch, Poster: Poster, PollTitle: Title!, options: ArrayOfOptions, upVotes: [])
         return newPoll
     }
     
@@ -145,20 +143,25 @@ class CreatePollViewController: UIViewController {
             "Poster" : poll.Poster,
             "Title" : poll.PollTitle,
             "Options": poll.Options,
-            "PosterId": poll.PosterId,
-            "ImageURL": poll.ImageURL
-        ]
+            "PosterId": poll.PosterId
+            ]
         let ThePollKey = [poll.PollId : ThePoll]
         ref = Database.database().reference()
         let pId = ThePoll["PostId"] as! String
         ref.child("Polls").updateChildValues(ThePollKey)
         ref.child("Polls/PollIds/\(pId)").setValue(pId)
+            var masterId = ""
+            for mem in mMembers.MemberList {
+                if mem.position == "Master" {
+                    masterId = mem.id
+                }
+            }
         let ThePollOptionKey = [poll.PollId :
             [
                 "\"0\"" :
                     [
                         "Names" :
-                            ["PT7KP7eO53fFT9RQUCfG4DMcD002" : "PT7KP7eO53fFT9RQUCfG4DMcD002"] //This needs to be replaced wth generic master id
+                            [masterId : masterId]
                 ]
             ]
         ]
