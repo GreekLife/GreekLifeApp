@@ -126,7 +126,10 @@ struct theCalendar {
 class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
     
-
+    //------------------//
+    //  Database Stuff  //
+    //------------------//
+    
     //Database References
     let dataRef:DatabaseReference = Database.database().reference()
     //Handles for Database Sync
@@ -233,9 +236,11 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         //For Viewing an Event
         if segue.identifier == "displayEventViewSegue"
         {
+            var senderDict = sender as! [String:Int]
             self.reloadCalendar()
             let displayEventView = segue.destination as? DisplayEventViewController
-            let eventData:[String:Any] = Array(calendar.eventList.values)[(sender as! Int)]
+            let eventData:[String:Any] =
+                Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[senderDict["section"]!])[senderDict["row"]!].value
             displayEventView?.eventData = eventData
         }
         //For Creating or Editing
@@ -263,8 +268,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     
     //Table View Controller Functions
     func reloadCalendar(){
-        
-        
         self.calendar.organizeEvents()
         self.calendarTable.reloadData()
     }
@@ -299,7 +302,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //To view an event in the DisplayEventViewController
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        performSegue(withIdentifier: "displayEventViewSegue", sender: indexPath.row)
+        performSegue(withIdentifier: "displayEventViewSegue", sender: ["section":indexPath.section, "row":indexPath.row])
     }
     
     
@@ -354,7 +357,7 @@ class DisplayEventViewController: UIViewController
         dateLabel.text = theFormatter.dateStringFromDate(date)
         let endDate:Date = date.addingTimeInterval(eventData["duration"] as! TimeInterval)
         timeLabel.text = "\(theFormatter.timeStringFromDate(date)) to \(theFormatter.timeStringFromDate(endDate))"
-        locationLabel.text = eventData["location"] as! String
+        locationLabel.text = eventData["location"] as? String
         descriptionField.text = eventData["description"] as! String
     }
     
