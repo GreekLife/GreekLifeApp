@@ -115,6 +115,29 @@ struct theCalendar {
             return "That's not a month"
         }
     }
+    func weekdayToString(_ day:Int) -> String{
+        switch day {
+            case 1: return "Sunday"
+            case 2: return "Monday"
+            case 3: return "Tuesday"
+            case 4: return "Wednesday"
+            case 5: return "Thursday"
+            case 6: return "Friday"
+            case 7: return "Saturday"
+            default: return "Not a day"
+        }
+    }
+    func stndrdth (_ day:Int) -> String {
+        if(day == 1 || day == 21 || day == 31){
+            return "st"
+        }else if(day == 2 || day == 22){
+            return "nd"
+        }else if(day == 3 || day == 23){
+            return "rd"
+        }else{
+            return "th"
+        }
+    }
     
 }
 
@@ -285,7 +308,17 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
             return calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.count
         }else{
-            return 0
+            return 1
+        }
+    }
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
+            let weekday = Calendar.current.component(.weekday, from: Date(timeIntervalSince1970:Double(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[section])[0].key)!))
+            let date = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!)[section].key
+            return "\(calendar.weekdayToString(weekday)) the \(date)\(calendar.stndrdth(date))"
+        }
+        else{
+            return "Loading..."
         }
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
