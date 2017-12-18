@@ -321,7 +321,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
             return "\(calendar.weekdayToString(weekday)) the \(date)\(calendar.stndrdth(date))"
         }
         else{
-            return "Loading..."
+            return "Nothing happening this month"
         }
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
