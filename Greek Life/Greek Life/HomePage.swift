@@ -216,8 +216,8 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         self.UserIsBlocked(userId: id){(blocked, value, success) in
             if success == true {
                 if blocked == true {
-                    let time: String! = String(describing: value)
-                    let blocked = UIAlertController(title: "Alert!", message: "Your Master has temporarily disabled your access. It will return in \(time) minutes?", preferredStyle: .alert)
+                    let time = String(describing: value)
+                    let blocked = UIAlertController(title: "Get Wrecked", message: "Your Master has temporarily disabled your access. It will return in " + time + " minutes?", preferredStyle: .alert)
                    let presentViewController: UIViewController! = UIApplication.shared.keyWindow?.currentViewController()
                     presentViewController.present(blocked, animated: true, completion: nil)
                     let ban = (value as! Int) * 60

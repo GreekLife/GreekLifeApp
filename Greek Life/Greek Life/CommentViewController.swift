@@ -8,6 +8,8 @@
 
 import UIKit
 import FirebaseDatabase
+import IQKeyboardManagerSwift
+import UserNotifications
 
 class CommentTableViewCell: UITableViewCell {
     
@@ -30,7 +32,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var OriginalViewY:CGFloat = 0
     var OriginalViewHeight:CGFloat = 0
     var InteractedCommentIndex = 0
-    
+
     @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var LeaveComment: UIButton!
     @IBOutlet weak var CommentBox: UITextView!
@@ -90,6 +92,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         ReadCommentsForPost()
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        IQKeyboardManager.sharedManager().enable = false
         self.TableView.allowsSelection = false
         self.CommentBox.layer.cornerRadius = 10
         self.CommentBox.delegate = self
@@ -100,20 +105,34 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
          OriginalViewHeight = CommentView.frame.size.height
     }
     
+    func keyboardWillHide(notification: NSNotification) {
+        self.CommentView.frame.origin.y = OriginalViewY + OriginalViewHeight + 4 //no clue why plus four
+        self.view.bringSubview(toFront: self.CommentView)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+            let keyboardSize = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.size
+            self.CommentView.frame.origin.y = (self.CommentView.frame.origin.y - keyboardSize.height)
+            self.view.bringSubview(toFront: self.CommentView)
+    }
+    
+    //feature to be added
      func textViewDidChange(_ textView: UITextView) {
         let fixedWidth = textView.frame.size.width
         let oldHeight = textView.frame.size.height
         if oldHeight <= (2.5 * OriginalTextHeight) {
-        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-        let newFrame = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-        textView.frame.size = newFrame
-        let heightChange = newSize.height - oldHeight
-        self.CommentView.frame.origin.y -= heightChange
-        self.CommentView.frame.size.height += heightChange
-        NewTextHeight = textView.frame.size.height
-        NewTextY = textView.frame.origin.y
-        NewViewY = self.CommentView.frame.origin.y
-        NewViewHeight = self.CommentView.frame.size.height
+            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+            if newSize.height > oldHeight {
+                let newFrame = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+                textView.frame.size = newFrame
+                let heightChange = newFrame.height - oldHeight
+                self.CommentView.frame.origin.y -= heightChange
+                self.CommentView.frame.size.height += heightChange
+                NewTextHeight = textView.frame.size.height
+                NewTextY = textView.frame.origin.y
+                NewViewY = self.CommentView.frame.origin.y
+                NewViewHeight = self.CommentView.frame.size.height
+            }
         }
     }
     
