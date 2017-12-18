@@ -241,12 +241,15 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var monthYearField: UITextField!
     @IBAction func monthYearField(_ sender: UITextField) {
         let monthPickerView:MonthYearPickerView = MonthYearPickerView();
+        
         monthPickerView.onDateSelected = { (month: Int, year: Int) in
             self.calendar.monthViewing = month
             self.calendar.yearViewing = year
             self.reloadCalendar()
         }
         sender.inputView = monthPickerView
+        monthPickerView.selectRow(calendar.monthViewing - 1, inComponent: 0, animated: false)
+        monthPickerView.selectRow(calendar.yearViewing - 1913, inComponent: 1, animated: false)
     }
     
     
