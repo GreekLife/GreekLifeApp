@@ -125,18 +125,12 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
             
             }
         }
-        //cell.VoteBtn.isEnabled = false
         cell.Vote.textColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1)
         cell.OptionText.text = Polling.ListOfPolls[Polling.OuterIndex].Options[indexPath.row]
         GenericTools.FrameToFitTextView(View: cell.OptionText)
         cell.Vote.text = String(Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row].count)
         cell.PercentLbl.text = Polling.ListOfPolls[Polling.OuterIndex].Placing[indexPath.row]
         cell.PercentLbl.frame.origin.y = cell.Vote.frame.origin.y
-        if Polling.fetched == true {
-        let percentIndex = cell.PercentLbl.text?.index(of: "%")
-        let strVal = (cell.PercentLbl.text!).prefix(upTo: percentIndex!)
-        let value = Int(strVal)
-    }
         self.rowHeight = cell.OptionText.frame.origin.y + cell.OptionText.frame.size.height
         return cell
     }
@@ -151,21 +145,8 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     @IBOutlet weak var InnerTable: UITableView!
     
     @IBOutlet weak var PollResults: UIButton!
-    @IBOutlet weak var SendReminder: UIButton!
     @IBOutlet weak var DeleteButton: UIButton!
     @IBOutlet weak var Vote: UIButton!
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-        setUpTable()
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
-    }
     
     func setUpTable(){
         InnerTable?.delegate = self
@@ -288,23 +269,23 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.TableView.allowsSelection = false
         //Get poll info for each existing poll
         if Reachability.isConnectedToNetwork() {
-        GetListOfPolls() {(success) in
+        GetListOfPolls() {(success, error) in
             guard success else{
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve polls.")
                 BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                 self.view.addSubview(BadPostRequest)
-                print("Internet Connection not Available!")
+                GenericTools.Logger(data: "\n Could not retrieve polls: \(error!)")
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
                 return
             }
             Polling.ListOfPolls = mergeSorting.mergeSort(Polling.ListOfPolls)
-                self.CalculateUpVotes(){(success) in
+                self.CalculateUpVotes(){(success, error) in
                     guard success else{
                         let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve votes.")
                         BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                         self.view.addSubview(BadPostRequest)
-                        print("Internet Connection not Available!")
+                        GenericTools.Logger(data: "\n Could not retrieve votes: \(error!)")
                         self.activityIndicator.stopAnimating();
                         UIApplication.shared.endIgnoringInteractionEvents();
                         return
@@ -347,12 +328,12 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
-            print("Internet Connection not Available!")
+            GenericTools.Logger(data: "\n No Internet Connection Available")
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
         }
     }
-        func GetListOfPolls(completion: @escaping (Bool) -> Void) {
+        func GetListOfPolls(completion: @escaping (Bool, Any?) -> Void) {
             PollRef = Database.database().reference()
             PollRef.child("Polls").observe(.value, with: { (snapshot) in
                 Polling.ListOfPolls.removeAll()
@@ -387,14 +368,13 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                         
                     }
                 }
-                completion(true)
+                completion(true, nil)
             }){ (error) in
-                print("Could not retrieve object from database");
-                completion(false);
+                completion(false, error);
             }
         }
     
-    func CalculateUpVotes(completion: @escaping (Bool) -> Void) {
+    func CalculateUpVotes(completion: @escaping (Bool, Any?) -> Void) {
         PollRef = Database.database().reference()
         PollRef.child("PollOptions").observe( .value, with: { (snapshot) in
             self.refreshPollUpvotes()
@@ -430,10 +410,9 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
                     }
                 }
             }
-            completion(true)
+            completion(true, nil)
         }){ (error) in
-            print("Could not retrieve object from database");
-            completion(false)
+            completion(false, error)
         }
     }
     
@@ -466,7 +445,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
-            print("Internet Connection not Available!")
+            GenericTools.Logger(data: "\n No Internet Connection Available")
         }
         
     }
@@ -474,8 +453,12 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var buttonIdentifier: String = ""
     func DeleteSelectedPollInternal(action: UIAlertAction) {
         if action.title == "Delete"{
-            FirebaseDatabase.Database.database().reference(withPath: "Polls").child(self.buttonIdentifier).removeValue()
-            FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.buttonIdentifier).removeValue()
+            FirebaseDatabase.Database.database().reference(withPath: "Polls").child(self.buttonIdentifier).removeValue(){ error in
+                GenericTools.Logger(data: "\n Could not delete poll: \(error)")
+            }
+            FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.buttonIdentifier).removeValue(){ error in
+                GenericTools.Logger(data: "\n Could not delete poll option list: \(error)")
+            }
             self.deleteState = false
             self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
             self.TableView.reloadData()
@@ -573,14 +556,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.InnerTable.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 10
         cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
         cell.PollResults.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
-        cell.SendReminder.frame.origin.y = cell.PollResults.frame.origin.y
         cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
         Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
-        cell.SendReminder.isHidden = true
-        
-        if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.User == "Master" {
-            cell.SendReminder.isHidden = false
-        }
         
         if self.deleteState == true {
             if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.User == "Master" {
@@ -590,7 +567,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
         cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 10
         cell.PollResults.frame.origin.y = cell.DeleteButton.frame.origin.y + cell.DeleteButton.frame.size.height + 10
-        cell.SendReminder.frame.origin.y = cell.PollResults.frame.origin.y
         cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
         Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
             }
@@ -651,12 +627,12 @@ class PollVoting: UIViewController {
         
         scrollView.contentSize = CGSize(width: screenWidth, height: screenHeight)
         self.view.addSubview(scrollView)
-        self.CalculateVotes(){(success) in
+        self.CalculateVotes(){(success, error) in
             guard success else{
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve votes.")
                 BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                 self.view.addSubview(BadPostRequest)
-                print("Internet Connection not Available!")
+                GenericTools.Logger(data: "\n Could not retreve polls: \(error!)")
                 return
             }
             //Calculate Percentages --
@@ -769,7 +745,9 @@ class PollVoting: UIViewController {
         if Reachability.isConnectedToNetwork() == true {
             let name = "\(self.first) \(self.last)"
             let ref = Database.database().reference()
-            ref.child("PollOptions").child(self.PollViewed.PollId).child("\"0\"/Names").updateChildValues([self.UserId : self.UserId])
+            ref.child("PollOptions").child(self.PollViewed.PollId).child("\"0\"/Names").updateChildValues([self.UserId : self.UserId]){ (error) in
+                GenericTools.Logger(data: "\n Couldn't update vote: \(error)")
+            }
             ref.child("PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
                 if snapshot.hasChild(self.UserId){
                     FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").child(self.UserId).removeValue()
@@ -779,15 +757,17 @@ class PollVoting: UIViewController {
                     ref.child("PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])
                     button.backgroundColor = UIColor(displayP3Red: 255/255, green: 224/255, blue: 0/255, alpha: 1)
                 }
-            })
+            }){ (error) in
+                GenericTools.Logger(data: "\n Couldnt update vote: \(error)")
+            }
         }
         else {
             //should help user handle error
-            print("Internet Connection not Available!")
+            GenericTools.Logger(data: "\n Internet connection not available")
         }
     }
     
-    func CalculateVotes(completion: @escaping (Bool) -> Void) {
+    func CalculateVotes(completion: @escaping (Bool, Any?) -> Void) {
         let ref = Database.database().reference()
         ref.child("PollOptions").child(self.PollViewed.PollId).observe( .value, with: { (snapshot) in
             self.refreshPollUpvotes()
@@ -809,10 +789,10 @@ class PollVoting: UIViewController {
                     }
                 }
             }
-            completion(true)
+            completion(true, nil)
         }){ (error) in
-            print("Could not retrieve object from database");
-            completion(false)
+            GenericTools.Logger(data: "\n Could not get vote from database: \(error)")
+            completion(false, error)
         }
     }
     var handled = false

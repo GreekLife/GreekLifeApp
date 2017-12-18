@@ -242,7 +242,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         Postings.AllPosts = mergeSorting.mergeSort(Posts)
     }
     
-    func getPosts(completion: @escaping (Bool, Any?) -> Void){
+    func getPosts(completion: @escaping (Bool, Any?, Any?) -> Void){
         ref = Database.database().reference()
         self.ref.child("Forum").observe(.value, with: { (snapshot) in
             var count = 1;
@@ -279,10 +279,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                     }
                 }
             }
-                completion(true, Posts);
+                completion(true, Posts, nil);
         }){ (error) in
-            print("Could not retrieve object from database");
-            completion(false, error)
+            GenericTools.Logger(data: "\n Could not retrieve posts: \(error)")
+            completion(false, nil, error)
         }
     }
 
@@ -293,12 +293,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.view.backgroundColor = UIColor.lightGray
         self.view.backgroundColor?.withAlphaComponent(0.2)
         if Reachability.isConnectedToNetwork(){
-        self.getPosts(){(success, response) in
+        self.getPosts(){(success, response, error) in
             guard success, let PostList = response as? [ForumPost] else{
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not get posts from database.")
                 BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                 self.view.addSubview(BadPostRequest)
-                print("Internet Connection not Available!")
+                GenericTools.Logger(data: "\n Could not get posts from database: \(error!)")
                 if(response != nil){
                     print(response!)
                     }
@@ -315,7 +315,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         else {
             let internetError =  Banner.ErrorBanner(errorTitle:"You're not connected to the Internet")
             self.view.addSubview(internetError)
-            print("Internet Connection not Available!")
+            GenericTools.Logger(data: "\n You're not connected to the Internet")
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 internetError.isHidden = true
             }
@@ -338,7 +338,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
-            print("Internet Connection not Available!")
+            GenericTools.Logger(data: "\n You're not connected to the Internet")
         }
         
     }
@@ -353,7 +353,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var buttonIdentifier: String = ""
     func DeleteSelectedPollInternal(action: UIAlertAction) {
-            FirebaseDatabase.Database.database().reference(withPath: "Forum").child(self.buttonIdentifier).removeValue()
+            Database.database().reference(withPath: "Forum").child(self.buttonIdentifier).removeValue()
             self.deleting = false
             self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
             self.TableView.reloadData()

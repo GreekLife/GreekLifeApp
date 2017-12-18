@@ -12,15 +12,8 @@ class FoundingFatherPrototypeTableViewCell: UITableViewCell {
     
     @IBOutlet weak var Name: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
     }
     
 }
@@ -34,10 +27,6 @@ class FoundingFatherViewController: UIViewController, UITableViewDelegate, UITab
         readFoundingFathers()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     func readFoundingFathers(){
         if let foundingfather =  Bundle.main.path(forResource: "Docs/Founding Fathers", ofType: "txt"){
             do{
@@ -50,7 +39,7 @@ class FoundingFatherViewController: UIViewController, UITableViewDelegate, UITab
                 }
             }
             catch {
-                print("Could not read from file!")
+                GenericTools.Logger(data: "\n Error reading from file")
             }
         }
         else {

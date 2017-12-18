@@ -19,12 +19,10 @@ class ConstitutionWebViewViewController: UIViewController {
             let urlRequest = URLRequest(url: url)
             webview.loadRequest(urlRequest as URLRequest)
             self.view.addSubview(webview)
-        }        // Do any additional setup after loading the view.
+        }
+        else {
+            GenericTools.Logger(data: "\n Error retreving and displaying constitution")
+        }
+         // Do any additional setup after loading the view.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
 }

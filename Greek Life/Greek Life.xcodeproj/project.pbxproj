@@ -32,6 +32,7 @@
 		6DCAFF141F9AC46F00D1311E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6DCAFF121F9AC46F00D1311E /* LaunchScreen.storyboard */; };
 		6DCAFF1F1F9AC46F00D1311E /* Greek_LifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF1E1F9AC46F00D1311E /* Greek_LifeTests.swift */; };
 		6DCAFF2A1F9AC46F00D1311E /* Greek_LifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */; };
+		6DD31F421FE74191006500AF /* UserHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD31F411FE74191006500AF /* UserHelpViewController.swift */; };
 		6DD95E6A1F9D306400894B0F /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD95E691F9D306400894B0F /* Tools.swift */; };
 		6DDA63AA1FE48AA7002B9952 /* Log.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6DDA63A91FE48AA6002B9952 /* Log.txt */; };
 		6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */; };
@@ -97,6 +98,7 @@
 		6DCAFF251F9AC46F00D1311E /* Greek LifeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Greek LifeUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DCAFF291F9AC46F00D1311E /* Greek_LifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Greek_LifeUITests.swift; sourceTree = "<group>"; };
 		6DCAFF2B1F9AC46F00D1311E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6DD31F411FE74191006500AF /* UserHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHelpViewController.swift; sourceTree = "<group>"; };
 		6DD95E691F9D306400894B0F /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		6DDA63A91FE48AA6002B9952 /* Log.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Log.txt; sourceTree = SOURCE_ROOT; };
 		6DE7156E1FB7A36E0061A7AC /* CreatePollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePollViewController.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 				6D8352121FCF7E07007C495D /* CreateAccountViewController.swift */,
 				6D2C8C471FD2409F00C62222 /* MasterControllsViewController.swift */,
 				6D0372B31FD341AB00FDD947 /* HomePage.swift */,
+				6DD31F411FE74191006500AF /* UserHelpViewController.swift */,
 			);
 			path = "Greek Life";
 			sourceTree = "<group>";
@@ -574,6 +577,7 @@
 				6D8352131FCF7E07007C495D /* CreateAccountViewController.swift in Sources */,
 				6DCAFF081F9AC46F00D1311E /* AppDelegate.swift in Sources */,
 				6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */,
+				6DD31F421FE74191006500AF /* UserHelpViewController.swift in Sources */,
 				6D5005EC1FC3D151007C21B5 /* PollViewResultsController.swift in Sources */,
 				6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */,
 				6D42ED641FCA0473003FFB07 /* CreatePostViewController.swift in Sources */,

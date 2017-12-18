@@ -8,9 +8,6 @@
 
 import Foundation
 import UIKit
-
-//For Swift 3, Swift 4 :Working in cellular and Wi - Fi
-
 import SystemConfiguration
 
 public class GenericTools {
@@ -177,6 +174,7 @@ public class Banner {
     }
 }
 
+//For Swift 3, Swift 4 :Working in cellular and Wi - Fi
 public class Reachability {
     
     class func isConnectedToNetwork() -> Bool {

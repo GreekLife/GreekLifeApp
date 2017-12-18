@@ -26,17 +26,11 @@ class ChapterInfoViewController: UIViewController {
     var ref: DatabaseReference!
 
     func ReadMaster() {
-
-        ref =  Database.database().reference()
-        ref.child("Users").child("Master").observeSingleEvent(of: .value, with:{(snapshot) in
-            let snap = snapshot.value as? NSDictionary
-            let firstName = snap?["First Name"] as? String
-            let lastName = snap?["Last Name"] as? String
-
-            let fullName = firstName! + " " + lastName!
-            self.ActiveMaster.text = fullName;
-        })
-
+        for mem in mMembers.MemberList {
+            if mem.position == "Master" {
+                self.ActiveMaster.text = "\(mem.first) \(mem.last)"
+            }
+        }
     }
 
     override func viewDidLoad() {
@@ -51,15 +45,6 @@ class ChapterInfoViewController: UIViewController {
         Constitution.layer.cornerRadius = 5
         Home.layer.cornerRadius = 5
 
-        // Do any additional setup after loading the view.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
-
 }
 

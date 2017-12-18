@@ -27,11 +27,6 @@ class ViewAllResults: UIViewController, UITableViewDataSource, UITableViewDelega
         self.TableView.separatorStyle = UITableViewCellSeparatorStyle.none
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if poll.count == 0 {
             poll.append("No one has voted for this option")
@@ -55,17 +50,6 @@ class ViewResultsControllerCell: UITableViewCell {
     
     @IBOutlet weak var Option: UIButton!
     @IBOutlet weak var Names: UILabel!
- 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
-    }
     
 }
 
@@ -83,13 +67,6 @@ class ViewResultsController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         self.TableView.separatorStyle = UITableViewCellSeparatorStyle.none
 
-    }
-    
-    
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     @objc func DisplayResultsController(button: UIButton) {

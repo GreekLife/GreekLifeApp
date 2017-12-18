@@ -92,6 +92,13 @@ class AccountDetails: UIViewController {
                             self.CreateProfile(newPostData: newUserData) {(success ,error) in
                                 self.activityIndicator.stopAnimating();
                                 UIApplication.shared.endIgnoringInteractionEvents();
+                                if error != nil {
+                                    GenericTools.Logger(data: "\n Error creating new user: \(error!)")
+                                    let invalid = UIAlertController(title: "Internal Error", message: "Could not create your account", preferredStyle: UIAlertControllerStyle.alert)
+                                    let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                    invalid.addAction(okAction)
+                                    self.present(invalid, animated: true, completion: nil)
+                                }
                             }
                             let value = [
                                 "Blocked": false,
@@ -131,7 +138,9 @@ class AccountDetails: UIViewController {
     
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        ref.child("Users").child(NewUser.userID).setValue(newPostData)
+        ref.child("Users").child(NewUser.userID).setValue(newPostData) { (error) in
+            completion(false, error)
+        }
         completion(true, nil)
         
     }
@@ -227,7 +236,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
                 storageRef.putData(uploadData, metadata: nil, completion:{ (metadata, error) in
                     if error != nil {
-                        print(error!)
+                        GenericTools.Logger(data: "\n Error initializing block value: \(error!)")
                     }
                     if let imageURL = metadata?.downloadURL()?.absoluteString{
                         image = imageURL
@@ -260,6 +269,14 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         self.CreateProfile(newPostData: newUserData) {(success ,error) in
                             self.activityIndicator.stopAnimating();
                             UIApplication.shared.endIgnoringInteractionEvents();
+                            if error != nil {
+                                GenericTools.Logger(data: "\n Error updating user accound: \(error!)")
+                                let invalid = UIAlertController(title: "Internal Error", message: "Could not succesfully update your account", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                invalid.addAction(okAction)
+                                self.present(invalid, animated: true, completion: nil)
+                                return
+                            }
                         self.performSegue(withIdentifier: "ProfileCreated", sender: self)
                     }
                     }
@@ -303,11 +320,14 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         self.CreateProfile(newPostData: updatedData) {(success ,error) in
                             self.activityIndicator.stopAnimating();
                             UIApplication.shared.endIgnoringInteractionEvents();
+                            if error != nil {
+                            GenericTools.Logger(data: "\n Could not update account \(error!)")
                             self.dismiss(animated: true, completion: nil)
                             let invalid = UIAlertController(title: "Error", message: "Could not update account", preferredStyle: UIAlertControllerStyle.alert)
                             let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                             invalid.addAction(okAction)
                             self.present(invalid, animated: true, completion: nil)
+                            }
                         }
                     }
                 
@@ -330,8 +350,9 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         else {
             id = NewUser.userID
         }
-        ref = Database.database().reference()
-        ref.child("Users").child(id).setValue(newPostData)
+        Database.database().reference().child("Users").child(id).setValue(newPostData){ error in
+            completion(false, error)
+        }
         completion(true, nil)
 
     }
@@ -378,7 +399,9 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         }
                     }
                 }
-        })
+            }){ (error) in
+                GenericTools.Logger(data: "\n Error getting brother names: \(error)")
+        }
     }
 
     override func viewDidLoad() {
@@ -428,10 +451,6 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         // Do any additional setup after loading the view.
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction func ExpectedGrad(_ sender: UITextField) {
         let datePickerView:UIDatePicker = UIDatePicker()

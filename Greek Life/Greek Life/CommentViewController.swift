@@ -17,17 +17,6 @@ class CommentTableViewCell: UITableViewCell {
     @IBOutlet weak var Comment: UITextView!
     @IBOutlet weak var Delete: UIButton!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
-    }
-    
 }
 class CommentViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate {
     var rowHeight:CGFloat = 0
@@ -40,7 +29,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var OriginalTextY:CGFloat = 0
     var OriginalViewY:CGFloat = 0
     var OriginalViewHeight:CGFloat = 0
-    var OriginalTableHeight:CGFloat = 0
     var InteractedCommentIndex = 0
     
     @IBOutlet weak var TableView: UITableView!
@@ -81,13 +69,18 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                 "CommentId": postId
                 ] as [String : Any]
             
-            self.PostData(newPostData: NewComment){(success) in
+            self.PostData(newPostData: NewComment){(success, error) in
+                if error != nil {
+                GenericTools.Logger(data: "\n Error posting comment: \(error!)")
+                }
+                else {
                 self.CommentBox.text = ""
                 self.CommentBox.frame.origin.y = self.OriginalTextY
                 self.CommentBox.frame.size.height = self.OriginalTextHeight
                 self.CommentView.frame.size.height = self.OriginalViewHeight
                 self.CommentView.frame.origin.y = self.OriginalViewY
                 self.view.endEditing(true)
+                }
 
             }
             
@@ -105,13 +98,12 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
          OriginalTextY = CommentBox.frame.origin.y
          OriginalViewY = CommentView.frame.origin.y
          OriginalViewHeight = CommentView.frame.size.height
-         OriginalTableHeight = TableView.frame.size.height
     }
     
      func textViewDidChange(_ textView: UITextView) {
         let fixedWidth = textView.frame.size.width
         let oldHeight = textView.frame.size.height
-        if oldHeight <= 2.5*OriginalTextHeight {
+        if oldHeight <= (2.5 * OriginalTextHeight) {
         let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         let newFrame = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         textView.frame.size = newFrame
@@ -122,10 +114,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         NewTextY = textView.frame.origin.y
         NewViewY = self.CommentView.frame.origin.y
         NewViewHeight = self.CommentView.frame.size.height
-        self.TableView.frame.size.height = self.CommentView.frame.origin.y - (self.Toolbar.frame.size.height + self.Toolbar.frame.origin.y)
-            if oldHeight != newSize.height {
-                HeightChanged = true
-            }
         }
     }
     
@@ -141,21 +129,21 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.CommentView.frame.origin.y = NewViewY
         self.CommentBox.frame.size.height = NewTextHeight
         self.CommentBox.frame.origin.y = NewTextY
-        self.TableView.frame.size.height = self.OriginalTableHeight
         }
     }
     
     //---Write comment data to database---//
-    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool) -> Void){
-        ref = Database.database().reference()
+    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Any?) -> Void){
         let commentId = newPostData["CommentId"] as! String
-        self.ref.child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(commentId).setValue(newPostData)
-        completion(true)
+        Database.database().reference().child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(commentId).setValue(newPostData){ error in
+            GenericTools.Logger(data: "\n Could not post comment data: \(error)")
+            completion(false, error)
+        }
+        completion(true, nil)
     }
     
     public func ReadCommentsForPost() {
-        ref = Database.database().reference()
-        ref.child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").observe(.value, with: { (snapshot) in
+        Database.database().reference().child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").observe(.value, with: { (snapshot) in
             self.CommentList.removeAll();
             for snap in snapshot.children{
                 if let childSnapshot = snap as? DataSnapshot
@@ -181,7 +169,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
             self.CommentList = self.CommentList.reversed()
            self.TableView.reloadData();
         }){ (error) in
-            print("Could not retrieve object from database");
+            GenericTools.Logger(data: "\n Could not retrieve comments: \(error)")
         }
     }
     
@@ -199,7 +187,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func DeleteComment(action: UIAlertAction) {
-        FirebaseDatabase.Database.database().reference().child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(CommentList[self.InteractedCommentIndex - 1].CommentId).removeValue()
+            Database.database().reference().child("Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(CommentList[self.InteractedCommentIndex - 1].CommentId).removeValue(){ error in
+            GenericTools.Logger(data: "\n Could not remove comment: \(error)")
+        }
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

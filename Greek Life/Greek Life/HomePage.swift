@@ -105,6 +105,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var Info: UIButton!
     @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var MasterControls: UIBarButtonItem!
+    @IBOutlet weak var Beta: UIBarButtonItem!
     
     var newsHeight: CGFloat = 0
     var ref: DatabaseReference!
@@ -113,6 +114,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var NewsPosts: [News] = []
     
+    @IBAction func Beta(_ sender: Any) {
+        performSegue(withIdentifier: "Beta", sender: self)
+    }
     @IBAction func MasterControls(_ sender: Any) {
         performSegue(withIdentifier: "MasterControls", sender: self)
     }
@@ -155,6 +159,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             break;
         case 9:
             performSegue(withIdentifier: "Info", sender: self)
+            break;
+        case 10:
+            performSegue(withIdentifier: "Beta", sender: self)
             break;
         default: ()
             break;

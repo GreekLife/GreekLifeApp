@@ -148,8 +148,12 @@ class CreatePollViewController: UIViewController {
         let ThePollKey = [poll.PollId : ThePoll]
         ref = Database.database().reference()
         let pId = ThePoll["PostId"] as! String
-        ref.child("Polls").updateChildValues(ThePollKey)
-        ref.child("Polls/PollIds/\(pId)").setValue(pId)
+            ref.child("Polls").updateChildValues(ThePollKey){ error in
+                GenericTools.Logger(data: "\n Couldn't create poll")
+            }
+            ref.child("Polls/PollIds/\(pId)").setValue(pId){ error in
+                GenericTools.Logger(data: "\n Couldn't create poll id")
+            }
             var masterId = ""
             for mem in mMembers.MemberList {
                 if mem.position == "Master" {
@@ -165,7 +169,9 @@ class CreatePollViewController: UIViewController {
                 ]
             ]
         ]
-        ref.child("PollOptions").updateChildValues(ThePollOptionKey)
+            ref.child("PollOptions").updateChildValues(ThePollOptionKey){ error in
+                GenericTools.Logger(data: "\n Couldn't create new poll option")
+            }
         self.activityIndicator.stopAnimating();
         UIApplication.shared.endIgnoringInteractionEvents();
         self.presentingViewController?.dismiss(animated: true)
@@ -174,7 +180,7 @@ class CreatePollViewController: UIViewController {
             let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
             error.backgroundColor = UIColor.black.withAlphaComponent(1)
             self.view.addSubview(error)
-            print("Internet Connection not Available!")
+            GenericTools.Logger(data: "\n No Internet Connection Available")
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
         }
@@ -203,13 +209,6 @@ class CreatePollViewController: UIViewController {
         scrollView.contentSize = CGSize(width: screenWidth, height: screenHeight)
         self.view.addSubview(scrollView)
 
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 

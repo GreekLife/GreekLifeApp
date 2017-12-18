@@ -123,10 +123,10 @@ class CreatePostViewController: UIViewController {
                 ] as [String : Any]
             PostData(newPostData: Post){(success, error) in
                 guard success else{
-                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not post.")
+                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not write post.")
                     BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
                     self.view.addSubview(BadPostRequest)
-                    print("Internet Connection not Available!")
+                    GenericTools.Logger(data: "\n Could not write post: \(error!)")
                     return
                 }
                 self.activityIndicator.stopAnimating();
@@ -138,8 +138,12 @@ class CreatePostViewController: UIViewController {
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         CreatePostRef = Database.database().reference()
         let pID = newPostData["PostId"] as! String
-        self.CreatePostRef.child("Forum").child(pID).setValue(newPostData)
-        self.CreatePostRef.child("Forum/ForumIds").child(pID).setValue(pID)
+        self.CreatePostRef.child("Forum").child(pID).setValue(newPostData){ error in
+            completion(false, error)
+        }
+        self.CreatePostRef.child("Forum/ForumIds").child(pID).setValue(pID){ error in
+            completion(false, error)
+        }
         completion(true, nil)
     }
 

@@ -6,6 +6,8 @@
 //  Copyright © 2017 ConcordiaDev. All rights reserved.
 //
 
+//As of right now the config file is pretty useless but ill keep it incase we need it later
+
 import Foundation
 
 struct Configuration{
