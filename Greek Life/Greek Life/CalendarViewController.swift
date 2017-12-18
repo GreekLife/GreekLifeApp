@@ -52,7 +52,6 @@ struct theCalendar {
                 sectionedEventList[year] = [month:[day:[event.key:event.value]]]
             }
         }
-        print(sectionedEventList)
     }
     
     //General Gregorian Rules and Tools
@@ -166,6 +165,8 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //  Calendar Model   //
     //-------------------//
     
+    var canDeleteEvents = false;
+    
     //theCalendar Struct Instance
     var calendar:theCalendar = theCalendar(monthViewing: 0, yearViewing: 0, eventList: [:], settings: [:], sectionedEventList: [:])
     
@@ -231,11 +232,33 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //IBOutlets and IBActions
     @IBOutlet weak var calendarTable: UITableView!
     @IBOutlet weak var createEventBTN: UIBarButtonItem!
+    @IBAction func editBTN(_ sender: Any)
+    {
+        self.canDeleteEvents = true
+        self.reloadCalendar()
+    }
+    //Action called to delete event
+    @objc func DeleteEventBTN(button: UIButton){
+        let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
+        let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
+        let indexPath = tbl.indexPath(for: cell)
+        let eventKey = String(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[(indexPath?.section)!])[(indexPath?.row)!].key)
+        let confirmDeleteEvent = UIAlertController(title: "Delete Event", message: "Are you sure you want to delete this event \(String(describing: eventKey))?", preferredStyle: UIAlertControllerStyle.alert)
+        confirmDeleteEvent.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in confirmDeleteEvent.dismiss(animated: true)}))
+        confirmDeleteEvent.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(action) in
+            self.dataRef.child("Calendar/"+eventKey!).removeValue()
+            confirmDeleteEvent.dismiss(animated: true)
+            self.calendar.eventList.removeValue(forKey: eventKey!)
+            self.reloadCalendar()
+        }))
+        self.present(confirmDeleteEvent, animated: true, completion: nil)
+    }
     
     @IBAction func createEventBTN(_ sender: Any){
         performSegue(withIdentifier: "eventEditorSegue", sender: "createEvent")
     }
     @IBAction func backBTN(_ sender: Any){
+        dataRef.removeObserver(withHandle: calendarDataHandle!)
         self.presentingViewController?.dismiss(animated: true)
     }
     @IBOutlet weak var monthYearField: UITextField!
@@ -341,6 +364,15 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["title"] as? String
             eventCell.eventDateTime.text =
                 CreateDate.getCurrentDate(epoch: Double(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["date"] as! Double))
+            eventCell.deleteBTN.addTarget(self, action: #selector(DeleteEventBTN(button:)), for: .touchUpInside )
+            if self.canDeleteEvents {
+                eventCell.deleteBTN.alpha = 1
+                eventCell.deleteBTN.isEnabled = true
+            }else{
+                eventCell.deleteBTN.alpha = 0
+                eventCell.deleteBTN.isEnabled = false
+            }
+            
         }
         return eventCell
     }
@@ -362,6 +394,8 @@ class EventCell: UITableViewCell
     
     @IBOutlet weak var eventTitle: UILabel!
     @IBOutlet weak var eventDateTime: UILabel!
+    @IBOutlet weak var deleteBTN: UIButton!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -380,15 +414,23 @@ class EventCell: UITableViewCell
  //  Display Event View Controller Class  //
 //**************************************//
 
-class DisplayEventViewController: UIViewController
+class DisplayEventViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell.init(style: .default, reuseIdentifier: "attendeeCell")
+        return cell
+    }
+    
     var eventData:[String:Any] = [:]
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var locationLabel: UILabel!
-    @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var descriptionField: UITextView!
     
     @IBAction func backBTN(_ sender: Any)

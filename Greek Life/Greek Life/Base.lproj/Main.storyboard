@@ -2953,15 +2953,24 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6OF-rF-t9Q">
+                                                            <rect key="frame" x="315" y="22" width="45" height="30"/>
+                                                            <state key="normal" title="Delete">
+                                                                <color key="titleColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
                                                     </subviews>
                                                     <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
+                                                        <constraint firstItem="6OF-rF-t9Q" firstAttribute="top" secondItem="rPR-kt-9YZ" secondAttribute="topMargin" constant="11" id="Dkh-K4-51U"/>
                                                         <constraint firstItem="Z2e-Ws-BYY" firstAttribute="leading" secondItem="rPR-kt-9YZ" secondAttribute="leading" constant="37" id="KXS-5R-0As"/>
                                                         <constraint firstItem="uQd-12-m9l" firstAttribute="top" secondItem="rPR-kt-9YZ" secondAttribute="top" constant="43" id="Q81-tG-A3e"/>
                                                         <constraint firstAttribute="bottom" secondItem="Z2e-Ws-BYY" secondAttribute="bottom" constant="43" id="Ucz-bT-HfF"/>
                                                         <constraint firstAttribute="trailing" secondItem="Z2e-Ws-BYY" secondAttribute="trailing" constant="153" id="d2R-Lw-dsg"/>
+                                                        <constraint firstItem="6OF-rF-t9Q" firstAttribute="trailing" secondItem="rPR-kt-9YZ" secondAttribute="trailingMargin" id="dgK-7T-eqP"/>
                                                         <constraint firstItem="Z2e-Ws-BYY" firstAttribute="top" secondItem="rPR-kt-9YZ" secondAttribute="top" constant="11" id="j4c-Fq-8CA"/>
                                                         <constraint firstAttribute="bottom" secondItem="uQd-12-m9l" secondAttribute="bottom" constant="15" id="o4m-4g-n4o"/>
+                                                        <constraint firstAttribute="bottomMargin" secondItem="6OF-rF-t9Q" secondAttribute="bottom" constant="12" id="q9h-sJ-AXn"/>
                                                         <constraint firstAttribute="trailing" secondItem="uQd-12-m9l" secondAttribute="trailing" constant="181" id="sKk-fY-P3N"/>
                                                         <constraint firstItem="uQd-12-m9l" firstAttribute="leading" secondItem="rPR-kt-9YZ" secondAttribute="leading" constant="37" id="xc6-ed-YFE"/>
                                                     </constraints>
@@ -2969,6 +2978,7 @@
                                                 <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="tintColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <connections>
+                                                    <outlet property="deleteBTN" destination="6OF-rF-t9Q" id="Mjc-bK-whQ"/>
                                                     <outlet property="eventDateTime" destination="uQd-12-m9l" id="Nm3-He-FHT"/>
                                                     <outlet property="eventTitle" destination="Z2e-Ws-BYY" id="2Jn-aR-lXT"/>
                                                 </connections>
@@ -2988,6 +2998,9 @@
                                         <items>
                                             <barButtonItem title="Edit" id="xBU-qH-mqR">
                                                 <color key="tintColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <connections>
+                                                    <action selector="editBTN:" destination="ukU-ox-igm" id="2Rd-N9-gii"/>
+                                                </connections>
                                             </barButtonItem>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="5WY-YF-xhk"/>
                                             <barButtonItem title="Create" id="r2c-6c-cqT">
