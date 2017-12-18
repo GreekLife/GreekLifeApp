@@ -215,11 +215,15 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     @IBAction func backBTN(_ sender: Any){
         self.presentingViewController?.dismiss(animated: true)
     }
-    @IBOutlet weak var monthYearBTN: UIBarButtonItem!
-    @IBAction func monthYearBTN(_ sender: Any) {
-        //pop up with selection wheel for month,year
-        //set the viewing month and year to the selected one
-        //reload calendar
+    @IBOutlet weak var monthYearField: UITextField!
+    @IBAction func monthYearField(_ sender: UITextField) {
+        let monthPickerView:MonthYearPickerView = MonthYearPickerView();
+        monthPickerView.onDateSelected = { (month: Int, year: Int) in
+            self.calendar.monthViewing = month
+            self.calendar.yearViewing = year
+            self.reloadCalendar()
+        }
+        sender.inputView = monthPickerView
     }
     
     
@@ -275,7 +279,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     func reloadCalendar(){
         self.calendar.organizeEvents()
         self.calendarTable.reloadData()
-        (self.monthYearBTN as UIBarItem).title = "\(calendar.monthToString(calendar.monthViewing)), \(calendar.yearViewing)"
+        self.monthYearField.text = "\(calendar.monthToString(calendar.monthViewing)), \(calendar.yearViewing)"
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
