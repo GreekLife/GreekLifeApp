@@ -2921,7 +2921,11 @@
                                         </constraints>
                                         <items>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="ehw-QU-WHp"/>
-                                            <barButtonItem title="Month Year" id="nhj-mT-EDa"/>
+                                            <barButtonItem tag="6666" title="Month Year" id="nhj-mT-EDa">
+                                                <connections>
+                                                    <action selector="monthYearBTN:" destination="ukU-ox-igm" id="HIP-iB-ivJ"/>
+                                                </connections>
+                                            </barButtonItem>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="0s9-pW-kCX"/>
                                         </items>
                                         <color key="tintColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -3030,6 +3034,7 @@
                     <connections>
                         <outlet property="calendarTable" destination="yam-MZ-lYQ" id="4Gc-ql-KO7"/>
                         <outlet property="createEventBTN" destination="r2c-6c-cqT" id="alz-oO-ASz"/>
+                        <outlet property="monthYearBTN" destination="nhj-mT-EDa" id="niU-vZ-VTU"/>
                         <segue destination="dJk-PE-0Qz" kind="presentation" identifier="displayEventViewSegue" id="yEs-Us-dWb"/>
                         <segue destination="OWr-c4-QcE" kind="presentation" identifier="eventEditorSegue" id="Fni-Ih-T5y"/>
                     </connections>

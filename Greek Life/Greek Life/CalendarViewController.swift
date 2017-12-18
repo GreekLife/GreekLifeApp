@@ -209,14 +209,19 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var calendarTable: UITableView!
     @IBOutlet weak var createEventBTN: UIBarButtonItem!
     
-    @IBAction func createEventBTN(_ sender: Any)
-    {
+    @IBAction func createEventBTN(_ sender: Any){
         performSegue(withIdentifier: "eventEditorSegue", sender: "createEvent")
     }
-    @IBAction func backBTN(_ sender: Any)
-    {
+    @IBAction func backBTN(_ sender: Any){
         self.presentingViewController?.dismiss(animated: true)
     }
+    @IBOutlet weak var monthYearBTN: UIBarButtonItem!
+    @IBAction func monthYearBTN(_ sender: Any) {
+        //pop up with selection wheel for month,year
+        //set the viewing month and year to the selected one
+        //reload calendar
+    }
+    
     
     
     //View Lifecycle Things
@@ -270,6 +275,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     func reloadCalendar(){
         self.calendar.organizeEvents()
         self.calendarTable.reloadData()
+        (self.monthYearBTN as UIBarItem).title = "\(calendar.monthToString(calendar.monthViewing)), \(calendar.yearViewing)"
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
