@@ -3045,6 +3045,7 @@
                     <connections>
                         <outlet property="calendarTable" destination="yam-MZ-lYQ" id="4Gc-ql-KO7"/>
                         <outlet property="createEventBTN" destination="r2c-6c-cqT" id="alz-oO-ASz"/>
+                        <outlet property="editBTN" destination="xBU-qH-mqR" id="kuN-qL-nUE"/>
                         <outlet property="monthYearField" destination="J3s-jk-0Hf" id="ljH-H6-Z35"/>
                         <segue destination="dJk-PE-0Qz" kind="presentation" identifier="displayEventViewSegue" id="yEs-Us-dWb"/>
                         <segue destination="OWr-c4-QcE" kind="presentation" identifier="eventEditorSegue" id="Fni-Ih-T5y"/>
@@ -3156,7 +3157,8 @@
                                             </label>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="LEA-qX-DRX">
                                                 <rect key="frame" x="0.0" y="35.5" width="345" height="164.5"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                <color key="separatorColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <connections>
                                                     <outlet property="dataSource" destination="dJk-PE-0Qz" id="lj9-55-PqK"/>
                                                     <outlet property="delegate" destination="dJk-PE-0Qz" id="VZ8-Sg-2Nh"/>
@@ -3197,6 +3199,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="attendingSwitch" destination="rDW-Io-9yf" id="FTt-wv-Lym"/>
                         <outlet property="dateLabel" destination="YDH-tJ-gTy" id="3tg-1o-ANR"/>
                         <outlet property="descriptionField" destination="H3c-fI-3ao" id="lOv-ID-fVc"/>
                         <outlet property="locationLabel" destination="LY4-sa-cNZ" id="jOH-2S-xP4"/>

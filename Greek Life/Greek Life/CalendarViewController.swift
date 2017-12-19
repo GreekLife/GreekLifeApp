@@ -24,7 +24,7 @@ struct theCalendar {
         self.yearViewing = userCalendar.component(.year, from: Date.init())
     }
     //Calendar Fields
-    var eventList:[String:[String:Any]]
+    var eventList:[String:[String:Any]] = ["":["":""]]
     var settings:[String:Any]
     var sectionedEventList:[Int:[Int:[Int:[String:[String:Any]]]]]
     ////////////////////////YY///MM///DD///epoch///Detail:Val///
@@ -232,6 +232,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //IBOutlets and IBActions
     @IBOutlet weak var calendarTable: UITableView!
     @IBOutlet weak var createEventBTN: UIBarButtonItem!
+    @IBOutlet weak var editBTN: UIBarButtonItem!
     @IBAction func editBTN(_ sender: Any)
     {
         self.canDeleteEvents = true
@@ -282,6 +283,13 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //View Lifecycle Things
     override func viewDidLoad() {
         super.viewDidLoad()
+        if LoggedIn.User["Position"] as! String == "Master" || LoggedIn.User["Position"] as! String == "Scribe" || LoggedIn.User["Position"] as! String == "LT Master" {
+            self.editBTN.isEnabled = true
+            self.createEventBTN.isEnabled = true
+        }else{
+            self.editBTN.isEnabled = false
+            self.createEventBTN.isEnabled = false
+        }
         self.calendar.initUI()
         initCalendar()
         calendarDataHandle = dataRef.child("Calendar").observe(.value, with: {(calendarSnapshot) in
@@ -302,6 +310,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
             let eventData:[String:Any] =
                 Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[senderDict["section"]!])[senderDict["row"]!].value
             displayEventView?.eventData = eventData
+            displayEventView?.calendar = self.calendar
         }
         //For Creating or Editing
         else if (sender as! String) == "createEvent"
@@ -419,28 +428,44 @@ class EventCell: UITableViewCell
 class DisplayEventViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        let calView = (presentingViewController as! CalendarViewController)
+        if (calView.calendar.eventList[String(Int(((eventData["date"] as! Double))))]!["attendees"] as? [String:String])?.keys != nil {
+            let attendees = calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]!["attendees"] as! [String:String]
+            return attendees.count
+        }else{
+            return 0
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let calView = (presentingViewController as! CalendarViewController)
+        let attendees = calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]!["attendees"] as! [String:String]
         let cell = UITableViewCell.init(style: .default, reuseIdentifier: "attendeeCell")
+        cell.textLabel?.text = Array(attendees)[indexPath.row].value
         return cell
     }
     
     var eventData:[String:Any] = [:]
+    var calendar:theCalendar = theCalendar(monthViewing: 0, yearViewing: 0, eventList: [:], settings: [:], sectionedEventList: [:])
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var descriptionField: UITextView!
+    @IBOutlet weak var attendingSwitch: UISwitch!
     @IBAction func attendingSwitch(_ sender: UISwitch)
     {
-        let dataRef = (presentingViewController as! CalendarViewController).dataRef
+        let calView = (presentingViewController as! CalendarViewController)
+        let dataRef = calView.dataRef
         if sender.isOn{
             dataRef.child("Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).setValue(LoggedIn.User["BrotherName"])
         }else{
-            
+            //if calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]?["attendees"].contains(where: (LoggedIn.User["UserID"] as? String)
+            dataRef.child("Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).removeValue(){error in
+                print("user wasn't attending in the first place")
+            }
         }
     }
     
@@ -451,6 +476,14 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewDidLoad() {
         titleLabel.text = (eventData["title"] as! String)
+        if let dictOfAttendees = calendar.eventList[String(Int(((eventData["date"] as! Double))))]!["attendees"] as? [String:String]? {
+            if dictOfAttendees?.keys != nil {
+            let listOfAttendees = dictOfAttendees!.keys
+            if (listOfAttendees.contains(LoggedIn.User["UserID"] as! String)){
+                attendingSwitch.isOn = true
+            }
+            }
+        }
         
         let date = Date.init(timeIntervalSince1970: eventData["date"] as! TimeInterval)
         dateLabel.text = theFormatter.dateStringFromDate(date)
