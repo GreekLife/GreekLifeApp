@@ -3091,6 +3091,9 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="onTintColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                     <color key="thumbTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <connections>
+                                                        <action selector="attendingSwitch:" destination="dJk-PE-0Qz" eventType="valueChanged" id="uZI-p6-F2U"/>
+                                                    </connections>
                                                 </switch>
                                             </barButtonItem>
                                         </items>

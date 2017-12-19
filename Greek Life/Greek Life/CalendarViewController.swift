@@ -32,7 +32,7 @@ struct theCalendar {
     
     mutating func organizeEvents ()
     {
-        
+        sectionedEventList.removeAll()
         for event in eventList
         {
             let dateDate = Date.init(timeIntervalSince1970: Double(event.key)!)
@@ -246,7 +246,9 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         let confirmDeleteEvent = UIAlertController(title: "Delete Event", message: "Are you sure you want to delete this event \(String(describing: eventKey))?", preferredStyle: UIAlertControllerStyle.alert)
         confirmDeleteEvent.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in confirmDeleteEvent.dismiss(animated: true)}))
         confirmDeleteEvent.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(action) in
-            self.dataRef.child("Calendar/"+eventKey!).removeValue()
+            self.dataRef.child("Calendar/"+eventKey!).removeValue(){ (error) in
+                
+            }
             confirmDeleteEvent.dismiss(animated: true)
             self.calendar.eventList.removeValue(forKey: eventKey!)
             self.reloadCalendar()
@@ -432,6 +434,15 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var descriptionField: UITextView!
+    @IBAction func attendingSwitch(_ sender: UISwitch)
+    {
+        let dataRef = (presentingViewController as! CalendarViewController).dataRef
+        if sender.isOn{
+            dataRef.child("Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).setValue(LoggedIn.User["BrotherName"])
+        }else{
+            
+        }
+    }
     
     @IBAction func backBTN(_ sender: Any)
     {
