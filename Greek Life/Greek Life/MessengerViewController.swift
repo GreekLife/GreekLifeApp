@@ -21,16 +21,16 @@ struct Channel
 struct DMessenger {
     static var dmList = [DM]()
     static func loadDMList() -> Void {
-        let dataRef = Database.database().reference()
+       /* let dataRef = Database.database().reference()
         dataRef.child("Messenger/DMs").observe(.value, with: {(snapshot) in
             for dmSnap in snapshot.children {
                 let dmSnapshot = dmSnap as! DataSnapshot
                 let messageDict = dmSnapshot.childSnapshot(forPath: "Messages").value as! [String:String]
-                let dmID = dmSnapshot.childSnapshot(forPath: "dmID").value as! String
+                let dmID = dmSnapshot.key// childSnapshot(forPath: "dmID").value as! String
                 let dmEntry = DM(id: dmID, messages: messageDict)
                 self.dmList.append(dmEntry)
             }
-        })
+        })*/
     }
     static func initUser() -> Void {
     //Check to make sure user has a dm with every other user.
@@ -39,38 +39,52 @@ struct DMessenger {
         let LoggedInUserID = LoggedIn.User["UserID"] as! String
         var userIDList:[String] = []
         var dmIDList:[String] = []
+        //Load up the dm's from db
+        loadDMList()
+        Database.database().reference().child("Messenger/DMs").observe(.value, with: {(snapshot) in
+            for dmSnap in snapshot.children {
+                let dmSnapshot = dmSnap as! DataSnapshot
+                let messageDict = dmSnapshot.childSnapshot(forPath: "Messages").value as! [String:String]
+                let dmID = dmSnapshot.key// childSnapshot(forPath: "dmID").value as! String
+                let dmEntry = DM(id: dmID, messages: messageDict)
+                self.dmList.append(dmEntry)
+            }
+        
         //Get list of userID's
         Database.database().reference().child("Users").observe(.value, with: { (snapshot) in
             
             userIDList = (snapshot.value as! [String:Any]).keys.reversed()
+            //Replace Master key with his actual userID
+            userIDList[userIDList.index(of: "Master")!] = snapshot.childSnapshot(forPath: "Master/UserID").value as! String
             
-        })
-        //Get list of dmID's
-        for dm in DMessenger.dmList {
-            dmIDList.append(dm.dmID)
-        }
-        //Check to see if logged in user has a dm with every other user
+            //Get list of dmID's
+            for dm in DMessenger.dmList {
+                dmIDList.append(dm.dmID)
+            }
+            //Check to see if logged in user has a dm with every other user
         
-        for userID in userIDList {
-            if (userID != LoggedInUserID)
-            {
-                var dmWithUserExists = false
-                for dmID in dmIDList{
-                    if (dmID.contains(LoggedInUserID) && dmID.contains(userID)){
-                        dmWithUserExists = true
+            for userID in userIDList {
+                if (userID != LoggedInUserID)
+                {
+                    var dmWithUserExists = false
+                    for dmID in dmIDList{
+                        if (dmID.contains(LoggedInUserID) && dmID.contains(userID)){
+                            dmWithUserExists = true
+                        }
+                    }
+                    //If dm between logged in user and userID doesn't exist then make one
+                    //and display welcome message
+                    if !dmWithUserExists {
+                        dataRef = Database.database().reference()
+                        let timeStamp = String(Int(Date.init().timeIntervalSince1970))
+                        dataRef.child("Messenger/DMs/"+userID+LoggedInUserID+"/Messages/"+timeStamp+","+LoggedInUserID).setValue("Hey, it's brother "+(LoggedIn.User["BrotherName"] as! String))
                     }
                 }
-                //If dm between logged in user and userID doesn't exist then make one
-                //and display welcome message
-                if !dmWithUserExists {
-                    dataRef = Database.database().reference()
-                    let timeStamp = String(Date.init().timeIntervalSince1970)
-                    dataRef.child("Messenger/DMs/"+userID+LoggedInUserID+"/Messages/"+timeStamp+","+LoggedInUserID).setValue("Hey, it's brother "+(LoggedIn.User["BrotherName"] as! String))
-                }
             }
-        }
-        
-        DMessenger.loadDMList()
+            })
+        //Reload dmList to ensure it is up to date
+            loadDMList()
+        })
     }
 }
 class DM {
