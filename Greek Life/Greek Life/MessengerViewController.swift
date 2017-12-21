@@ -20,7 +20,8 @@ struct Channel
 }
 struct DMessenger {
     static var dmList = [DM]()
-    static func loadDMList(dataRef:DatabaseReference) -> Void {
+    static func loadDMList() -> Void {
+        let dataRef = Database.database().reference()
         dataRef.child("Messenger/DMs").observe(.value, with: {(snapshot) in
             for dmSnap in snapshot.children {
                 let dmSnapshot = dmSnap as! DataSnapshot
@@ -31,9 +32,10 @@ struct DMessenger {
             }
         })
     }
-    static func initUser(dataRef:DatabaseReference) -> Void {
+    static func initUser() -> Void {
     //Check to make sure user has a dm with every other user.
     //If not, create dm in db and put welcome message.
+        var dataRef = Database.database().reference()
         let LoggedInUserID = LoggedIn.User["UserID"] as! String
         var userIDList:[String] = []
         var dmIDList:[String] = []
@@ -61,13 +63,14 @@ struct DMessenger {
                 //If dm between logged in user and userID doesn't exist then make one
                 //and display welcome message
                 if !dmWithUserExists {
+                    dataRef = Database.database().reference()
                     let timeStamp = String(Date.init().timeIntervalSince1970)
                     dataRef.child("Messenger/DMs/"+userID+LoggedInUserID+"/Messages/"+timeStamp+","+LoggedInUserID).setValue("Hey, it's brother "+(LoggedIn.User["BrotherName"] as! String))
                 }
             }
         }
         
-        DMessenger.loadDMList(dataRef: dataRef)
+        DMessenger.loadDMList()
     }
 }
 class DM {
@@ -77,7 +80,8 @@ class DM {
         self.dmID = dmID
         self.messages = messages
     }
-    func sendMessage(senderUserID:String, message:String, dataRef:DatabaseReference, sendingView:UIViewController) -> Void {
+    func sendMessage(senderUserID:String, message:String, sendingView:UIViewController) -> Void {
+        let dataRef = Database.database().reference()
         let messageID = String(Date.init().timeIntervalSince1970) + "," + senderUserID
         dataRef.child("Messenger/DMs/"+dmID+"/"+messageID).setValue(message){ error in
             let alert = UIAlertController(title: "Cannot send...", message: "We were unable to send you message, please check your internet connection.", preferredStyle: UIAlertControllerStyle.alert )
@@ -188,8 +192,8 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        DMessenger.loadDMList(dataRef: dataRef)
-        DMessenger.initUser(dataRef: dataRef)
+        DMessenger.loadDMList()
+        DMessenger.initUser()
     }
 }
 
