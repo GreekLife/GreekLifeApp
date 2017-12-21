@@ -94,13 +94,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/Tools.swift"
-            timestampString = "535126171.819065"
+            timestampString = "535525729.689767"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "19"
             endingLineNumber = "19"
-            landmarkName = "FrameToFitTextView(View:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -138,13 +138,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/Tools.swift"
-            timestampString = "535126171.819224"
+            timestampString = "535525729.690907"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "115"
             endingLineNumber = "115"
-            landmarkName = "getTimeSince(epoch:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -154,13 +154,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/Tools.swift"
-            timestampString = "535126171.819313"
+            timestampString = "535525729.691389"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "118"
             endingLineNumber = "118"
-            landmarkName = "getCurrentDate(epoch:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -958,6 +958,70 @@
             startingLineNumber = "839"
             endingLineNumber = "839"
             landmarkName = "CalculateVotes(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Greek Life/MessengerViewController.swift"
+            timestampString = "535525729.693498"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "initUser(dataRef:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static Greek_Life.DMessenger.initUser(dataRef: __ObjC.DatabaseReference) -&gt; ()"
+                  moduleName = "Greek Life"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonahelbaz/Desktop/Fraternity_IOS/GreekLife/Greek%20Life/Greek%20Life/MessengerViewController.swift"
+                  timestampString = "535525730.734978"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "732">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__ObjC.DataSnapshot) -&gt; () in static Greek_Life.DMessenger.initUser(dataRef: __ObjC.DatabaseReference) -&gt; ()"
+                  moduleName = "Greek Life"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jonahelbaz/Desktop/Fraternity_IOS/GreekLife/Greek%20Life/Greek%20Life/MessengerViewController.swift"
+                  timestampString = "535525730.739239"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "17">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Greek Life/MessengerViewController.swift"
+            timestampString = "535525729.694075"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "initUser(dataRef:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

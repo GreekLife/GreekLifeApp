@@ -38,7 +38,7 @@ struct DMessenger {
         var userIDList:[String] = []
         var dmIDList:[String] = []
         //Get list of userID's
-        dataRef.child("Users").observe(.value, with: { (snapshot) in
+        Database.database().reference().child("Users").observe(.value, with: { (snapshot) in
             
             userIDList = (snapshot.value as! [String:Any]).keys.reversed()
             
