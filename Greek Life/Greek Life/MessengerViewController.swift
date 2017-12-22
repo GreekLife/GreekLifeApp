@@ -20,27 +20,18 @@ struct Channel
 }
 struct DMessenger {
     static var dmList = [DM]()
-    static func loadDMList() -> Void {
-       /* let dataRef = Database.database().reference()
-        dataRef.child("Messenger/DMs").observe(.value, with: {(snapshot) in
-            for dmSnap in snapshot.children {
-                let dmSnapshot = dmSnap as! DataSnapshot
-                let messageDict = dmSnapshot.childSnapshot(forPath: "Messages").value as! [String:String]
-                let dmID = dmSnapshot.key// childSnapshot(forPath: "dmID").value as! String
-                let dmEntry = DM(id: dmID, messages: messageDict)
-                self.dmList.append(dmEntry)
-            }
-        })*/
-    }
-    static func initUser() -> Void {
+    static var dmListOfLoggedIn = [DM]()
+    
+    static func initUser(for dmTable:UITableView) -> Void {
     //Check to make sure user has a dm with every other user.
     //If not, create dm in db and put welcome message.
         var dataRef = Database.database().reference()
         let LoggedInUserID = LoggedIn.User["UserID"] as! String
         var userIDList:[String] = []
         var dmIDList:[String] = []
+        dmList.removeAll()
+        dmListOfLoggedIn.removeAll()
         //Load up the dm's from db
-        loadDMList()
         Database.database().reference().child("Messenger/DMs").observe(.value, with: {(snapshot) in
             for dmSnap in snapshot.children {
                 let dmSnapshot = dmSnap as! DataSnapshot
@@ -81,9 +72,13 @@ struct DMessenger {
                     }
                 }
             }
+            for dm in dmList {
+                if dm.dmID.contains(LoggedIn.User["UserID"] as! String) && dm.dmID != dm.dmID+dm.dmID {
+                    dmListOfLoggedIn.append(dm)
+                }
+            }
+            dmTable.reloadData()
             })
-        //Reload dmList to ensure it is up to date
-            loadDMList()
         })
     }
 }
@@ -153,9 +148,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        
-        let convoCell = tableView.dequeueReusableCell(withIdentifier: "convoCell", for: indexPath)
-        return convoCell
+        let dmCell = tableView.dequeueReusableCell(withIdentifier: "convoCell", for: indexPath)
+        return dmCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
@@ -176,6 +170,7 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
 {
     //DataBaseStuff
     let dataRef = Database.database().reference()
+    var otherUsersFirstLast = [String:String]()
     
     //Top toolbar
     @IBAction func backBTN(_ sender: Any)
@@ -186,15 +181,23 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     
     //Table Stuff
+    @IBOutlet weak var dmTableView: UITableView!
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return 5
+        return DMessenger.dmListOfLoggedIn.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+        let dmCell = UITableViewCell()
+        var otherBrotherID = ""
+        if let userIDRange = DMessenger.dmListOfLoggedIn[indexPath.row].dmID.range(of: LoggedIn.User["UserID"] as! String){
+            otherBrotherID = DMessenger.dmListOfLoggedIn[indexPath.row].dmID
+            otherBrotherID.removeSubrange(userIDRange)
+        }
         
-        let convoCell = tableView.dequeueReusableCell(withIdentifier: "convoCell", for: indexPath)
-        return convoCell
+        dmCell.textLabel?.text = self.otherUsersFirstLast[otherBrotherID]
+        return dmCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
@@ -206,8 +209,16 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        DMessenger.loadDMList()
-        DMessenger.initUser()
+        Database.database().reference().child("Users").observe(.value, with: { (snapshot) in
+            for userSnap in snapshot.children {
+                let userID = (userSnap as! DataSnapshot).childSnapshot(forPath: "UserID").value as! String
+                let firstName = (userSnap as! DataSnapshot).childSnapshot(forPath: "First Name").value as! String
+                let lastName = (userSnap as! DataSnapshot).childSnapshot(forPath: "Last Name").value as! String
+                self.otherUsersFirstLast[userID] = firstName+", "+lastName
+            }
+            DMessenger.initUser(for: self.dmTableView)
+        })
+        
     }
 }
 

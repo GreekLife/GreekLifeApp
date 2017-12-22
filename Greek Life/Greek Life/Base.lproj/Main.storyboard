@@ -3310,6 +3310,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="DMs" id="ZfX-E4-UFH"/>
                     <connections>
+                        <outlet property="dmTableView" destination="WY9-DK-9Re" id="fZw-xX-BqI"/>
                         <segue destination="Qux-EQ-qw0" kind="presentation" identifier="ChatSettingsSegue" id="71o-Vy-4w5"/>
                         <segue destination="Nrr-Hk-tNg" kind="presentation" identifier="ChatViewSegue" id="6nq-ve-hg4"/>
                     </connections>
