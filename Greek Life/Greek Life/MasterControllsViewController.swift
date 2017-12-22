@@ -334,23 +334,28 @@ class Ban: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return true
     }
     
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let editAction = UITableViewRowAction(style: .normal, title: "Ban") { (rowAction, indexPath) in
+            self.selectedIndex = indexPath.row
+            let verify = UIAlertController(title: "Ban", message: "How long would you like to temporarily ban this person from the app? All access will be revoked.", preferredStyle: UIAlertControllerStyle.alert)
+            let Five = UIAlertAction(title: "5 minutes", style: UIAlertActionStyle.default, handler: self.BanMember)
+            let Thirty = UIAlertAction(title: "30 minutes", style: UIAlertActionStyle.default, handler: self.BanMember)
+            let OneTwenty = UIAlertAction(title: "2 hours", style: UIAlertActionStyle.default, handler: self.BanMember)
+            let day = UIAlertAction(title: "1 Day", style: UIAlertActionStyle.default, handler: self.BanMember)
+            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+            
+            verify.addAction(Five)
+            verify.addAction(Thirty)
+            verify.addAction(OneTwenty)
+            verify.addAction(day)
+            verify.addAction(destructorAction)
+            self.present(verify, animated: true, completion: nil)
+        }
+        editAction.backgroundColor = .blue
+        return [editAction]
+    }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-            if (editingStyle == UITableViewCellEditingStyle.delete) {
-                selectedIndex = indexPath.row
-                let verify = UIAlertController(title: "Ban", message: "How long would you like to temporarily ban this person from the app? All access will be revoked.", preferredStyle: UIAlertControllerStyle.alert)
-                let Five = UIAlertAction(title: "5 minutes", style: UIAlertActionStyle.default, handler: BanMember)
-                let Thirty = UIAlertAction(title: "30 minutes", style: UIAlertActionStyle.default, handler: BanMember)
-                let OneTwenty = UIAlertAction(title: "2 hours", style: UIAlertActionStyle.default, handler: BanMember)
-                let day = UIAlertAction(title: "1 Day", style: UIAlertActionStyle.default, handler: BanMember)
-                let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
-                
-                verify.addAction(Five)
-                verify.addAction(Thirty)
-                verify.addAction(OneTwenty)
-                verify.addAction(day)
-                verify.addAction(destructorAction)
-                self.present(verify, animated: true, completion: nil)
-            }
         }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
