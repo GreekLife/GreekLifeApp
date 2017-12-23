@@ -163,7 +163,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func Login(_ sender: Any?) {
-        if let notifId = defaults.string(forKey: "NotificationId") {
+        /*if let notifId = defaults.string(forKey: "NotificationId") {
             self.NotifId = notifId
         }
         else {
@@ -173,7 +173,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return
-        }
+        }*/
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
