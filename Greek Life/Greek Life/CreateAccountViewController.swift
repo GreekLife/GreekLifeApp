@@ -172,6 +172,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     let positionOptions = ["Brother", "Alumni", "Pledge", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
     var existingBrotherNames: [String] = []
     var notifId = ""
+    var defaultEmail = ""
     
     @IBAction func Cancel(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -234,7 +235,11 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             }
             let storageRef = Storage.storage().reference().child("ProfilePictures/\(image).jpg")
             if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
-                storageRef.putData(uploadData, metadata: nil, completion:{ (metadata, error) in
+                let newMetadata = StorageMetadata()
+                newMetadata.contentType = "image/jpeg";
+
+                storageRef.putData(uploadData, metadata: newMetadata, completion:{ (metadata, error) in
+           
                     if error != nil {
                         GenericTools.Logger(data: "\n Error initializing block value: \(error!)")
                     }
@@ -306,15 +311,16 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "NotificationId": self.notifId,
                             "Validated": validated
                             ] as [String : Any]
-                        
-                        Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
-                            GenericTools.Logger(data: "Could not update email")
-                            self.activityIndicator.stopAnimating();
-                            UIApplication.shared.endIgnoringInteractionEvents();
-                            let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-                            invalid.addAction(okAction)
-                            self.present(invalid, animated: true, completion: nil)
+                        if self.defaultEmail != self.emailEdit.text! {
+                            Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
+                                GenericTools.Logger(data: "Could not update email")
+                                self.activityIndicator.stopAnimating();
+                                UIApplication.shared.endIgnoringInteractionEvents();
+                                let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                invalid.addAction(okAction)
+                                self.present(invalid, animated: true, completion: nil)
+                            }
                         }
                         
                         self.CreateProfile(newPostData: updatedData) {(success ,error) in
@@ -350,9 +356,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         else {
             id = NewUser.userID
         }
-        Database.database().reference().child("Users").child(id).setValue(newPostData){ error in
-            completion(false, error)
-        }
+        Database.database().reference().child("Users").child(id).setValue(newPostData)
         completion(true, nil)
 
     }
@@ -406,6 +410,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        defaultEmail = emailEdit.text!
         getBrotherNames()
         if let notifId = defaults.string(forKey: "NotificationId") {
             self.notifId = notifId

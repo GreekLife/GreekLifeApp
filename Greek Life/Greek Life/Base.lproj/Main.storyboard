@@ -2540,6 +2540,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nBJ-g2-3BS">
+                                <rect key="frame" x="16" y="198" width="343" height="253"/>
+                            </stackView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="Wll-tw-S6a">
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -2714,6 +2717,7 @@
                             <constraint firstItem="6Fm-CR-Oti" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-164.5" id="6Xv-oh-iir"/>
                             <constraint firstItem="zIp-rh-lxY" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="1.5" id="996-fv-keL"/>
                             <constraint firstItem="s4z-T8-6eS" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="9rq-7J-FCV"/>
+                            <constraint firstItem="nBJ-g2-3BS" firstAttribute="top" secondItem="ZOe-jt-SmC" secondAttribute="bottom" id="ADn-gm-LCa"/>
                             <constraint firstItem="1YY-c9-VUJ" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="AlD-9f-uda"/>
                             <constraint firstItem="bjx-Kr-gr3" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="233.5" id="FUc-SK-RvO"/>
                             <constraint firstItem="uPX-y4-wka" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="Ipr-cK-PXr"/>
@@ -2724,6 +2728,7 @@
                             <constraint firstItem="ZOe-jt-SmC" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-101" id="Mx9-YG-dnI"/>
                             <constraint firstItem="Wll-tw-S6a" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" id="Okf-jL-551"/>
                             <constraint firstItem="6Fm-CR-Oti" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="74.5" id="Uel-hS-dfe"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="nBJ-g2-3BS" secondAttribute="trailing" id="Xba-io-6oE"/>
                             <constraint firstItem="zIp-rh-lxY" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-291" id="XdW-0J-T8h"/>
                             <constraint firstItem="ZOe-jt-SmC" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-184" id="Xtu-y1-Q1n"/>
                             <constraint firstItem="s4z-T8-6eS" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="54.5" id="YRx-rj-MoO"/>
@@ -2736,6 +2741,8 @@
                             <constraint firstItem="nHO-qY-dDu" firstAttribute="centerX" secondItem="39T-k3-ROs" secondAttribute="centerX" constant="-43" id="h5o-LH-Ngz"/>
                             <constraint firstItem="Wll-tw-S6a" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-291.5" id="k9g-ie-FUL"/>
                             <constraint firstItem="1YY-c9-VUJ" firstAttribute="centerY" secondItem="39T-k3-ROs" secondAttribute="centerY" constant="-97.5" id="ksA-ra-OJl"/>
+                            <constraint firstItem="1vn-P4-I3U" firstAttribute="top" secondItem="nBJ-g2-3BS" secondAttribute="bottom" id="nWK-1S-VMm"/>
+                            <constraint firstItem="nBJ-g2-3BS" firstAttribute="leading" secondItem="39T-k3-ROs" secondAttribute="leadingMargin" id="yGO-Uj-zso"/>
                         </constraints>
                     </view>
                     <connections>
