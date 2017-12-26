@@ -10,16 +10,17 @@ function SendAndroidNotification(token, title, body){
     var message = {
         to: token, // required fill with device token or topics
         notification: {
-            title: title,
+            title: title +' \u270C',
             body: body
         }
     };
+    var subToken = token.substring(0, 6);
     fcm.send(message)
         .then(function(response){
-            console.log("Succesfully sent message.");
+            console.log("Succesfully sent message to ", subToken);
         })
         .catch(function(error) {
-            console.log("Something has gone wrong!");
+            console.log("Something has gone wrong sending to ", subToken);
             console.error(err);
         })
 }
@@ -76,7 +77,9 @@ iosRef.on('value', function(snapshot) {
     snapshot.forEach(function(id) {
         var wId = id.val().Id;
         IOSIds.push(wId);
-    })        
+    }) 
+    console.log("IOS");
+    console.log(IOSIds);       
 });
 
 //get Android notification Ids
@@ -95,6 +98,8 @@ idRef.on('value', function(snapshot) {
         ids.forEach(function(id) {
             UserIds.push(id);
         });
+    console.log("Android");
+    console.log(AndroidIds);
 });
 //var masterIdRef = firebase.database().ref("Users/Master/UserId");
 //masterIdRef.on('value', function(snapshot) {
@@ -107,10 +112,6 @@ idRef.on('value', function(snapshot) {
 var FirstRoundMaster = true; //skip over the first read
 var masterRef = firebase.database().ref("GeneralMessage/Master");
 masterRef.on('value', function(snapshot) {
-    console.log("IOS");
-    console.log(IOSIds);
-    console.log("Android");
-    console.log(AndroidIds);
     if(!FirstRoundMaster) {
         IOSIds.forEach(function(id) {
             SendIOSNotification(id, snapshot.val(), 'ping.aiff', 1, 3 );
