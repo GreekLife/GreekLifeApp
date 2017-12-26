@@ -3248,7 +3248,7 @@
                                         <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="separatorColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="detailDisclosureButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="convoCell" rowHeight="71" id="e3x-Ya-9Wl">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="detailDisclosureButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="directDialogueCell" rowHeight="71" id="e3x-Ya-9Wl" customClass="DirectDialogueCell" customModule="Greek_Life" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="375" height="71"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="e3x-Ya-9Wl" id="IkZ-37-nJz">
@@ -3280,6 +3280,10 @@
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <connections>
+                                                    <outlet property="lastMessageLabel" destination="YqH-33-oTZ" id="Vvn-cw-kQP"/>
+                                                    <outlet property="messengeeOtherLabel" destination="mnO-G2-yJ5" id="U64-m6-Bdg"/>
+                                                </connections>
                                             </tableViewCell>
                                         </prototypes>
                                         <connections>
@@ -3310,7 +3314,8 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="DMs" id="ZfX-E4-UFH"/>
                     <connections>
-                        <outlet property="dmTableView" destination="WY9-DK-9Re" id="fZw-xX-BqI"/>
+                        <outlet property="TabBarItem" destination="ZfX-E4-UFH" id="dzz-B9-w4t"/>
+                        <outlet property="directDialogueTable" destination="WY9-DK-9Re" id="rZt-sZ-wZ4"/>
                         <segue destination="Qux-EQ-qw0" kind="presentation" identifier="ChatSettingsSegue" id="71o-Vy-4w5"/>
                         <segue destination="Nrr-Hk-tNg" kind="presentation" identifier="ChatViewSegue" id="6nq-ve-hg4"/>
                     </connections>
@@ -3522,6 +3527,9 @@
                                                 <state key="normal" title="Send">
                                                     <color key="titleColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="sendMsgBTN:" destination="Nrr-Hk-tNg" eventType="touchUpInside" id="PcN-Ry-eOE"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <color key="backgroundColor" red="0.078431372550000003" green="0.1019607843" blue="0.43137254899999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -3541,7 +3549,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="messagesTableView" destination="g8R-gB-lKO" id="ZGm-Aa-Hxl"/>
+                        <outlet property="messageInputField" destination="5qH-3f-kLb" id="B95-4i-ZR0"/>
+                        <outlet property="messagesTable" destination="g8R-gB-lKO" id="wet-Qa-3Zj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o2I-ka-mif" userLabel="First Responder" sceneMemberID="firstResponder"/>

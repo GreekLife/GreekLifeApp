@@ -28,38 +28,54 @@ import FirebaseDatabase
 
 struct DatabaseHousekeeping {
     
-    static var handles = [DatabaseHandle]()
+    static var handles = [DatabaseHandle]() //To be deleted
     
+    static var dmHandle = DatabaseHandle()
+    static var chHandle = DatabaseHandle()
+    static var dbSnapshot = DataSnapshot()
+    
+    static func removeObservers () -> Void {
+        Database.database().reference().removeObserver(withHandle: dmHandle)
+        Database.database().reference().removeObserver(withHandle: chHandle)
+        
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
 //  Messenger Objects
 //-----------------------------------------------------------------------------------------------------------
 
-// --- Channel Dialiogue --- //
+// --- Dialogue --- //
 
-class ChannelDialogue {
+class Dialogue {
     
-    // --- Channel Dialogue Attributes --- //
-    
-    var messengees = [Messengee]()
-    var messages = [Message]()
-    
-}
-
-// --- Direct Dialogue --- //
-
-class DirectDialogue {
-    
-    // --- Direct Messenger Dialogue Properties --- //
+    // --- Dialogue Attributes --- //
     
     var id = ""
     var messages = [Message]()
     var messengees = [Messengee]()
     
+}
+
+// --- Channel Dialogue --- //
+
+class ChannelDialogue: Dialogue {
+    
+    // --- Channel Dialogue Attributes --- //
+    
+    
+}
+
+// --- Direct Dialogue --- //
+
+class DirectDialogue: Dialogue {
+    
+    // --- Direct Messenger Dialogue Properties --- //
+    
     // --- Constructors ---//
     
     init(id:String) {
+        super.init()
         //Assign the id to the object property
         //and populate the array of messengees
         //in case directDialogue doesn't exist
@@ -73,6 +89,7 @@ class DirectDialogue {
         initializeDirectDialogue()
     }
     init(messengeeIDs: [String]) {
+        super.init()
         //Put together the proper DirectDialogue ID
         //and populate the array of messengees
         //in case directDialogue doesn't exist
@@ -90,22 +107,28 @@ class DirectDialogue {
         // If the direct dialoue exists pull the data.
         // Otherwise there will be an error and so,
         // create a new one with a welcome message from both messengees.
-        let handle = Database.database().reference().child("DirectDialogues/"+id).observe(.value, with: { snapshot in
-            //Pulling Messengees
-            let messengeeIDsString = snapshot.key
-            let messengeeIDs = messengeeIDsString.components(separatedBy: ", ")
-            for id in messengeeIDs {
-                self.messengees.append(Messengee(userID: id))
+        //let handle = Database.database().reference().child("DirectDialogues/"+id).observe(.value, with: { snapshot in
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "DirectDialogues/"+id)
+            if snapshot.hasChildren() {
+                //Pulling Messages
+                for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
+                    self.messages.append(Message(
+                        id: (messageSnapshot as! DataSnapshot).key,
+                        content: (messageSnapshot as! DataSnapshot).value as! String
+                    ))
+                }
+            }else{
+                //Create a new Direct Dialogue with welcome messages from each messengee
+                for messengee in self.messengees {
+                    //make welcome message for the messengee
+                    let timeStamp = Int(Date.init().timeIntervalSince1970)
+                    let messengeeID = messengee.userID
+                    let messageID = String(timeStamp)+", "+messengeeID
+                    Database.database().reference().child("DirectDialogues/"+self.id+"/Messages/"+messageID).setValue("Hey, wassup?")
+                }
             }
-            //Pulling Messages
-            for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
-                self.messages.append(Message(
-                    id: (messageSnapshot as! DataSnapshot).key,
-                    content: (messageSnapshot as! DataSnapshot).value as! String
-                ))
-            }
-            
-        }){ error in
+        //})
+        /*{ error in
             //Create a new Direct Dialogue with welcome messages from each messengee
             for messengee in self.messengees {
                 //make welcome message for the messengee
@@ -114,8 +137,8 @@ class DirectDialogue {
                 let messageID = String(timeStamp)+", "+messengeeID
                 Database.database().reference().child("DirectDialogues/"+self.id+"Messages/"+messageID).setValue("Hey, wassup?")
             }
-        }
-        DatabaseHousekeeping.handles.append(handle)
+        }*/
+        //DatabaseHousekeeping.handles.append(handle)
     }
     
 }
@@ -131,16 +154,18 @@ class Messengee {
     
     // --- Static Messengee Functions --- //
     
-    static func getAllFromDB (voidCallback: @escaping () -> Void) -> Void {
-        let handle = Database.database().reference().child("Users").observe(.value, with: { snapshot in
+    static func getAllFromDB () -> Void {
+        //let handle = Database.database().reference().child("Users").observe(.value, with: { snapshot in
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users")
+        self.messengees.removeAll()
             for user in snapshot.children {
                 self.messengees.append(Messengee(userID: (user as! DataSnapshot).key))
             }
-            voidCallback()
-        }){ error in
+        //})
+        /*{ error in
             print("Error: There seems to be no users in the database.")
-        }
-        DatabaseHousekeeping.handles.append(handle)
+        }*/
+        //DatabaseHousekeeping.handles.append(handle)
     }
     
     // --- Messengee Properties --- //
@@ -155,15 +180,17 @@ class Messengee {
     
     init(userID:String) {
         self.userID = userID
-        let handle = Database.database().reference().child("Users/"+userID).observe(.value, with: { (snapshot) in
-            self.firstName = snapshot.value(forKey: "First Name") as! String;
-            self.lastName = snapshot.value(forKey: "Last Name") as! String;
-            self.brotherName = snapshot.value(forKey: "BrotherName") as! String;
-            self.position = snapshot.value(forKey: "Position") as! String;
-        }){ error in
+        //let handle = Database.database().reference().child("Users/"+userID).observe(.value, with: { (snapshot) in
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+userID)
+            self.firstName = snapshot.childSnapshot(forPath: "First Name").value as? String ?? " ";
+            self.lastName = snapshot.childSnapshot(forPath: "Last Name").value as? String ?? " ";
+            self.brotherName = snapshot.childSnapshot(forPath: "BrotherName").value as? String ?? " ";
+            self.position = snapshot.childSnapshot(forPath: "Position").value as? String ?? " ";
+        //})
+    /*{ error in
             print("Error: This brother does not exist.")
         }
-        DatabaseHousekeeping.handles.append(handle)
+        DatabaseHousekeeping.handles.append(handle)*/
     }
     
 }
@@ -204,6 +231,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBAction func backBTN(_ sender: Any)
     {
         presentingViewController?.dismiss(animated: true)
+        DatabaseHousekeeping.removeObservers()
     }
     
     
@@ -247,40 +275,71 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     // --- IB Outlets --- //
     
+    @IBOutlet weak var directDialogueTable: UITableView!
+    
+    
     // --- View Did Load  --- //
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Messengee.getAllFromDB(voidCallback: setupDirectDialogues)
+        
+        Database.database().reference().observeSingleEvent(of:.value, with: {snapshot in
+            //Store Database in housekeeping struct
+            DatabaseHousekeeping.dbSnapshot = snapshot
+            //Get all the Messengees/Users from database
+            Messengee.getAllFromDB()
+            self.initDirectDialogues()
+            
+            //Begin Sync
+            DatabaseHousekeeping.dmHandle = Database.database().reference().observe(.value, with: { snapshot in
+                DatabaseHousekeeping.dbSnapshot = snapshot
+                Messengee.getAllFromDB()
+                self.initDirectDialogues()
+                self.directDialogueTable.reloadData()
+            })
+            
+        })
     }
     
-    // --- Populate the directDialogues with all the possible ones --- //
-    func setupDirectDialogues() -> Void {
-        for messengeeA in Messengee.messengees {
-            for messengeeB in Messengee.messengees {
-                if messengeeA.userID != messengeeB.userID {
-                    directDialogues.append(DirectDialogue(messengeeIDs: [messengeeA.userID, messengeeB.userID]))
-                }
+    // --- Initialize directDialogues --- //
+    func initDirectDialogues () -> Void {
+        // Initialize directDialogues of LoggedIn user
+        self.directDialogues.removeAll()
+        let messengeeLoggedIn = LoggedIn.User["UserID"] as! String
+        for messengeeOther in Messengee.messengees {
+            if messengeeLoggedIn != messengeeOther.userID {
+                self.directDialogues.append(DirectDialogue(messengeeIDs: [messengeeLoggedIn, messengeeOther.userID]))
             }
         }
     }
-    
+   
     //-- IB Actions --//
     
     @IBAction func backBTN(_ sender: Any)
     {
         presentingViewController?.dismiss(animated: true)
+        DatabaseHousekeeping.removeObservers()
     }
     
     //-- Table of Direct Messaging Conversations --//
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return 0
+        return directDialogues.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        return UITableViewCell()
+        let directDialogue = self.directDialogues[indexPath.row]
+        let directDialogueCell = directDialogueTable.dequeueReusableCell(withIdentifier: "directDialogueCell") as! DirectDialogueCell
+        // Get the names of the other messengees and put them in a string
+        var otherMessengees = ""
+        for messengee in directDialogue.messengees {
+            if messengee.userID != (LoggedIn.User["UserID"] as! String) {
+                otherMessengees.append(messengee.firstName+" "+messengee.lastName+", ")
+            }
+        }
+        directDialogueCell.messengeeOtherLabel.text? = String(otherMessengees.dropLast(2))
+        return directDialogueCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
@@ -299,6 +358,15 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
 }
 
 
+// --- Direct Dialogue Reusable Cell Class --- //
+
+class DirectDialogueCell: UITableViewCell {
+    @IBOutlet weak var messengeeOtherLabel: UILabel!
+    @IBOutlet weak var lastMessageLabel: UILabel!
+    
+    
+}
+
 
 //-----------------------------------------------------------------------------------------------------------
 //  Messaging Interface
@@ -306,14 +374,30 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
 
 class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate{
     
+    // --- Chat View Controller Properties --- //
     
-    //--- IB Outlets and Actions ---//
+    var dialogue = Dialogue()
+    
+    // --- IB Outlets --- //
+    
+    @IBOutlet weak var messagesTable: UITableView!
+    @IBOutlet weak var messageInputField: UITextView!
+    
+    
+    // --- View Did Load --- //
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    //--- IB Actions ---//
     
     @IBAction func backBTN(_ sender: Any)
     {
         presentingViewController?.dismiss(animated: true)
     }
-    
+    @IBAction func sendMsgBTN(_ sender: UIButton) {
+    }
     
     //--- Table of Messages in Direct Message or Channel ---//
     
