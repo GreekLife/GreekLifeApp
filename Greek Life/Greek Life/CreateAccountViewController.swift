@@ -321,17 +321,17 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "Validated": validated
                             ] as [String : Any]
                         
-                        //this should be sayng that when you update your profile not to bother with updating the email in Auth if t
-                        //hasnt changed but its not working.
                         if self.defaultEmail != self.emailEdit.text! {
                             Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
+                                if(error != nil) {
                                 GenericTools.Logger(data: "Could not update email")
-                                self.activityIndicator.stopAnimating();
-                                UIApplication.shared.endIgnoringInteractionEvents();
-                                let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
-                                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-                                invalid.addAction(okAction)
-                                self.present(invalid, animated: true, completion: nil)
+                                    self.activityIndicator.stopAnimating();
+                                    UIApplication.shared.endIgnoringInteractionEvents();
+                                    let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
+                                    let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                    invalid.addAction(okAction)
+                                    self.present(invalid, animated: true, completion: nil)
+                                }
                             }
                         }
                         
@@ -345,6 +345,12 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                             invalid.addAction(okAction)
                             self.present(invalid, animated: true, completion: nil)
+                            }
+                            else {
+                                let valid = UIAlertController(title: "Success", message: "Updated account", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                valid.addAction(okAction)
+                                self.present(valid, animated: true, completion: nil)
                             }
                         }
                     }
