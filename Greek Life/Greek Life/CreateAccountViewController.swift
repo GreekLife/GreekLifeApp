@@ -196,11 +196,13 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             }
         }
         
-        //validate birthday
+        //validate birthday --> Disable copy paste
         //validate grad date
-        if (LoggedIn.User["Username"] as? String) == nil { //This is invalid and should be fixed
-            if existingBrotherNames.index(of: BrotherName.text!) != nil { //Needs to be tested
-                let invalid = UIAlertController(title: "Invalid", message: "The brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
+        
+        //avoid duplicate usernames
+        if (LoggedIn.User["Username"] as? String) == nil { 
+            if existingBrotherNames.index(of: BrotherName.text!) != nil {
+                let invalid = UIAlertController(title: "Invalid", message: "This brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                 invalid.addAction(okAction)
                 self.present(invalid, animated: true, completion: nil)
@@ -247,7 +249,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         image = imageURL
                     }
                     var username = ""
-                    if self.Position.text == "Master" { //noone can identify as master in their profile so this should be valid. Actually master will never be created except by me with placeholders.
+                    if self.Position.text == "Master" {
                         username = "Master"
                     }
                     else {
@@ -283,17 +285,24 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                                 return
                             }
                         self.performSegue(withIdentifier: "ProfileCreated", sender: self)
-                    }
+                      }
                     }
                     else {
                         var changedUser = ""
                         var validated = false
-                        if LoggedIn.User["Username"] as! String == "Master" {
+                        if (LoggedIn.User["Username"] as! String) == "Master" {
                             changedUser = "Master"
                             validated = true
                         }
                         else {
                             changedUser = self.BrotherName.text!
+                        }
+                        
+                        if let notifId = self.defaults.string(forKey: "NotificationId") {
+                            self.notifId = notifId
+                        }
+                        else {
+                            self.notifId = ""
                         }
                         let updatedData = [
                             "BrotherName": self.BrotherName.text!,
@@ -311,6 +320,9 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "NotificationId": self.notifId,
                             "Validated": validated
                             ] as [String : Any]
+                        
+                        //this should be sayng that when you update your profile not to bother with updating the email in Auth if t
+                        //hasnt changed but its not working.
                         if self.defaultEmail != self.emailEdit.text! {
                             Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
                                 GenericTools.Logger(data: "Could not update email")
@@ -410,11 +422,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        defaultEmail = emailEdit.text!
         getBrotherNames()
-        if let notifId = defaults.string(forKey: "NotificationId") {
-            self.notifId = notifId
-        }
         Create.layer.cornerRadius = 5
         ImageButton.layer.borderColor = UIColor.black.cgColor
         ImageButton.layer.borderWidth = 1
@@ -449,7 +457,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                 }
             }
             
-            
+            defaultEmail = emailEdit.text!
             Create.setTitle("Update Profile", for: .normal)
         }
 
