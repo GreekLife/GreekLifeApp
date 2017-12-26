@@ -32,6 +32,7 @@ struct DatabaseHousekeeping {
     
     static var dmHandle = DatabaseHandle()
     static var chHandle = DatabaseHandle()
+    static var miHandle = DatabaseHandle()
     static var dbSnapshot = DataSnapshot()
     
     static func removeObservers () -> Void {
@@ -54,6 +55,11 @@ class Dialogue {
     var id = ""
     var messages = [Message]()
     var messengees = [Messengee]()
+    var type:String
+    
+    init(dialogueType:String) {
+        type = dialogueType
+    }
     
 }
 
@@ -75,7 +81,7 @@ class DirectDialogue: Dialogue {
     // --- Constructors ---//
     
     init(id:String) {
-        super.init()
+        super.init(dialogueType: "direct")
         //Assign the id to the object property
         //and populate the array of messengees
         //in case directDialogue doesn't exist
@@ -89,7 +95,7 @@ class DirectDialogue: Dialogue {
         initializeDirectDialogue()
     }
     init(messengeeIDs: [String]) {
-        super.init()
+        super.init(dialogueType: "direct")
         //Put together the proper DirectDialogue ID
         //and populate the array of messengees
         //in case directDialogue doesn't exist
@@ -204,6 +210,7 @@ class Message {
     var id = ""
     var content = ""
     var sentBy = ""
+    var sentByName = ""
     var timeSent = ""
     
     // --- Constructor --- //
@@ -214,6 +221,7 @@ class Message {
         let idComponents = id.components(separatedBy: ", ")
         self.timeSent = idComponents[0]
         self.sentBy = idComponents[1]
+        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
     }
     
 }
@@ -343,17 +351,19 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        performSegue(withIdentifier: "ChatViewSegue", sender: "")
+        performSegue(withIdentifier: "ChatViewSegue", sender: directDialogues[indexPath.row])
     }
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        performSegue(withIdentifier: "ChatSettingsSegue", sender: "")
+        performSegue(withIdentifier: "ChatSettingsSegue", sender: directDialogues[indexPath.row])
     }
     
     
     //-- Prepare for Segues --//
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        if segue.identifier == "ChatViewSegue" {
+            (segue.destination as! ChatViewController).dialogue = sender as! DirectDialogue
+        }
     }
 }
 
@@ -376,7 +386,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     // --- Chat View Controller Properties --- //
     
-    var dialogue = Dialogue()
+    var dialogue = Dialogue(dialogueType: "")
     
     // --- IB Outlets --- //
     
@@ -388,6 +398,12 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // --- Set up automatic scaling of table cells --- //
+        //messagesTable.estimatedRowHeight = 85.0
+        messagesTable.rowHeight = 100.0 //UITableViewAutomaticDimension
+        messagesTable.reloadData()
+        
+        
     }
     
     //--- IB Actions ---//
@@ -402,11 +418,17 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     //--- Table of Messages in Direct Message or Channel ---//
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return dialogue.messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        
+        let messageCell = messagesTable.dequeueReusableCell(withIdentifier: "messageCell") as! MessageCell
+        
+        messageCell.messageSender.text = dialogue.messages[indexPath.row].sentByName
+        messageCell.message.text = dialogue.messages[indexPath.row].content
+        
+        return messageCell
     }
     
     
@@ -416,9 +438,9 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
 
 //--- Cells for the Messaging Interface Table ---//
 
-class ChatViewMessageCell: UITableViewCell {
+class MessageCell: UITableViewCell {
     @IBOutlet weak var messageSender: UILabel!
-    @IBOutlet weak var messageContent: UILabel!
+    @IBOutlet weak var message: UILabel!
     
 }
 

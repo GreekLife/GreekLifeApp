@@ -3474,7 +3474,7 @@
                                         <rect key="frame" x="0.0" y="44" width="375" height="539"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="messageCell" rowHeight="78" id="RDB-Zv-x8l" customClass="ChatViewMessageCell" customModule="Greek_Life" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="messageCell" rowHeight="78" id="RDB-Zv-x8l" customClass="MessageCell" customModule="Greek_Life" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="375" height="78"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RDB-Zv-x8l" id="8ab-5A-glE">
@@ -3498,8 +3498,8 @@
                                                     </subviews>
                                                 </tableViewCellContentView>
                                                 <connections>
-                                                    <outlet property="messageContent" destination="8sd-wg-35G" id="faZ-xZ-Mny"/>
-                                                    <outlet property="messageSender" destination="BkF-3P-sZ3" id="Kby-40-RFQ"/>
+                                                    <outlet property="message" destination="8sd-wg-35G" id="lab-OB-dcr"/>
+                                                    <outlet property="messageSender" destination="BkF-3P-sZ3" id="JdX-If-41S"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>
