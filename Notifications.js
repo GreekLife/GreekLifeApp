@@ -1,6 +1,29 @@
+var FCM = require('fcm-push');
 var firebase = require('firebase');
 var apn = require('apn');
- 
+
+//Android connection
+var androidServerKey = 'AAAAnM9NExs:APA91bGvq70XEEDVAKBkp3MA99D88pISL3OITfDh6Us9_rjLla2eNW589iKGORHs8EEZn_IFq4QFJrBFqUvs4vHv9A8ugZsjvqGSrfdrQAc0v1Kb_hmY19AR8VqXxjD39kDbXcFSfZ-a';
+var fcm = new FCM(androidServerKey);
+
+function SendAndroidNotification(token, title, body){
+    var message = {
+        to: token, // required fill with device token or topics
+        notification: {
+            title: title,
+            body: body
+        }
+    };
+    fcm.send(message)
+        .then(function(response){
+            console.log("Succesfully sent message.");
+        })
+        .catch(function(error) {
+            console.log("Something has gone wrong!");
+            console.error(err);
+        })
+}
+
 //IOS connection
  var options = {
     token: {
@@ -25,7 +48,7 @@ notification.alert = message +' \u270C'; //supports emoticon codes
 notification.payload = {id: payload}; // Send any extra payload data with the notification which will be accessible to your app in didReceiveRemoteNotification
 apnProvider.send(notification, deviceToken).then(function(result) {  //send actual notifcation
     // Check the result for any failed devices
-    console.log(result);
+   // console.log(result);
 });
 }
 
@@ -37,16 +60,27 @@ var config = {
     databaseURL: "https://greek-life-ios.firebaseio.com/"
 };
 
+var AndroidIds = [];
 var IOSIds = [];
 var UserIds = [];
 
 //get apple notification Ids
 firebase.initializeApp(config);
-var rootRef = firebase.database().ref("NotificationIds/IOS");
-rootRef.on('value', function(snapshot) {
+
+var iosRef = firebase.database().ref("NotificationIds/IOS");
+iosRef.on('value', function(snapshot) {
     snapshot.forEach(function(id) {
         var wId = id.val().Id;
         IOSIds.push(wId);
+    })        
+});
+
+//get Android notification Ids
+var androidRef = firebase.database().ref("NotificationIds/Android");
+androidRef.on('value', function(snapshot) {
+    snapshot.forEach(function(id) {
+        var wId = id.val().Id;
+        AndroidIds.push(wId);
     })        
 });
 
@@ -69,10 +103,16 @@ idRef.on('value', function(snapshot) {
 var FirstRoundMaster = true; //skip over the first read
 var masterRef = firebase.database().ref("GeneralMessage/Master");
 masterRef.on('value', function(snapshot) {
+    console.log("IOS");
     console.log(IOSIds);
+    console.log("Android");
+    console.log(AndroidIds);
     if(!FirstRoundMaster) {
         IOSIds.forEach(function(id) {
             SendIOSNotification(id, snapshot.val(), 'ping.aiff', 1, 3 );
+        });
+        AndroidIds.forEach(function(id) {
+            SendAndroidNotification(id, snapshot.val(),"");
         });
     }
     FirstRoundMaster = false;
@@ -86,6 +126,9 @@ appRef.on('value', function(snapshot) {
         IOSIds.forEach(function(id) {
             SendIOSNotification(id, snapshot.val(), 'ping.aiff', 2, 3 );
         });  
+        AndroidIds.forEach(function(id) {
+            SendAndroidNotification(id, snapshot.val(),"");
+        });
     }
     FirstRoundApp = false;
 });
@@ -97,7 +140,10 @@ forumRef.on('value', function(snapshot) {
     if(!FirstRoundForum) {
         IOSIds.forEach(function(id) {
             SendIOSNotification(id, "A new Post has been added to the Forum!", 'ping.aiff', 1, 3 );
-        });        
+        }); 
+        AndroidIds.forEach(function(id) {
+            SendAndroidNotification(id, "A new Post has been added to the Forum!","");
+        });       
     }
     FirstRoundForum = false;
 });
@@ -109,6 +155,9 @@ pollRef.on('value', function(snapshot) {
         IOSIds.forEach(function(id) {
             SendIOSNotification(id, "A new Poll has been added!", 'ping.aiff', 3, 3 );
         });
+        AndroidIds.forEach(function(id) {
+            SendAndroidNotification(id, "A new Poll has been added!","");
+        }); 
     }
     FirstRoundPoll = false;
 });
@@ -154,6 +203,7 @@ function CheckForUnansweredPolls() {
         console.log(hasntAnsweredAPoll);
         hasntAnsweredAPoll.forEach(function(notif) {
                 SendIOSNotification(notif, "You have an unanswered poll.", 'ping.aiff', 4, 3 ); 
+                SendAndroidNotification(notif, "You have an unanswered poll.", "");
          });
     });
 }
