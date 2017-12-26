@@ -3469,7 +3469,7 @@
                                         <rect key="frame" x="0.0" y="44" width="375" height="539"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <prototypes>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="messageCell" rowHeight="78" id="RDB-Zv-x8l">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="messageCell" rowHeight="78" id="RDB-Zv-x8l" customClass="ChatViewMessageCell" customModule="Greek_Life" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="28" width="375" height="78"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RDB-Zv-x8l" id="8ab-5A-glE">
@@ -3492,8 +3492,16 @@
                                                         </label>
                                                     </subviews>
                                                 </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="messageContent" destination="8sd-wg-35G" id="faZ-xZ-Mny"/>
+                                                    <outlet property="messageSender" destination="BkF-3P-sZ3" id="Kby-40-RFQ"/>
+                                                </connections>
                                             </tableViewCell>
                                         </prototypes>
+                                        <connections>
+                                            <outlet property="dataSource" destination="Nrr-Hk-tNg" id="DJz-1v-lQX"/>
+                                            <outlet property="delegate" destination="Nrr-Hk-tNg" id="E9q-6Q-0rX"/>
+                                        </connections>
                                     </tableView>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R41-1k-vkc">
                                         <rect key="frame" x="0.0" y="583" width="375" height="64"/>
@@ -3532,6 +3540,9 @@
                             <constraint firstItem="xWa-z8-4wh" firstAttribute="top" secondItem="FEs-eQ-xX4" secondAttribute="bottom" id="xgk-Gu-0Cw"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="messagesTableView" destination="g8R-gB-lKO" id="ZGm-Aa-Hxl"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o2I-ka-mif" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
