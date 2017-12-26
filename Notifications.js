@@ -46,10 +46,14 @@ notification.badge = badge; //selected badge
 notification.sound = sound; //sound is configurable
 notification.alert = message +' \u270C'; //supports emoticon codes
 notification.payload = {id: payload}; // Send any extra payload data with the notification which will be accessible to your app in didReceiveRemoteNotification
-apnProvider.send(notification, deviceToken).then(function(result) {  //send actual notifcation
+    apnProvider.send(notification, deviceToken).then(function(result) {  //send actual notifcation
     // Check the result for any failed devices
-   // console.log(result);
-});
+
+    var subToken = token.substring(0, 6);
+    console.log("Succesfully sent message to ", subToken);
+    }).catch( function (error) {
+            console.log("Faled to send message to ", subToken);
+    })
 }
 
 
