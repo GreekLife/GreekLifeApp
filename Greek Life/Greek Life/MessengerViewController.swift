@@ -57,26 +57,65 @@ class DirectDialogue {
     var messages = [Message]()
     var messengees = [Messengee]()
     
-    // --- Constructor ---//
+    // --- Constructors ---//
     
     init(id:String) {
+        //Assign the id to the object property
+        //and populate the array of messengees
+        //in case directDialogue doesn't exist
         self.id = id
+        let messengeeIDsString = id
+        let messengeeIDs = messengeeIDsString.components(separatedBy: ", ")
+        for id in messengeeIDs {
+            self.messengees.append(Messengee(userID: id))
+        }
+        //Then continue with initialization script
+        initializeDirectDialogue()
+    }
+    init(messengeeIDs: [String]) {
+        //Put together the proper DirectDialogue ID
+        //and populate the array of messengees
+        //in case directDialogue doesn't exist
+        let sortedMessengeeIDs = messengeeIDs.sorted()
+        for messengeeID in sortedMessengeeIDs {
+            self.id.append(messengeeID+", ")
+            self.messengees.append(Messengee(userID: messengeeID))
+        }
+        self.id = String(self.id.dropLast(2)) // to get rid of last ", "
+        //Then continue with init script
+        initializeDirectDialogue()
+    }
+    
+    func initializeDirectDialogue () -> Void {
         // If the direct dialoue exists pull the data.
-        // Otherwise, create a new one with a welcome message from both messengees
+        // Otherwise there will be an error and so,
+        // create a new one with a welcome message from both messengees.
         let handle = Database.database().reference().child("DirectDialogues/"+id).observe(.value, with: { snapshot in
-            let messengeeIDsString = snapshot.childSnapshot(forPath: "Messengees").value as! String
+            //Pulling Messengees
+            let messengeeIDsString = snapshot.key
             let messengeeIDs = messengeeIDsString.components(separatedBy: ", ")
-            //Pulling messengee data
             for id in messengeeIDs {
                 self.messengees.append(Messengee(userID: id))
             }
+            //Pulling Messages
+            for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
+                self.messages.append(Message(
+                    id: (messageSnapshot as! DataSnapshot).key,
+                    content: (messageSnapshot as! DataSnapshot).value as! String
+                ))
+            }
+            
         }){ error in
-            Database.database().reference().child("DirectDialogues/"+id)
+            //Create a new Direct Dialogue with welcome messages from each messengee
+            for messengee in self.messengees {
+                //make welcome message for the messengee
+                let timeStamp = Date.init().timeIntervalSince1970
+                let messengeeID = messengee.userID
+                let messageID = String(timeStamp)+", "+messengeeID
+                Database.database().reference().child("DirectDialogues/"+self.id+"Messages/"+messageID).setValue("Hey, wassup?")
+            }
         }
         DatabaseHousekeeping.handles.append(handle)
-    }
-    init(ids: [String]) {
-        //Put together a proper DirectDialogue ID
     }
     
 }
@@ -85,6 +124,24 @@ class DirectDialogue {
 // --- Messengee --- //
 
 class Messengee {
+    
+    // --- Static Messengee Properties --- //
+    
+    static var messengees = [Messengee]()
+    
+    // --- Static Messengee Functions --- //
+    
+    static func getAllFromDB (voidCallback: @escaping () -> Void) -> Void {
+        let handle = Database.database().reference().child("Users").observe(.value, with: { snapshot in
+            for user in snapshot.children {
+                self.messengees.append(Messengee(userID: (user as! DataSnapshot).key))
+            }
+            voidCallback()
+        }){ error in
+            print("Error: There seems to be no users in the database.")
+        }
+        DatabaseHousekeeping.handles.append(handle)
+    }
     
     // --- Messengee Properties --- //
     
@@ -104,7 +161,7 @@ class Messengee {
             self.brotherName = snapshot.value(forKey: "BrotherName") as! String;
             self.position = snapshot.value(forKey: "Position") as! String;
         }){ error in
-            print("brother did not exist")
+            print("Error: This brother does not exist.")
         }
         DatabaseHousekeeping.handles.append(handle)
     }
@@ -127,6 +184,9 @@ class Message {
     init(id:String, content:String) {
         self.id = id
         self.content = content
+        let idComponents = id.components(separatedBy: ", ")
+        self.timeSent = idComponents[0]
+        self.sentBy = idComponents[1]
     }
     
 }
@@ -180,7 +240,32 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
 class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
     
-    //-- IB Outlets and Actions --//
+    // --- Direct Messaging Properties --- //
+    
+    var directDialogues = [DirectDialogue]()
+    
+    
+    // --- IB Outlets --- //
+    
+    // --- View Did Load  --- //
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        Messengee.getAllFromDB(voidCallback: setupDirectDialogues)
+    }
+    
+    // --- Populate the directDialogues with all the possible ones --- //
+    func setupDirectDialogues() -> Void {
+        for messengeeA in Messengee.messengees {
+            for messengeeB in Messengee.messengees {
+                if messengeeA.userID != messengeeB.userID {
+                    directDialogues.append(DirectDialogue(messengeeIDs: [messengeeA.userID, messengeeB.userID]))
+                }
+            }
+        }
+    }
+    
+    //-- IB Actions --//
     
     @IBAction func backBTN(_ sender: Any)
     {
@@ -209,14 +294,6 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     //-- Prepare for Segues --//
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-    }
-    
-    
-    //-- View Did Load  --//
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
     }
 }
