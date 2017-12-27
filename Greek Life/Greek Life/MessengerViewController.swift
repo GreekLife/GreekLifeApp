@@ -83,7 +83,10 @@ class ChannelDialogue: Dialogue {
                 content: (messageSnapshot as! DataSnapshot).value as! String
             ))
         }
-        //////******** FINISH GETTING THE CHANNEL FROM DATABASE THEN SETUP THE CREATE DATABASE UI
+        let messengeesArrayOfIDs = (snapshot.childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
+        for messengeeID in messengeesArrayOfIDs {
+            messengees.append(Messengee(userID: messengeeID))
+        }
     }
     
     // Send a message to the channel
@@ -285,10 +288,26 @@ class Message {
 
 class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
-    
+    // --- Channel Dialogues Properties --- //
     var channelDialogues = [ChannelDialogue]()
     
-    //Top toolbar
+    // --- IB Outlets --- //
+    
+    @IBOutlet weak var channelsTable: UITableView!
+    
+    
+    // --- View Did Load --- //
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    // --- IB Actions --- //
+    
+    @IBAction func createChannelBTN(_ sender: UIBarButtonItem)
+    {
+        self.performSegue(withIdentifier: "ChannelSettingsSegue", sender: "")
+    }
     @IBAction func backBTN(_ sender: Any)
     {
         presentingViewController?.dismiss(animated: true)
@@ -515,8 +534,6 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     
 }
-
-
 //--- Cells for the Messaging Interface Table ---//
 
 class MessageCell: UITableViewCell {
@@ -527,19 +544,172 @@ class MessageCell: UITableViewCell {
 
 
 //-----------------------------------------------------------------------------------------------------------
-//  Messaging Interface Settings
+//  Channel Creation/Editing View
 //-----------------------------------------------------------------------------------------------------------
 
-class ChatSettingsViewController:UIViewController
+class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITableViewDataSource
 {
-    @IBAction func doneBTN(_ sender: Any)
+    // --- Channel Settings Properties --- //
+    var channelID = ""
+    var channelName = ""
+    var oldWelcomeMessage = ""
+    var welcomeMessage = ""
+    var allMessengees = [Messengee]()
+    var messengeesInChannel = [Messengee]()
+    var messengeesNotInChannel = [Messengee]()
+    
+    // --- IB Outlets --- //
+    @IBOutlet weak var channelNameField: UITextField!
+    @IBOutlet weak var welcomeMessageField: UITextField!
+    @IBOutlet weak var tableOfMessengeesInChannel: UITableView!
+    
+    
+    // --- View Did Load --- //
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let snapshot = DatabaseHousekeeping.dbSnapshot
+        // Get all potential messengees
+        for messengeeSnap in snapshot.childSnapshot(forPath: "Users").children
+        {
+            allMessengees.append(Messengee(userID: (messengeeSnap as! DataSnapshot).key))
+        }
+        // Get all channel data if channel exists and shove it into the fields
+        if snapshot.childSnapshot(forPath: "ChannelDialogue/"+channelID).exists() {
+            let channelSnap = snapshot.childSnapshot(forPath: "ChannelDialogue/"+channelID)
+            // Get channelID
+            self.channelID = channelSnap.key
+            // Get channelName
+            self.channelName = channelSnap.childSnapshot(forPath: "Name").value as! String
+            // Get the original Welcome Message
+            self.oldWelcomeMessage = (Array(channelSnap.childSnapshot(forPath: "Messages").children)[0] as! DataSnapshot).value as! String
+            self.welcomeMessage = self.oldWelcomeMessage
+            // Get messengeesInChannel
+            for messengeeID in (channelSnap.childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
+            {
+                messengeesInChannel.append(Messengee(userID: messengeeID))
+            }
+            //Check populate the messengeesNotInChannel
+            var messengeeIsInChannel = false
+            for messengeeA in allMessengees {
+                for messengeeB in messengeesInChannel {
+                    if messengeeA.userID == messengeeB.userID {
+                        messengeeIsInChannel = true
+                    }
+                }
+                if !messengeeIsInChannel {
+                    messengeesNotInChannel.append(messengeeA)
+                }
+            }
+            // Shove data into the fields
+            self.channelNameField.text = self.channelName
+            self.welcomeMessageField.text = self.welcomeMessage
+            self.tableOfMessengeesInChannel.reloadData()
+        }
+    }
+    
+    // --- IB Actions --- //
+    @IBAction func cancelBTN(_ sender: UIBarButtonItem)
     {
         presentingViewController?.dismiss(animated: true)
     }
+    // Submit the changes to database then dismiss view
+    @IBAction func doneBTN(_ sender: Any)
+    {
+        // Get or set referece/id for channelDialogue
+        var channelDBReference = DatabaseReference()
+        if self.channelID == "" {
+            channelDBReference = Database.database().reference().child("ChannelDialogues").childByAutoId()
+        }
+        else {
+            channelDBReference = Database.database().reference().child("ChannelDialogues/"+self.channelID)
+        }
+        // --- Update the messengees --- //
+        // Remove messengees that were turned off
+        var messengeeIndexesToRemoveFromChannel = [Int]()
+        for cellRow in 0...(tableOfMessengeesInChannel.numberOfRows(inSection: 0)-1) {
+            let messengeeCell = tableOfMessengeesInChannel.cellForRow(at: IndexPath(row: cellRow, section: 0)) as! ChannelSettingsMessengeeCell
+            if messengeeCell.channelMemberSwitch.isOn == false {
+                messengeeIndexesToRemoveFromChannel.append(cellRow)
+            }
+        }
+        var removalCount = 0
+        for index in messengeeIndexesToRemoveFromChannel {
+            let indexToRemove = index - removalCount
+            messengeesInChannel.remove(at: indexToRemove)
+            removalCount += 1
+        }
+        // Add messengees that were turned on
+        for cellRow in 0...(tableOfMessengeesInChannel.numberOfRows(inSection: 1)-1) {
+            let messengeeCell = tableOfMessengeesInChannel.cellForRow(at: IndexPath(row: cellRow, section: 1)) as! ChannelSettingsMessengeeCell
+            if messengeeCell.channelMemberSwitch.isOn == true{
+                messengeesInChannel.append(messengeesNotInChannel[cellRow])
+            }
+        }
+        // Make the string of IDs for the database
+        var stringOfIDsForDB = ""
+        for messengee in messengeesInChannel {
+            stringOfIDsForDB.append(messengee.userID+", ")
+        }
+        stringOfIDsForDB = String(stringOfIDsForDB.dropLast(2))
+        channelDBReference.setValue(["Messengees":stringOfIDsForDB])
+        
+        // --- Update the Welcome Messages if new --- //
+        welcomeMessage = welcomeMessageField.text!
+        if welcomeMessage != oldWelcomeMessage {
+            let timeRN = Date.init().timeIntervalSince1970
+            let messageID = String(timeRN)+", "+(LoggedIn.User["UserID"] as! String)
+            channelDBReference.child("Messages/"+messageID).setValue(welcomeMessage)
+        }
+        
+        // --- Update Channel Name --- //
+        channelName = channelNameField.text!
+        channelDBReference.child("Name").setValue(channelName)
+        
+        presentingViewController?.dismiss(animated: true)
+    }
     
+    // --- Table O' Messengees --- //
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Current Channel Members:"
+        }else{
+            return "Rest of Users:"
+        }
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return messengeesInChannel.count
+        } else {
+            return messengeesNotInChannel.count
+        }
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let messengeeCell = tableOfMessengeesInChannel.dequeueReusableCell(withIdentifier: "ChannelMessengeeCell")! as! ChannelSettingsMessengeeCell
+        
+        if indexPath.section == 0 {
+            messengeeCell.messengeeNameLabel.text = messengeesInChannel[indexPath.row].firstName+" "+messengeesInChannel[indexPath.row].lastName
+            messengeeCell.channelMemberSwitch.isOn = true
+        }
+        else {
+            messengeeCell.messengeeNameLabel.text = messengeesNotInChannel[indexPath.row].firstName+" "+messengeesNotInChannel[indexPath.row].lastName
+            messengeeCell.channelMemberSwitch.isOn = false
+        }
+        return messengeeCell
+    }
 }
 
-
+class ChannelSettingsMessengeeCell: UITableViewCell {
+    
+    // --- IB Outlets --- //
+    @IBOutlet weak var messengeeNameLabel: UILabel!
+    @IBOutlet weak var channelMemberSwitch: UISwitch!
+    
+    
+    
+}
 
 
 
