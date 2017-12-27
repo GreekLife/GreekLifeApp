@@ -109,7 +109,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var ref: DatabaseReference!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
-    let username = LoggedIn.User["Username"] as! String
+    let position = LoggedIn.User["Position"] as! String
     let userId = LoggedIn.User["UserID"] as! String
     var deleting = false
     
@@ -380,7 +380,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.Post.text = Postings.AllPosts![indexPath.row].Post
             let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
             cell.PostDate.text = date
-            if self.username == "Master" || Postings.AllPosts![indexPath.row].PosterId == self.userId {
+            if self.position == "Master" || Postings.AllPosts![indexPath.row].PosterId == self.userId {
                 cell.DeleteButton.accessibilityLabel = Postings.AllPosts![indexPath.row].PostId
                 cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
             }

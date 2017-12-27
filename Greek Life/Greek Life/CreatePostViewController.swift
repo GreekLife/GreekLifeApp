@@ -19,6 +19,7 @@ class CreatePostViewController: UIViewController {
     @IBOutlet weak var WritePost: UIButton!
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     let user = LoggedIn.User["Username"] as! String
+    let Position = LoggedIn.User["Position"] as! String
     let name = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
     let image = LoggedIn.User["Image"] as! String
     var CreatePostRef: DatabaseReference!
@@ -101,7 +102,7 @@ class CreatePostViewController: UIViewController {
         let posterId = LoggedIn.User["UserID"] as! String
         let posterImageURL = LoggedIn.User["Image"] as! String
         var Name = FirstName + " " + LastName
-        if(self.user == "Master"){
+        if(self.Position == "Master"){
             Name = Name + " (Master)"
         }
         let Epoch = Date().timeIntervalSince1970

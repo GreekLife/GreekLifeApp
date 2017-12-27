@@ -46,7 +46,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! HomePageCell
-        if username != "Master" {
+        if position != "Master" {
             cell.Delete.isHidden = true
         }
         else {
@@ -110,7 +110,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var newsHeight: CGFloat = 0
     var ref: DatabaseReference!
     let defaults:UserDefaults = UserDefaults.standard
-    let username = LoggedIn.User["Username"] as! String
+    let position = LoggedIn.User["Position"] as! String
     
     var NewsPosts: [News] = []
     
@@ -246,7 +246,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             self.TableView.reloadData()
         }
         
-        if (LoggedIn.User["Username"] as! String) != "Master" {
+        if (LoggedIn.User["Position"] as! String) != "Master" {
             MasterControls.isEnabled = false
             MasterControls.image = UIImage(named: "")
         }

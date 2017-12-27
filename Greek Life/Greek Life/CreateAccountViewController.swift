@@ -186,7 +186,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             self.present(empty, animated: true, completion: nil)
             return
         }
-        if (LoggedIn.User["Username"] as? String) == nil || (LoggedIn.User["Username"] as? String) != "Master" {
+        if (LoggedIn.User["Username"] as? String) == nil || (LoggedIn.User["Position"] as? String) != "Master" {
             if FirstName.text! == "Master" || LastName.text! == "Master" || BrotherName.text! == "Master" || FirstName.text! == "master" || LastName.text! == "master" || BrotherName.text! == "master" {
                 let masterNotAllowed = UIAlertController(title: "Warning!", message: "You can not use the name Master in your profile.", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
@@ -210,7 +210,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             }
         }
         
-        if (LoggedIn.User["Username"] as? String) != "Master" {
+        if (LoggedIn.User["Position"] as? String) != "Master" {
             if positionOptions.index(of: Position.text!) == nil {
                 let invalid = UIAlertController(title: "Invalid", message: "Invalid position", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
@@ -290,7 +290,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                     else {
                         var changedUser = ""
                         var validated = false
-                        if (LoggedIn.User["Username"] as! String) == "Master" {
+                        if (LoggedIn.User["Position"] as! String) == "Master" {
                             changedUser = "Master"
                             validated = true
                         }
@@ -364,12 +364,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         var id = ""
         if LoggedIn.User["Username"] != nil {
-            if LoggedIn.User["Username"] as? String == "Master" {
-             id = "Master"
-            }
-            else {
-                id = LoggedIn.User["UserID"] as! String
-            }
+            id = LoggedIn.User["UserID"] as! String
         }
         else {
             id = NewUser.userID
@@ -440,7 +435,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         Position.inputView = pickerView
         
         if NewUser.edit == true {
-            if LoggedIn.User["Username"] as? String == "Master" {
+            if LoggedIn.User["Position"] as? String == "Master" {
                 Position.isUserInteractionEnabled = false
             }
             emailEdit.isHidden = false
