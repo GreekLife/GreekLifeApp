@@ -81,7 +81,7 @@ class DirectDialogue: Dialogue {
     // --- Constructors ---//
     
     init(id:String) {
-        super.init(dialogueType: "direct")
+        super.init(dialogueType: "DirectDialogues")
         //Assign the id to the object property
         //and populate the array of messengees
         //in case directDialogue doesn't exist
@@ -95,7 +95,7 @@ class DirectDialogue: Dialogue {
         initializeDirectDialogue()
     }
     init(messengeeIDs: [String]) {
-        super.init(dialogueType: "direct")
+        super.init(dialogueType: "DirectDialogues")
         //Put together the proper DirectDialogue ID
         //and populate the array of messengees
         //in case directDialogue doesn't exist
@@ -108,7 +108,7 @@ class DirectDialogue: Dialogue {
         //Then continue with init script
         initializeDirectDialogue()
     }
-    
+    // --- Generic Initialization Common to Contstructors --- //
     func initializeDirectDialogue () -> Void {
         // If the direct dialoue exists pull the data.
         // Otherwise there will be an error and so,
@@ -119,7 +119,7 @@ class DirectDialogue: Dialogue {
                 //Pulling Messages
                 for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
                     self.messages.append(Message(
-                        id: (messageSnapshot as! DataSnapshot).key,
+                        messageID: (messageSnapshot as! DataSnapshot).key,
                         content: (messageSnapshot as! DataSnapshot).value as! String
                     ))
                 }
@@ -145,6 +145,12 @@ class DirectDialogue: Dialogue {
             }
         }*/
         //DatabaseHousekeeping.handles.append(handle)
+    }
+    
+    // --- Send Message to Dialogue --- //
+    
+    func sendMessage(message:Message) {
+        Database.database().reference().child("DirectDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
     }
     
 }
@@ -213,15 +219,23 @@ class Message {
     var sentByName = ""
     var timeSent = ""
     
-    // --- Constructor --- //
-    
-    init(id:String, content:String) {
-        self.id = id
+    // --- Constructors --- //
+    //For pulling a message
+    init(messageID:String, content:String) {
+        self.id = messageID
         self.content = content
-        let idComponents = id.components(separatedBy: ", ")
+        let idComponents = messageID.components(separatedBy: ", ")
         self.timeSent = idComponents[0]
         self.sentBy = idComponents[1]
         self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
+    }
+    //For sending a message
+    init(senderID:String, content:String) {
+        self.timeSent = String(Int(Date.init().timeIntervalSince1970))
+        self.sentBy = senderID
+        self.id = self.timeSent+", "+self.sentBy
+        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
+        self.content = content
     }
     
 }
@@ -387,6 +401,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     // --- Chat View Controller Properties --- //
     
     var dialogue = Dialogue(dialogueType: "")
+    var numRowsInTable = 0
+    var endOfTable = IndexPath(row: 0, section: 0)
     
     // --- IB Outlets --- //
     
@@ -398,12 +414,33 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // --- Set up automatic scaling of table cells --- //
+        
+        // --- Set up the table --- //
         //messagesTable.estimatedRowHeight = 85.0
         messagesTable.rowHeight = 100.0 //UITableViewAutomaticDimension
         messagesTable.reloadData()
+        scrollToBottom()
+        
+        DatabaseHousekeeping.miHandle = Database.database().reference().observe(.value, with: { snapshot in
+            DatabaseHousekeeping.dbSnapshot = snapshot
+            let oldDialogueID = self.dialogue.id
+            if self.dialogue.type == "DirectDialogues" {
+                self.dialogue = DirectDialogue(id: oldDialogueID)
+            }
+            self.messagesTable.reloadData()
+            self.scrollToBottom()
+        })
         
         
+        
+    }
+    
+    // --- Function to scroll to end of the table --- //
+    
+    func scrollToBottom() -> Void {
+        numRowsInTable = messagesTable.numberOfRows(inSection: 0)
+        endOfTable.row = numRowsInTable-1
+        messagesTable.scrollToRow(at: endOfTable, at: .bottom, animated: false)
     }
     
     //--- IB Actions ---//
@@ -413,6 +450,11 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         presentingViewController?.dismiss(animated: true)
     }
     @IBAction func sendMsgBTN(_ sender: UIButton) {
+        if self.dialogue.type == "DirectDialogues" {
+            let messageToSend = Message(senderID: (LoggedIn.User["UserID"] as! String), content: messageInputField.text)
+            (self.dialogue as! DirectDialogue).sendMessage(message: messageToSend)
+        }
+        self.messageInputField.text = ""
     }
     
     //--- Table of Messages in Direct Message or Channel ---//
