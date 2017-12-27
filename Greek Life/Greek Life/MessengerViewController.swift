@@ -55,7 +55,7 @@ class Dialogue {
     var id = ""
     var messages = [Message]()
     var messengees = [Messengee]()
-    var type:String
+    var type = ""
     
     init(dialogueType:String) {
         type = dialogueType
@@ -68,6 +68,42 @@ class Dialogue {
 class ChannelDialogue: Dialogue {
     
     // --- Channel Dialogue Attributes --- //
+    var name = ""
+    
+    // --- Constructors ---//
+    // For innitializing a channel from database
+    init(id:String) {
+        super.init(dialogueType: "ChannelDialogues")
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "ChannelDialogues/"+id)
+        self.id = id
+        self.name = snapshot.childSnapshot(forPath: "Name").value as! String
+        for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
+            self.messages.append(Message(
+                messageID: (messageSnapshot as! DataSnapshot).key,
+                content: (messageSnapshot as! DataSnapshot).value as! String
+            ))
+        }
+        //////******** FINISH GETTING THE CHANNEL FROM DATABASE THEN SETUP THE CREATE DATABASE UI
+    }
+    
+    // Send a message to the channel
+    func sendMessage(message:Message) {
+        Database.database().reference().child("ChannelDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
+    }
+    
+    // --- Static Functions --- //
+    //Creation of a Channel
+    static func createChannel(channelName:String, messengees:[Messengee], welcomeMessage:Message) -> Void {
+        let dbChannelRef = Database.database().reference().child("ChannelDialogues/").childByAutoId()
+        dbChannelRef.setValue(["Name": channelName])
+        dbChannelRef.child("Messages").setValue([welcomeMessage.id: welcomeMessage.content])
+        var listOfMessengees = ""
+        for messengee in messengees {
+            listOfMessengees.append(messengee.userID+", ")
+        }
+        listOfMessengees.removeLast(2)
+        dbChannelRef.setValue(["Messengees": listOfMessengees])
+    }
     
     
 }
@@ -249,6 +285,9 @@ class Message {
 
 class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
 {
+    
+    var channelDialogues = [ChannelDialogue]()
+    
     //Top toolbar
     @IBAction func backBTN(_ sender: Any)
     {
