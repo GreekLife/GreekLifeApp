@@ -107,7 +107,7 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     @IBOutlet weak var Position: UILabel!
     @IBOutlet weak var mBrother: UITextField!
     
-    let user = LoggedIn.User["Username"] as? String
+    let position = LoggedIn.User["Position"] as? String
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
 
     @IBAction func Back(_ sender: Any) {
@@ -160,7 +160,7 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             Image.image = pic
         }
         
-        if self.user == "Master" && mMembers.memberObj?.position != "Master" {
+        if self.position == "Master" && mMembers.memberObj?.position != "Master" {
             Position.isHidden = true
             mPosition.frame.origin.y = Position.frame.origin.y
             mPosition.frame.origin.x = Position.frame.origin.x

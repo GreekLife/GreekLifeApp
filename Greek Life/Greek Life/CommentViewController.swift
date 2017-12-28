@@ -24,7 +24,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var rowHeight:CGFloat = 0
     var ref: DatabaseReference!
     var CommentList:[Comment] = []
-    let user = LoggedIn.User["Username"] as! String
+    let position = LoggedIn.User["Position"] as! String
     let userName = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
     let userId = LoggedIn.User["UserID"] as! String
     var OriginalTextHeight:CGFloat = 0
@@ -248,7 +248,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.CommentDate.frame.origin.y = cell.CommenterName.frame.origin.y
         cell.Comment.frame.origin.y = cell.CommenterName.frame.origin.y + cell.CommenterName.frame.size.height
         cell.Delete.frame.origin.y = (cell.Comment.frame.origin.y + cell.Comment.frame.size.height) + 5
-            if CommentList[indexPath.row - 1].PosterId != self.userId && self.user != "Master" {
+            if CommentList[indexPath.row - 1].PosterId != self.userId && self.position != "Master" {
                 cell.Delete.isHidden = true
                 self.rowHeight = cell.Comment.frame.origin.y + cell.Comment.frame.size.height
             }

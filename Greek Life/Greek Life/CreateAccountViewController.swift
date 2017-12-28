@@ -172,6 +172,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     let positionOptions = ["Brother", "Alumni", "Pledge", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
     var existingBrotherNames: [String] = []
     var notifId = ""
+    var defaultEmail = ""
     
     @IBAction func Cancel(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -185,7 +186,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             self.present(empty, animated: true, completion: nil)
             return
         }
-        if (LoggedIn.User["Username"] as? String) == nil || (LoggedIn.User["Username"] as? String) != "Master" {
+        if (LoggedIn.User["Username"] as? String) == nil || (LoggedIn.User["Position"] as? String) != "Master" {
             if FirstName.text! == "Master" || LastName.text! == "Master" || BrotherName.text! == "Master" || FirstName.text! == "master" || LastName.text! == "master" || BrotherName.text! == "master" {
                 let masterNotAllowed = UIAlertController(title: "Warning!", message: "You can not use the name Master in your profile.", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
@@ -195,11 +196,13 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             }
         }
         
-        //validate birthday
+        //validate birthday --> Disable copy paste
         //validate grad date
-        if (LoggedIn.User["Username"] as? String) == nil { //This is invalid and should be fixed
-            if existingBrotherNames.index(of: BrotherName.text!) != nil { //Needs to be tested
-                let invalid = UIAlertController(title: "Invalid", message: "The brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
+        
+        //avoid duplicate usernames
+        if (LoggedIn.User["Username"] as? String) == nil { 
+            if existingBrotherNames.index(of: BrotherName.text!) != nil {
+                let invalid = UIAlertController(title: "Invalid", message: "This brother name already exists", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                 invalid.addAction(okAction)
                 self.present(invalid, animated: true, completion: nil)
@@ -207,7 +210,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             }
         }
         
-        if (LoggedIn.User["Username"] as? String) != "Master" {
+        if (LoggedIn.User["Position"] as? String) != "Master" {
             if positionOptions.index(of: Position.text!) == nil {
                 let invalid = UIAlertController(title: "Invalid", message: "Invalid position", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
@@ -234,7 +237,11 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             }
             let storageRef = Storage.storage().reference().child("ProfilePictures/\(image).jpg")
             if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
-                storageRef.putData(uploadData, metadata: nil, completion:{ (metadata, error) in
+                let newMetadata = StorageMetadata()
+                newMetadata.contentType = "image/jpeg";
+
+                storageRef.putData(uploadData, metadata: newMetadata, completion:{ (metadata, error) in
+           
                     if error != nil {
                         GenericTools.Logger(data: "\n Error initializing block value: \(error!)")
                     }
@@ -242,7 +249,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         image = imageURL
                     }
                     var username = ""
-                    if self.Position.text == "Master" { //noone can identify as master in their profile so this should be valid. Actually master will never be created except by me with placeholders.
+                    if self.Position.text == "Master" {
                         username = "Master"
                     }
                     else {
@@ -278,17 +285,24 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                                 return
                             }
                         self.performSegue(withIdentifier: "ProfileCreated", sender: self)
-                    }
+                      }
                     }
                     else {
                         var changedUser = ""
                         var validated = false
-                        if LoggedIn.User["Username"] as! String == "Master" {
+                        if (LoggedIn.User["Position"] as! String) == "Master" {
                             changedUser = "Master"
                             validated = true
                         }
                         else {
                             changedUser = self.BrotherName.text!
+                        }
+                        
+                        if let notifId = self.defaults.string(forKey: "NotificationId") {
+                            self.notifId = notifId
+                        }
+                        else {
+                            self.notifId = ""
                         }
                         let updatedData = [
                             "BrotherName": self.BrotherName.text!,
@@ -307,14 +321,18 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "Validated": validated
                             ] as [String : Any]
                         
-                        Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
-                            GenericTools.Logger(data: "Could not update email")
-                            self.activityIndicator.stopAnimating();
-                            UIApplication.shared.endIgnoringInteractionEvents();
-                            let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
-                            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-                            invalid.addAction(okAction)
-                            self.present(invalid, animated: true, completion: nil)
+                        if self.defaultEmail != self.emailEdit.text! {
+                            Auth.auth().currentUser!.updateEmail(to: self.emailEdit.text!) { error in
+                                if(error != nil) {
+                                GenericTools.Logger(data: "Could not update email")
+                                    self.activityIndicator.stopAnimating();
+                                    UIApplication.shared.endIgnoringInteractionEvents();
+                                    let invalid = UIAlertController(title: "Email", message: "Could not update email", preferredStyle: UIAlertControllerStyle.alert)
+                                    let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                    invalid.addAction(okAction)
+                                    self.present(invalid, animated: true, completion: nil)
+                                }
+                            }
                         }
                         
                         self.CreateProfile(newPostData: updatedData) {(success ,error) in
@@ -328,6 +346,12 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             invalid.addAction(okAction)
                             self.present(invalid, animated: true, completion: nil)
                             }
+                            else {
+                                let valid = UIAlertController(title: "Success", message: "Updated account", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                valid.addAction(okAction)
+                                self.present(valid, animated: true, completion: nil)
+                            }
                         }
                     }
                 
@@ -340,19 +364,12 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         var id = ""
         if LoggedIn.User["Username"] != nil {
-            if LoggedIn.User["Username"] as? String == "Master" {
-             id = "Master"
-            }
-            else {
-                id = LoggedIn.User["UserID"] as! String
-            }
+            id = LoggedIn.User["UserID"] as! String
         }
         else {
             id = NewUser.userID
         }
-        Database.database().reference().child("Users").child(id).setValue(newPostData){ error in
-            completion(false, error)
-        }
+        Database.database().reference().child("Users").child(id).setValue(newPostData)
         completion(true, nil)
 
     }
@@ -407,9 +424,6 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     override func viewDidLoad() {
         super.viewDidLoad()
         getBrotherNames()
-        if let notifId = defaults.string(forKey: "NotificationId") {
-            self.notifId = notifId
-        }
         Create.layer.cornerRadius = 5
         ImageButton.layer.borderColor = UIColor.black.cgColor
         ImageButton.layer.borderWidth = 1
@@ -421,7 +435,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         Position.inputView = pickerView
         
         if NewUser.edit == true {
-            if LoggedIn.User["Username"] as? String == "Master" {
+            if LoggedIn.User["Position"] as? String == "Master" {
                 Position.isUserInteractionEnabled = false
             }
             emailEdit.isHidden = false
@@ -444,7 +458,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                 }
             }
             
-            
+            defaultEmail = emailEdit.text!
             Create.setTitle("Update Profile", for: .normal)
         }
 

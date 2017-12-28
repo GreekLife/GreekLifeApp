@@ -84,7 +84,7 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     
     var rowHeight: CGFloat = 0
     var InnerPollRef: DatabaseReference!
-    var User = LoggedIn.User["Username"] as! String
+    var Position = LoggedIn.User["Position"] as! String
     var UserId = LoggedIn.User["UserID"] as! String
     let first = LoggedIn.User["First Name"] as? String ?? "Unknown"
     let last = LoggedIn.User["Last Name"] as? String ?? "Unknown"
@@ -164,7 +164,7 @@ struct Polling {
 
 class PollViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var User = LoggedIn.User["Username"] as! String
+    var Position = LoggedIn.User["Position"] as! String
     var UserId = LoggedIn.User["UserID"] as! String
     let first = LoggedIn.User["First Name"] as! String
     let last = LoggedIn.User["Last Name"] as! String
@@ -505,7 +505,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: "PollCell", for: indexPath) as! PollTableViewCell
         cell.isHidden = false
         if deleteState == true {
-            if UserId != Polling.ListOfPolls[indexPath.row].PosterId && self.User != "Master" {
+            if UserId != Polling.ListOfPolls[indexPath.row].PosterId && self.Position != "Master" {
                 cell.isHidden = true
             }
         }
@@ -560,7 +560,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
         
         if self.deleteState == true {
-            if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.User == "Master" {
+            if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.Position == "Master" {
         cell.DeleteButton.isHidden = false
         cell.DeleteButton.layer.cornerRadius = 5
         cell.DeleteButton.accessibilityLabel = Polling.ListOfPolls[indexPath.row].PollId
@@ -603,7 +603,7 @@ class PollVoting: UIViewController {
     let screensize: CGRect = UIScreen.main.bounds
     var scrollView: UIScrollView!
     var PollViewed: Poll!
-    var User = LoggedIn.User["Username"] as! String
+    var Position = LoggedIn.User["Position"] as! String
     var UserId = LoggedIn.User["UserID"] as! String
     let first = LoggedIn.User["First Name"] as? String ?? "Unknown"
     let last = LoggedIn.User["Last Name"] as? String ?? "Unknown"

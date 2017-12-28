@@ -48,17 +48,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var CreateAccount: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
         NewUser.edit = false
-        if let notifId = defaults.string(forKey: "NotificationId") {
-            self.NotifId = notifId
-        }
-        else {
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            let alert = UIAlertController(title: "Notifications", message: "You must accept notifications to sign in", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
         CreateAccount.isHidden = true
         ForgotPassword.isHidden = true
         SubView.isHidden = true
@@ -163,7 +152,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func Login(_ sender: Any?) {
-        if let notifId = defaults.string(forKey: "NotificationId") {
+        /*if let notifId = defaults.string(forKey: "NotificationId") {
             self.NotifId = notifId
         }
         else {
@@ -173,7 +162,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return
-        }
+        }*/
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
@@ -274,9 +263,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     "UserId": LoggedIn.User["UserID"] as! String,
                     "Username": LoggedIn.User["Username"] as! String
                 ]
-                Database.database().reference().child("NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
-                    GenericTools.Logger(data: "\n Could not add notification id to list: \(error)")
-
+                if self.NotifId != "" {
+                    Database.database().reference().child("NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
+                        GenericTools.Logger(data: "\n Could not add notification id to list: \(error)")
+                    }
+                    Database.database().reference().child("Users/"+(LoggedIn.User["UserID"] as! String)+"/NotificationId").setValue(self.NotifId){(error) in
+                        GenericTools.Logger(data: "\n Could not change users notification id: \(error)")
+                    }
                 }
                 self.performSegue(withIdentifier: "LoginSuccess", sender: LoggedIn.User);
             }
@@ -295,12 +288,23 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let username = defaults.string(forKey: "Username") {
-            self.Username.text = username
-            if let password = defaults.string(forKey: "Password") {
-                self.Password.text = password
-                self.Login(nil)
+        if let notifId = defaults.string(forKey: "NotificationId") {
+            self.NotifId = notifId
+            if let username = defaults.string(forKey: "Username") {
+                self.Username.text = username
+                if let password = defaults.string(forKey: "Password") {
+                    self.Password.text = password
+                    self.Login(nil)
+                }
             }
+        }
+        else {
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+            let alert = UIAlertController(title: "Notifications", message: "You must accept notifications to sign in", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
         }
         LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
         CodeBox1.delegate = self
