@@ -34,8 +34,6 @@ class News: Comparable {
 class HomePageCell: UITableViewCell {
     
     @IBOutlet weak var news: UITextView!
-    @IBOutlet weak var newsDate: UILabel!
-    @IBOutlet weak var Delete: UIButton!
     
 }
 
@@ -44,18 +42,15 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return self.NewsPosts.count
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(position == "Master") {
+            deleteNews(index: indexPath.row);
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! HomePageCell
-        if position != "Master" {
-            cell.Delete.isHidden = true
-        }
-        else {
-            cell.Delete.accessibilityValue = self.NewsPosts[indexPath.row].postId
-            cell.Delete.addTarget(self, action: #selector(deleteNews(button:)), for: .touchUpInside)
-        }
         cell.news.text = self.NewsPosts[indexPath.row].Post
-        let date = CreateDate.getTimeSince(epoch: self.NewsPosts[indexPath.row].Epoch)
-        cell.newsDate.text = date
         GenericTools.FrameToFitTextView(View: cell.news)
         self.newsHeight = cell.news.frame.origin.y + cell.news.frame.size.height
         return cell
@@ -65,9 +60,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     var buttonIdentifier = ""
-    func deleteNews(button: UIButton) {
+    func deleteNews(index: Int) {
         if Reachability.isConnectedToNetwork() == true {
-            self.buttonIdentifier = button.accessibilityValue!
+            self.buttonIdentifier = self.NewsPosts[index].postId
             let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
             let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: deleteNewsInternal)
             let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
@@ -230,7 +225,6 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 }
             }
         }
-       self.TableView.allowsSelection = false
         self.ReadNews(){(success) in
             guard success else {
                 let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not get posts from database.")
@@ -261,21 +255,22 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         Info.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
 
         //Styles
-        InstantMessaging.layer.borderColor = UIColor.white.cgColor
+        let color = UIColor(red: 70/255.0, green: 70/255.0, blue: 70/255.0, alpha: 1.0)
+        InstantMessaging.layer.borderColor = color.cgColor
         InstantMessaging.layer.borderWidth = 1
-        Forum.layer.borderColor = UIColor.white.cgColor
+        Forum.layer.borderColor = color.cgColor
         Forum.layer.borderWidth = 1
-        Calendar.layer.borderColor = UIColor.white.cgColor
+        Calendar.layer.borderColor = color.cgColor
         Calendar.layer.borderWidth = 1
-        Poll.layer.borderColor = UIColor.white.cgColor
+        Poll.layer.borderColor = color.cgColor
         Poll.layer.borderWidth = 1
-        Members.layer.borderColor = UIColor.white.cgColor
+        Members.layer.borderColor = color.cgColor
         Members.layer.borderWidth = 1
-        Profile.layer.borderColor = UIColor.white.cgColor
+        Profile.layer.borderColor = color.cgColor
         Profile.layer.borderWidth = 1
-        GoogleDrive.layer.borderColor = UIColor.white.cgColor
+        GoogleDrive.layer.borderColor = color.cgColor
         GoogleDrive.layer.borderWidth = 1
-        Info.layer.borderColor = UIColor.white.cgColor
+        Info.layer.borderColor = color.cgColor
         Info.layer.borderWidth = 1
 
         self.getUsers(){(response) in

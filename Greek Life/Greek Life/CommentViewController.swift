@@ -27,29 +27,23 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     let position = LoggedIn.User["Position"] as! String
     let userName = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
     let userId = LoggedIn.User["UserID"] as! String
-    var OriginalTextHeight:CGFloat = 0
-    var OriginalTextY:CGFloat = 0
-    var OriginalViewY:CGFloat = 0
-    var OriginalViewHeight:CGFloat = 0
     var InteractedCommentIndex = 0
 
     @IBOutlet weak var TableView: UITableView!
-    @IBOutlet weak var LeaveComment: UIButton!
-    @IBOutlet weak var CommentBox: UITextView!
-    @IBOutlet weak var CommentView: UIView!
     @IBOutlet weak var Toolbar: UIToolbar!
+    @IBOutlet weak var Layout: UIStackView!
     
     @IBAction func BackToForum(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
     //--Process comment --//
-    @IBAction func LeaveComment(_ sender: Any) {
+    func leaveComment(sender: UIButton) {
         let date = Date().timeIntervalSince1970
-        let comment = CommentBox.text
-        let components = comment!.components(separatedBy: .whitespacesAndNewlines)
+       // let comment = CommentBox.text
+        let components = textField.text!.components(separatedBy: .whitespacesAndNewlines)
         let PostWords = components.filter { !$0.isEmpty }
-        if comment == "" {
+        if  textField.text == "" {
             let emptyError = UIAlertController(title: "Empty Comment", message: "Your comment cannot be empty", preferredStyle: UIAlertControllerStyle.alert)
             let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
             emptyError.addAction(okAction)
@@ -64,91 +58,109 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         else {
             let postId = UUID().uuidString
             let NewComment = [
-                "Post": comment!,
+                "Post":  textField.text!,
                 "Poster": self.userName,
                 "Epoch": date,
                 "PosterId": userId,
                 "CommentId": postId
                 ] as [String : Any]
-            
+
             self.PostData(newPostData: NewComment){(success, error) in
                 if error != nil {
                 GenericTools.Logger(data: "\n Error posting comment: \(error!)")
+                    let emptyError = UIAlertController(title: "Internal Server Error", message: "Error posting comment", preferredStyle: UIAlertControllerStyle.alert)
+                    let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                    emptyError.addAction(okAction)
+                    self.present(emptyError, animated: true, completion: nil)
                 }
                 else {
-                self.CommentBox.text = ""
-                self.CommentBox.frame.origin.y = self.OriginalTextY
-                self.CommentBox.frame.size.height = self.OriginalTextHeight
-                self.CommentView.frame.size.height = self.OriginalViewHeight
-                self.CommentView.frame.origin.y = self.OriginalViewY
-                self.view.endEditing(true)
+                    self.textField.text = ""
                 }
-
             }
-            
+
         }
     }
-    
+    let textField = UITextView()
+    let containerView = UIView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         ReadCommentsForPost()
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         IQKeyboardManager.sharedManager().enable = false
         self.TableView.allowsSelection = false
-        self.CommentBox.layer.cornerRadius = 10
-        self.CommentBox.delegate = self
+        TableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        self.TableView?.keyboardDismissMode = .interactive
         
-         OriginalTextHeight = CommentBox.frame.size.height
-         OriginalTextY = CommentBox.frame.origin.y
-         OriginalViewY = CommentView.frame.origin.y
-         OriginalViewHeight = CommentView.frame.size.height
+       // textField.placeholder = "Enter comment..."
+        textField.frame = CGRect(x: 0, y: 5 , width: (self.view.frame.width - 80), height:30)
+        textField.backgroundColor = UIColor.white
+        textField.delegate = self
+        textField.layer.cornerRadius = 10
+
     }
     
-    func keyboardWillHide(notification: NSNotification) {
-        self.CommentView.frame.origin.y = OriginalViewY + OriginalViewHeight + 4 //no clue why plus four
-        self.view.bringSubview(toFront: self.CommentView)
-    }
+    lazy var inputContainerView: UIView = {
+        self.containerView.frame = CGRect(x:0, y:0, width: self.view.frame.width, height: 40)
+        self.containerView.backgroundColor = UIColor.black
+        self.containerView.layer.borderWidth = 0.5
+
+        let sendButton = UIButton(type: .system)
+        sendButton.setTitle("Post", for: .normal)
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        sendButton.addTarget(self, action: #selector(leaveComment), for: .touchUpInside)
+        self.containerView.addSubview(sendButton)
+        
+        sendButton.rightAnchor.constraint(equalTo: self.containerView.rightAnchor).isActive = true
+        sendButton.centerYAnchor.constraint(equalTo: self.containerView.centerYAnchor).isActive = true
+        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        sendButton.heightAnchor.constraint(equalTo: self.containerView.heightAnchor).isActive = true
+
+       self.containerView.addSubview(self.textField)
+        
+        self.textField.leftAnchor.constraint(equalTo: self.containerView.leftAnchor, constant: 8).isActive = true
+        self.textField.centerYAnchor.constraint(equalTo: self.containerView.centerYAnchor).isActive = true
+        self.textField.rightAnchor.constraint(equalTo: sendButton.rightAnchor).isActive = true
+        self.textField.heightAnchor.constraint(equalTo: self.containerView.heightAnchor).isActive = true
+        
+        let separatorLineView = UIView()
+        let color = UIColor(red: 220/255.0, green: 220/255.0, blue: 220/255.0, alpha: 1.0)
+        separatorLineView.translatesAutoresizingMaskIntoConstraints = false
+       self.containerView.addSubview(separatorLineView)
+        
+        separatorLineView.leftAnchor.constraint(equalTo: self.containerView.leftAnchor, constant: 8).isActive = true
+        separatorLineView.topAnchor.constraint(equalTo: self.containerView.topAnchor).isActive = true
+        separatorLineView.widthAnchor.constraint(equalTo: self.containerView.widthAnchor).isActive = true
+        sendButton.heightAnchor.constraint(equalToConstant: 1).isActive = true
+
+
+        
+        return self.containerView
+    }()
     
-    func keyboardWillShow(notification: NSNotification) {
-            let keyboardSize = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.size
-            self.CommentView.frame.origin.y = (self.CommentView.frame.origin.y - keyboardSize.height)
-            self.view.bringSubview(toFront: self.CommentView)
-    }
-    
-    //feature to be added
-     func textViewDidChange(_ textView: UITextView) {
-        let fixedWidth = textView.frame.size.width
-        let oldHeight = textView.frame.size.height
-        if oldHeight <= (2.5 * OriginalTextHeight) {
-            let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-            if newSize.height > oldHeight {
-                let newFrame = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-                textView.frame.size = newFrame
-                let heightChange = newFrame.height - oldHeight
-                self.CommentView.frame.origin.y -= heightChange
-                self.CommentView.frame.size.height += heightChange
-                NewTextHeight = textView.frame.size.height
-                NewTextY = textView.frame.origin.y
-                NewViewY = self.CommentView.frame.origin.y
-                NewViewHeight = self.CommentView.frame.size.height
-            }
+    func textViewDidChange(_ textField: UITextView) {
+        let originalHeight = textField.frame.size.height
+        if originalHeight < 100 {
+            GenericTools.FrameToFitTextView(View: textField)
+            let newHeight = textField.frame.size.height
+            let diff = newHeight - originalHeight
+            self.containerView.frame.origin.y -= diff
+            self.containerView.frame.size.height += diff
         }
     }
-    
-    var NewTextHeight:CGFloat = 0
-    var NewTextY:CGFloat = 0
-    var NewViewY:CGFloat = 0
-    var NewViewHeight:CGFloat = 0
-    var HeightChanged = false
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        if HeightChanged == true {
-        self.CommentView.frame.size.height = NewViewHeight
-        self.CommentView.frame.origin.y = NewViewY
-        self.CommentBox.frame.size.height = NewTextHeight
-        self.CommentBox.frame.origin.y = NewTextY
+        self.containerView.frame.size.height = 40
+        textField.frame.size.height = 30
+    }
+    
+    override var inputAccessoryView: UIView? {
+        get {
+            return inputContainerView
         }
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
     }
     
     //---Write comment data to database---//

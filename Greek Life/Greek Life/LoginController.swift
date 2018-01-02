@@ -23,18 +23,13 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Title_Pic: UIImageView!
     @IBOutlet weak var Password: UITextField!
     @IBOutlet weak var LoginLabel: UIButton!
-    @IBOutlet weak var SubView: UIView!
     
-    @IBOutlet weak var CodeView: UIView!
     @IBOutlet weak var CodeBox1: UITextField!
     @IBOutlet weak var CodeBox2: UITextField!
     @IBOutlet weak var CodeBox3: UITextField!
     @IBOutlet weak var CodeBox4: UITextField!
-    @IBOutlet weak var Errors: UITextField!
     
-    @IBOutlet weak var CancelCode: UIButton!
     
-    @IBOutlet weak var EnterCode: UIButton!
     @IBOutlet weak var Login: UIButton!
     
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
@@ -43,38 +38,19 @@ class LoginController: UIViewController, UITextFieldDelegate {
     var email:String = ""
     var NotifId = ""
     
-    @IBOutlet weak var text: UITextField!
     @IBOutlet weak var ForgotPassword: UIButton!
     @IBOutlet weak var CreateAccount: UIButton!
     @IBAction func CreateAccount(_ sender: Any) {
         NewUser.edit = false
-        CreateAccount.isHidden = true
-        ForgotPassword.isHidden = true
-        SubView.isHidden = true
-        Errors.layer.borderColor = UIColor.clear.cgColor
-        Errors.layer.borderWidth = 0
-        Errors.isHidden = false
-        text.isHidden = false
-        text.text = ""
-        EnterCode.layer.cornerRadius = 5
-        CodeView.isHidden = false
-        CancelCode.isHidden = false
-        EnterCode.isHidden = false
-        CodeBox1.text = "0"
-        CodeBox2.text = "0"
-        CodeBox3.text = "0"
-        CodeBox4.text = "0"
-    }
-    @IBAction func ForgotPassword(_ sender: Any) {
-        performSegue(withIdentifier: "ForgotPassword", sender: self)
-        
-    }
-    @IBAction func EnterCode(_ sender: Any) {
+    
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         let enteredCode = CodeBox1.text! + CodeBox2.text! + CodeBox3.text! + CodeBox4.text!
         
         //should actually be testing for nil on type cast
         if CodeBox1.text == "" || CodeBox2.text == "" || CodeBox3.text == "" || CodeBox4.text == "" {
+            self.CodeBox1.becomeFirstResponder()
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
             return
         }
         ref = Database.database().reference()
@@ -86,37 +62,29 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 self.performSegue(withIdentifier: "CreateAccount", sender: self)
             }
             else {
-                self.Errors.text = "You entered the incorrect code"
-                let delay = DispatchTime.now() + 3
-                DispatchQueue.main.asyncAfter(deadline: delay) {
-                    self.Errors.text = ""
-                }
+                let alert = UIAlertController(title: "Code", message: "You entered the incorrect code. You can get the correct code from your master.", preferredStyle: UIAlertControllerStyle.alert)
+                
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
                 self.activityIndicator.stopAnimating();
                 UIApplication.shared.endIgnoringInteractionEvents();
             }
         }) {(error) in
             print(error.localizedDescription)
             GenericTools.Logger(data: "\n Error entering code to create an account!")
-            self.Errors.text = "An error occured"
-            let delay = DispatchTime.now() + 3 
-            DispatchQueue.main.asyncAfter(deadline: delay) {
-                self.Errors.text = ""
-            }
+            let alert = UIAlertController(title: "Error", message: "An internal server error occured", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
         }
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        self.EnterCode.isEnabled = true
-        if textField.text == "" {
-            textField.text = "0"
-            return
-        }
-        let val = Int(textField.text!)
-        if val == nil {
-            textField.text = "0"
-            return
-        }
+    
+    @IBAction func ForgotPassword(_ sender: Any) {
+        performSegue(withIdentifier: "ForgotPassword", sender: self)
     }
+
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField.text!.count > 0 {
@@ -131,25 +99,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.text = ""
-        self.EnterCode.isEnabled = false
         return
     }
 
-    
-    @IBAction func CancelCode(_ sender: Any) {
-        CreateAccount.isHidden = false
-        ForgotPassword.isHidden = false
-        SubView.isHidden = false
-        Errors.isHidden = true
-        text.isHidden = true
-        CancelCode.isHidden = true
-        EnterCode.isHidden = true
-        CodeView.isHidden = true
-        CodeBox1.text = ""
-        CodeBox2.text = ""
-        CodeBox3.text = ""
-        CodeBox4.text = ""
-    }
     
     @IBAction func Login(_ sender: Any?) {
         /*if let notifId = defaults.string(forKey: "NotificationId") {
@@ -307,11 +259,12 @@ class LoginController: UIViewController, UITextFieldDelegate {
             return
         }
         LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
+
         CodeBox1.delegate = self
         CodeBox2.delegate = self
         CodeBox3.delegate = self
         CodeBox4.delegate = self
-        
+
         //self.addBackground(imageName: "AEPiDocs/School.png", contextMode: .scaleAspectFit);
         Username.layer.borderColor = UIColor.black.cgColor
         Username.layer.borderWidth = 1
@@ -320,15 +273,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
         Password.layer.borderColor = UIColor.black.cgColor
         Password.layer.borderWidth = 1
         Password.layer.cornerRadius = 5
-        
-        Login.layer.cornerRadius = 5
-        
-        SubView.layer.borderColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1).cgColor
-        SubView.layer.borderWidth = 3
-        SubView.layer.cornerRadius = 10
-
-        
-        LoginLabel.layer.cornerRadius = LoginLabel.frame.height / 2;
         
     }
 
