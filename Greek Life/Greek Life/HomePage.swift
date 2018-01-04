@@ -45,6 +45,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if(position == "Master") {
             deleteNews(index: indexPath.row);
+            TableView.deselectRow(at: indexPath, animated: true)
         }
     }
     

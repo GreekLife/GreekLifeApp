@@ -21,6 +21,7 @@
 
 import UIKit
 import FirebaseDatabase
+import IQKeyboardManagerSwift
 
 //-----------------------------------------------------------------------------------------------------------
 //  Database Objects
@@ -287,21 +288,27 @@ class Message {
 
 //--- Channels Controller ---//
 
-class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
+class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate
 {
+   
+    
     // --- Channel Dialogues Properties --- //
     var channelDialogues = [ChannelDialogue]()
-    
+    var filtered = [ChannelDialogue]()
+    var searchActive : Bool = false
     // --- IB Outlets --- //
     
     @IBOutlet weak var channelsTable: UITableView!
+    @IBOutlet weak var SearchBar: UISearchBar!
+    @IBOutlet weak var TableView: UITableView!
     
     
     // --- View Did Load --- //
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        SearchBar.delegate = self
+        TableView.keyboardDismissMode = .interactive
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -333,19 +340,86 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
         presentingViewController?.dismiss(animated: true)
     }
     
+    //Search bar stuff
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filtered.removeAll()
+        
+        let textSize = searchText.count
+
+        for dialogue in channelDialogues {
+            let name = dialogue.name.count
+            if name > textSize {
+                let newStr = (dialogue.name).substring(to: searchText.endIndex)
+                if searchText.containsIgnoringCase(find: newStr) {
+                    filtered.append(dialogue)
+                }
+            }
+            if name < textSize {
+                let newStr = searchText.substring(to: dialogue.name.endIndex)
+                if newStr.containsIgnoringCase(find: dialogue.name) {
+                    filtered.append(dialogue)
+                }
+            }
+            if name == textSize {
+                if (searchText).containsIgnoringCase(find: dialogue.name) {
+                    filtered.append(dialogue)
+                }
+            }
+
+        }
+    
+        if(filtered.count == 0){
+            searchActive = false;
+        } else {
+            searchActive = true;
+        }
+        self.TableView.reloadData()
+    }
+    
     
     //Table Stuff
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return self.channelDialogues.count
+        if searchActive {
+            return filtered.count
+        }
+        else {
+            return self.channelDialogues.count
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let chCell = (tableView.dequeueReusableCell(withIdentifier: "convoCell", for: indexPath) as! ChannelDialogueCell)
-        chCell.channelNameLabel.text = channelDialogues[indexPath.row].name
-        chCell.lastMessageLabel.text? = ""
-        chCell.lastMessageLabel.text?.append(Messengee(userID:(channelDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (channelDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
-        chCell.lastMessageLabel.text?.append((channelDialogues[indexPath.row].messages.last?.content)!+"\"")
+        
+        if searchActive {
+            chCell.channelNameLabel.text = filtered[indexPath.row].name
+            chCell.lastMessageLabel.text? = ""
+            chCell.lastMessageLabel.text?.append(Messengee(userID:(filtered[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (filtered[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
+            chCell.lastMessageLabel.text?.append((filtered[indexPath.row].messages.last?.content)!+"\"")
+        }
+        else {
+            chCell.channelNameLabel.text = channelDialogues[indexPath.row].name
+            chCell.lastMessageLabel.text? = ""
+            chCell.lastMessageLabel.text?.append(Messengee(userID:(channelDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (channelDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
+            chCell.lastMessageLabel.text?.append((channelDialogues[indexPath.row].messages.last?.content)!+"\"")
+        }
         
         return chCell
     }
@@ -391,24 +465,28 @@ class ChannelDialogueCell: UITableViewCell {
 
 //--- Direct Messaging Controller ---//
 
-class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSource
+class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate
 {
     
     // --- Direct Messaging Properties --- //
     
     var directDialogues = [DirectDialogue]()
+    var filtered = [DirectDialogue]()
+    var searchActive = false
     
     
     // --- IB Outlets --- //
     
     @IBOutlet weak var directDialogueTable: UITableView!
+    @IBOutlet weak var SearchBar: UISearchBar!
+    @IBOutlet weak var TableView: UITableView!
     
     
     // --- View Did Load  --- //
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        SearchBar.delegate = self
         Database.database().reference().observeSingleEvent(of:.value, with: {snapshot in
             //Store Database in housekeeping struct
             DatabaseHousekeeping.dbSnapshot = snapshot
@@ -447,27 +525,121 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
         DatabaseHousekeeping.removeObservers()
     }
     
+    //Search bar
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filtered.removeAll()
+        
+        let textSize = searchText.count
+        
+        for dialogue in directDialogues {
+            var name = ""
+            var id = ""
+            let idTokens = dialogue.id.components(separatedBy: ",")
+            if LoggedIn.User["UserID"] as! String == idTokens[0] {
+                id = idTokens[1]
+                let space = id.index(id.startIndex, offsetBy: 1)..<id.endIndex
+                id = id[space]
+            }
+            else {
+                id = idTokens[0]
+            }
+            for user in mMembers.MemberList {
+                if user.id == id {
+                    name = (user.first + " " + user.last)
+                }
+            }
+            let nameCount = name.count
+            if nameCount > textSize {
+                let newStr = name.substring(to: searchText.endIndex)
+                if searchText.containsIgnoringCase(find: newStr) {
+                    filtered.append(dialogue)
+                }
+            }
+            if nameCount < textSize {
+                let newStr = searchText.substring(to: name.endIndex)
+                if newStr.containsIgnoringCase(find: name) {
+                    filtered.append(dialogue)
+                }
+            }
+            if nameCount == textSize {
+                if (searchText).containsIgnoringCase(find: name) {
+                    filtered.append(dialogue)
+                }
+            }
+            
+        }
+        
+        if(filtered.count == 0){
+            searchActive = false;
+        } else {
+            searchActive = true;
+        }
+        self.TableView.reloadData()
+    }
+    
     //-- Table of Direct Messaging Conversations --//
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
+        if searchActive {
+            return filtered.count
+        }
+        else {
         return directDialogues.count
+        }
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let directDialogue = self.directDialogues[indexPath.row]
         let directDialogueCell = directDialogueTable.dequeueReusableCell(withIdentifier: "directDialogueCell") as! DirectDialogueCell
-        // Get the names of the other messengees and put them in a string
-        var otherMessengees = ""
-        for messengee in directDialogue.messengees {
-            if messengee.userID != (LoggedIn.User["UserID"] as! String) {
-                otherMessengees.append(messengee.firstName+" "+messengee.lastName+", ")
+        
+        directDialogueCell.accessoryType = .disclosureIndicator
+
+        if searchActive {
+            let directDialogue = self.filtered[indexPath.row]
+            // Get the names of the other messengees and put them in a string
+            var otherMessengees = ""
+            for messengee in directDialogue.messengees {
+                if messengee.userID != (LoggedIn.User["UserID"] as! String) {
+                    otherMessengees.append(messengee.firstName+" "+messengee.lastName+", ")
+                }
             }
+            directDialogueCell.messengeeOtherLabel.text? = String(otherMessengees.dropLast(2))
+            directDialogueCell.lastMessageLabel.text? = ""
+            directDialogueCell.lastMessageLabel.text?.append(Messengee(userID:(filtered[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (filtered[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
+            directDialogueCell.lastMessageLabel.text?.append((filtered[indexPath.row].messages.last?.content)!+"\"")
+            
         }
-        directDialogueCell.messengeeOtherLabel.text? = String(otherMessengees.dropLast(2))
-        directDialogueCell.lastMessageLabel.text? = ""
-        directDialogueCell.lastMessageLabel.text?.append(Messengee(userID:(directDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (directDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
-        directDialogueCell.lastMessageLabel.text?.append((directDialogues[indexPath.row].messages.last?.content)!+"\"")
+        else {
+            let directDialogue = self.directDialogues[indexPath.row]
+            // Get the names of the other messengees and put them in a string
+            var otherMessengees = ""
+            for messengee in directDialogue.messengees {
+                if messengee.userID != (LoggedIn.User["UserID"] as! String) {
+                    otherMessengees.append(messengee.firstName+" "+messengee.lastName+", ")
+                }
+            }
+            directDialogueCell.messengeeOtherLabel.text? = String(otherMessengees.dropLast(2))
+            directDialogueCell.lastMessageLabel.text? = ""
+            directDialogueCell.lastMessageLabel.text?.append(Messengee(userID:(directDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (directDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
+            directDialogueCell.lastMessageLabel.text?.append((directDialogues[indexPath.row].messages.last?.content)!+"\"")
+        }
         return directDialogueCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
@@ -503,7 +675,7 @@ class DirectDialogueCell: UITableViewCell {
 //  Messaging Interface
 //-----------------------------------------------------------------------------------------------------------
 
-class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate{
+class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate, UITextViewDelegate {
     
     // --- Chat View Controller Properties --- //
     
@@ -514,14 +686,23 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     // --- IB Outlets --- //
     
     @IBOutlet weak var messagesTable: UITableView!
-    @IBOutlet weak var messageInputField: UITextView!
-    
+    @IBOutlet weak var Layout: UIStackView!
+    @IBOutlet weak var TableView: UITableView!
     
     // --- View Did Load --- //
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        IQKeyboardManager.sharedManager().enable = false
+        TableView.allowsSelection = false
+        TableView.keyboardDismissMode = .interactive
+        TableView.separatorStyle = .none
+        messageInputField.frame = CGRect(x: 0, y: 5 , width: (self.view.frame.width - 80), height:30)
+        messageInputField.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1)
+        messageInputField.layer.borderWidth = 0.5
+        messageInputField.delegate = self
+        messageInputField.layer.cornerRadius = 10
+
         // --- Set up the table --- //
         //messagesTable.estimatedRowHeight = 85.0
         messagesTable.rowHeight = 100.0 //UITableViewAutomaticDimension
@@ -539,10 +720,80 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             self.messagesTable.reloadData()
             self.scrollToBottom()
         })
-        
-        
-        
     }
+    
+    
+    //----Create chat box ----/ --> NOt fucking working fucking shit
+    
+    
+    let messageInputField = UITextView()
+    let containerView = UIView()
+    
+    lazy var inputContainerView: UIView = {
+        self.containerView.frame = CGRect(x:0, y:0, width: self.view.frame.width, height: 40)
+        self.containerView.backgroundColor = UIColor(displayP3Red: 26/255, green: 26/255, blue: 26/255, alpha: 1)
+        self.containerView.layer.borderWidth = 0.5
+        
+        let sendButton = UIButton(type: .system)
+        sendButton.setTitle("Post", for: .normal)
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        sendButton.addTarget(self, action: #selector(sendMsgBTN), for: .touchUpInside)
+        self.containerView.addSubview(sendButton)
+        
+        sendButton.rightAnchor.constraint(equalTo: self.containerView.rightAnchor).isActive = true
+        sendButton.centerYAnchor.constraint(equalTo: self.containerView.centerYAnchor).isActive = true
+        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        sendButton.heightAnchor.constraint(equalTo: self.containerView.heightAnchor).isActive = true
+        
+        self.containerView.addSubview(self.messageInputField)
+        
+        self.messageInputField.leftAnchor.constraint(equalTo: self.containerView.leftAnchor, constant: 8).isActive = true
+        self.messageInputField.centerYAnchor.constraint(equalTo: self.containerView.centerYAnchor).isActive = true
+        self.messageInputField.rightAnchor.constraint(equalTo: sendButton.rightAnchor).isActive = true
+        self.messageInputField.heightAnchor.constraint(equalTo: self.containerView.heightAnchor).isActive = true
+        
+        let separatorLineView = UIView()
+        let color = UIColor(red: 220/255.0, green: 220/255.0, blue: 220/255.0, alpha: 1.0)
+        separatorLineView.translatesAutoresizingMaskIntoConstraints = false
+        self.containerView.addSubview(separatorLineView)
+        
+        separatorLineView.leftAnchor.constraint(equalTo: self.containerView.leftAnchor, constant: 8).isActive = true
+        separatorLineView.topAnchor.constraint(equalTo: self.containerView.topAnchor).isActive = true
+        separatorLineView.widthAnchor.constraint(equalTo: self.containerView.widthAnchor).isActive = true
+        separatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        self.view.bringSubview(toFront: self.containerView);
+        return self.containerView
+    }()
+    
+    override var inputAccessoryView: UIView? {
+        get {
+            return inputContainerView
+        }
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
+    
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let originalHeight = textView.frame.size.height
+        if originalHeight < 100 {
+            GenericTools.FrameToFitTextView(View: textView)
+            let newHeight = textView.frame.size.height
+            let diff = newHeight - originalHeight
+            self.containerView.frame.origin.y -= diff
+            self.containerView.frame.size.height += diff
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        self.containerView.frame.size.height = 40
+        textView.frame.size.height = 30
+    }
+    
+    
     
     // --- Function to scroll to end of the table --- //
     
@@ -558,7 +809,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     {
         presentingViewController?.dismiss(animated: true)
     }
-    @IBAction func sendMsgBTN(_ sender: UIButton) {
+    func sendMsgBTN(button: UIButton) {
         let messageToSend = Message(senderID: (LoggedIn.User["UserID"] as! String), content: messageInputField.text)
         if self.dialogue.type == "DirectDialogues" {
             (self.dialogue as! DirectDialogue).sendMessage(message: messageToSend)
@@ -574,14 +825,56 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dialogue.messages.count
     }
+    var rowHeight: CGFloat = 0
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.rowHeight
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let messageCell = messagesTable.dequeueReusableCell(withIdentifier: "messageCell") as! MessageCell
-        
+        messageCell.message.becomeFirstResponder() //biggest patch in existance - done at 7:21am post all nighter -- should fix
+        if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy {
+            messageCell.messageSender.textAlignment = .right
+            messageCell.message.textAlignment = .right
+            messageCell.textbubble.layer.backgroundColor = UIColor(displayP3Red: 36/255, green: 91/255, blue: 155/255, alpha: 1).cgColor
+            messageCell.message.backgroundColor = UIColor.clear
+            messageCell.messageSender.isHidden = true
+        }
+        else {
+            messageCell.messageSender.isHidden = false
+            messageCell.message.textAlignment = .left
+            messageCell.messageSender.textAlignment = .left
+            messageCell.message.backgroundColor = UIColor.clear
+            messageCell.textbubble.layer.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1).cgColor
+        }
         messageCell.messageSender.text = dialogue.messages[indexPath.row].sentByName
         messageCell.message.text = dialogue.messages[indexPath.row].content
         
+         GenericTools.FrameToFitTextView(View: messageCell.message)
+         var newSize = messageCell.message.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+        
+        if newSize.width > 200 {
+            let remainder = 200 - newSize.width
+            newSize.width += remainder
+        }
+        
+        let newFrame = CGSize(width: newSize.width, height: newSize.height)
+        messageCell.message.frame.size = newFrame
+        GenericTools.FrameToFitTextView(View: messageCell.message)
+
+        self.rowHeight = (messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 17)
+        messageCell.addSubview(messageCell.textbubble)
+        messageCell.textbubble.addSubview(messageCell.messageSender)
+        messageCell.textbubble.addSubview(messageCell.message)
+        
+        if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy {
+            messageCell.textbubble.frame = CGRect(x: UIScreen.main.bounds.width - (messageCell.message.frame.size.width + 20), y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
+        }
+        else {
+            messageCell.textbubble.frame = CGRect(x: 10, y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
+
+        }
         return messageCell
     }
     
@@ -592,8 +885,15 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
 
 class MessageCell: UITableViewCell {
     @IBOutlet weak var messageSender: UILabel!
-    @IBOutlet weak var message: UILabel!
+    @IBOutlet weak var message: UITextView!
     
+    let textbubble: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1)
+        view.layer.cornerRadius = 20
+        view.layer.masksToBounds = true
+        return view
+    }()
 }
 
 
@@ -679,6 +979,16 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
     // Submit the changes to database then dismiss view
     @IBAction func doneBTN(_ sender: Any)
     {
+        if welcomeMessageField.text! == "" || channelNameField.text! == "" {
+            let verify = UIAlertController(title: "Alert!", message: "You cannot leave any fields empty.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            self.present(verify, animated: true, completion: nil)
+            return
+        }
+        
+        
+        
         // Get or set referece/id for channelDialogue
         var channelDBReference = DatabaseReference()
         if self.channelID == "" {
@@ -690,10 +1000,19 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
         // --- Update the messengees --- //
         // Make the string of IDs for the database
         var stringOfIDsForDB = ""
+        var numberOfMembersInChannel = 0
         for messengee in isMessengeeInChannel {
             if messengee.value {
                 stringOfIDsForDB.append(messengee.key+", ")
+                numberOfMembersInChannel += 1
             }
+        }
+        if numberOfMembersInChannel < 3 {
+            let verify = UIAlertController(title: "Alert!", message: "You cannot make a channel with less than 3 members.", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            self.present(verify, animated: true, completion: nil)
+            return
         }
         stringOfIDsForDB = String(stringOfIDsForDB.dropLast(2))
         channelDBReference.child("Messengees").setValue(stringOfIDsForDB)
@@ -787,6 +1106,14 @@ class ChannelSettingsMessengeeCell: UITableViewCell {
             containingView.isMessengeeInChannel[messengeeInCellID] = false
         }
         containingView.tableOfMessengeesInChannel.reloadData()
+    }
+}
+extension String {
+    func contains(find: String) -> Bool{
+        return self.range(of: find) != nil
+    }
+    func containsIgnoringCase(find: String) -> Bool{
+        return self.range(of: find, options: .caseInsensitive) != nil
     }
 }
 

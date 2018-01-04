@@ -58,6 +58,11 @@ class CreatePostViewController: UIViewController {
                 self.PosterImage.image = mem.picture
             }
         }
+        
+        self.PosterImage.layer.borderWidth = 1.0
+        self.PosterImage.frame.size.width = self.PosterImage.frame.size.height
+        self.PosterImage.layer.cornerRadius = self.PosterImage.frame.size.width / 2
+        self.PosterImage.clipsToBounds = true
     }
 
     func validate(words:Int)->Bool{
@@ -95,22 +100,18 @@ class CreatePostViewController: UIViewController {
         
         
     }
-    
+    var postId = ""
     func UploadPost(){
         let FirstName = LoggedIn.User["First Name"] as! String
         let LastName = LoggedIn.User["Last Name"] as! String
         let posterId = LoggedIn.User["UserID"] as! String
-        let posterImageURL = LoggedIn.User["Image"] as! String
-        var Name = FirstName + " " + LastName
-        if(self.Position == "Master"){
-            Name = Name + " (Master)"
-        }
+        let Name = FirstName + " " + LastName
+
         let Epoch = Date().timeIntervalSince1970
         let Title = PostTitle.text
         let Posting = Post.text
-        let postId = UUID().uuidString
+        self.postId = UUID().uuidString
         
-        //let Picture = LoggedIn.User["Picture"]
         if(Title != nil && Posting != nil){
             let Post = [
                 "Post": Posting!,
@@ -118,9 +119,8 @@ class CreatePostViewController: UIViewController {
                 "Poster": Name,
                 "Epoch": Epoch,
                 "Username": self.user,
-                "PostId": postId,
-                "PosterId": posterId,
-                "PosterImage": posterImageURL
+                "PostId": self.postId,
+                "PosterId": posterId
                 ] as [String : Any]
             PostData(newPostData: Post){(success, error) in
                 guard success else{
@@ -137,12 +137,12 @@ class CreatePostViewController: UIViewController {
         }
     }
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
-        CreatePostRef = Database.database().reference()
-        let pID = newPostData["PostId"] as! String
-        self.CreatePostRef.child("Forum").child(pID).setValue(newPostData){ error in
+        let v = postId
+        Database.database().reference().child("Forum").child(self.postId).setValue(newPostData){ error in
             completion(false, error)
         }
-        self.CreatePostRef.child("Forum/ForumIds").child(pID).setValue(pID){ error in
+        
+        Database.database().reference().child("Forum/ForumIds").child(self.postId).setValue(self.postId){ error in
             completion(false, error)
         }
         completion(true, nil)

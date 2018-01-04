@@ -130,7 +130,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         separatorLineView.leftAnchor.constraint(equalTo: self.containerView.leftAnchor, constant: 8).isActive = true
         separatorLineView.topAnchor.constraint(equalTo: self.containerView.topAnchor).isActive = true
         separatorLineView.widthAnchor.constraint(equalTo: self.containerView.widthAnchor).isActive = true
-        sendButton.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        separatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
 
 
         

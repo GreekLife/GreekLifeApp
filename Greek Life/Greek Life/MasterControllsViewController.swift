@@ -37,6 +37,7 @@ class MasterControllsViewController: UIViewController {
         GenerateNewCode.layer.cornerRadius = 5
         KickAMember.layer.cornerRadius = 5
         SendNotif.layer.cornerRadius = 5
+        CurrentCode.layer.cornerRadius = 6
         
         ref = Database.database().reference()
         ref.child("CreateAccount").child("GeneratedKey").observe(.value, with: { (snapshot) in
@@ -182,7 +183,7 @@ class PostNews: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         News.text = ""
-        News.layer.cornerRadius = 10
+        News.layer.cornerRadius = 30
         News.layer.borderWidth = 1
         Post.layer.cornerRadius = 5
     }
