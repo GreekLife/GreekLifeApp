@@ -143,7 +143,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         self.TableView.reloadData()
     }
-    
+    let backgroundColor = UIColor(displayP3Red: 48/255, green: 48/255, blue: 48/255, alpha: 1)
     //List order button actions
     @IBAction func Newest(_ sender: Any) {
         if NewestClicked == true{
@@ -151,14 +151,14 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         else {
             self.SortByDate(Posts: Postings.AllPosts!)
-            Newest.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            Newest.backgroundColor = UIColor.black
             NewestClicked = true;
             OldestClicked = false;
-            Oldest.layer.backgroundColor = UIColor.clear.cgColor
+            Oldest.layer.backgroundColor = self.backgroundColor.cgColor
             ThisMonthClicked = false;
-            ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
+            ThisMonth.layer.backgroundColor = self.backgroundColor.cgColor
             ThisWeekClicked = false;
-            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeek.layer.backgroundColor = self.backgroundColor.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -171,16 +171,16 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             return
         }
         else {
-            Oldest.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            Oldest.backgroundColor = UIColor.black
             Postings.AllPosts?.reverse()
             self.TableView.reloadData();
             OldestClicked = true;
             NewestClicked = false;
-            Newest.layer.backgroundColor = UIColor.clear.cgColor
+            Newest.layer.backgroundColor = self.backgroundColor.cgColor
             ThisMonthClicked = false;
-            ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
+            ThisMonth.layer.backgroundColor = self.backgroundColor.cgColor
             ThisWeekClicked = false;
-            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeek.layer.backgroundColor = self.backgroundColor.cgColor
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
             return;
@@ -194,14 +194,14 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         else {
             self.SortByDate(Posts: Postings.AllPosts!)
-            ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            ThisWeek.backgroundColor = UIColor.black
             ThisWeekClicked = true;
             OldestClicked = false;
-            Oldest.layer.backgroundColor = UIColor.clear.cgColor
+            Oldest.layer.backgroundColor = self.backgroundColor.cgColor
             NewestClicked = false;
-            Newest.layer.backgroundColor = UIColor.clear.cgColor
+            Newest.layer.backgroundColor = self.backgroundColor.cgColor
             ThisMonthClicked = false;
-            ThisMonth.layer.backgroundColor = UIColor.clear.cgColor
+            ThisMonth.layer.backgroundColor = self.backgroundColor.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -216,14 +216,14 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         else {
             self.SortByDate(Posts: Postings.AllPosts!)
-            ThisMonth.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
+            ThisMonth.backgroundColor = UIColor.black
             ThisMonthClicked = true;
             OldestClicked = false;
-            Oldest.layer.backgroundColor = UIColor.clear.cgColor
+            Oldest.layer.backgroundColor = self.backgroundColor.cgColor
             NewestClicked = false;
-            Newest.layer.backgroundColor = UIColor.clear.cgColor
+            Newest.layer.backgroundColor = self.backgroundColor.cgColor
             ThisWeekClicked = false;
-            ThisWeek.layer.backgroundColor = UIColor.clear.cgColor
+            ThisWeek.layer.backgroundColor = self.backgroundColor.cgColor
             self.TableView.reloadData();
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
@@ -288,6 +288,13 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = backgroundColor
+        self.TableView.backgroundColor = backgroundColor
+        self.Newest.layer.borderWidth = 1
+        self.Oldest.layer.borderWidth = 1
+        self.ThisWeek.layer.borderWidth = 1
+        self.ThisMonth.layer.borderWidth = 1
+
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         self.TableView.allowsSelection = false
         self.view.backgroundColor = UIColor.lightGray
@@ -366,7 +373,12 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ForumCell", for: indexPath) as! ForumCellTableViewCell
-        cell.PosterImage.contentMode = .scaleToFill
+        //cell.PosterImage.contentMode = .scaleToFill
+        cell.PosterImage.layer.borderWidth = 1.0
+        cell.PosterImage.frame.size.width = cell.PosterImage.frame.size.height
+        cell.PosterImage.layer.cornerRadius = cell.PosterImage.frame.size.width / 2
+        cell.PosterImage.clipsToBounds = true
+        
         for mem in mMembers.MemberList {
             if mem.id == Postings.AllPosts![indexPath.row].PosterId {
             cell.PosterImage.image = mem.picture

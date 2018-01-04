@@ -162,7 +162,6 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     override var canBecomeFirstResponder: Bool {
         return true
     }
-    
     //---Write comment data to database---//
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Any?) -> Void){
         let commentId = newPostData["CommentId"] as! String
@@ -234,26 +233,20 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
             cell.layer.borderWidth = 1
             self.rowHeight = cell.Comment.frame.origin.y + cell.Comment.frame.size.height + 30
             cell.Delete.isHidden = true
+            cell.layer.backgroundColor = UIColor(displayP3Red: 35/255, green: 35/255, blue: 35/255, alpha: 1).cgColor
+            cell.CommenterName.textColor = UIColor(displayP3Red: 36/255, green: 91/255, blue: 155/255, alpha: 1)
 
             return cell
         }
         cell.Delete.isHidden = false
         //--Set Content--//
         if CommentList.count > 0 {
-            cell.backgroundColor = .white
-            if indexPath.row % 2 == 0 {
-                cell.backgroundColor = UIColor(displayP3Red: 250/255, green: 234/255, blue: 234/255, alpha: 0.5)
-            }
-            else {
-            }
+        cell.backgroundColor = UIColor(displayP3Red: 60/255, green: 60/255, blue: 60/255, alpha: 1)
         cell.layer.borderWidth = 0.1
         cell.CommenterName.text = CommentList[indexPath.row - 1].Poster
         let timeSince = CreateDate.getTimeSince(epoch: CommentList[indexPath.row - 1].PostEpoch)
         cell.CommentDate.text = timeSince
         cell.Comment.text = CommentList[indexPath.row - 1].Post
-        if CommentList[indexPath.row - 1].PosterId  == self.userId {
-            cell.CommenterName.textColor = .blue
-        }
         //--Change cell height--//
         GenericTools.FrameToFitTextView(View: cell.Comment)
         cell.CommenterName.frame.origin.y = 20
