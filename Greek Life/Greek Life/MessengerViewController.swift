@@ -155,35 +155,35 @@ class DirectDialogue: Dialogue {
         // create a new one with a welcome message from both messengees.
         //let handle = Database.database().reference().child("DirectDialogues/"+id).observe(.value, with: { snapshot in
         let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "DirectDialogues/"+id)
-            if snapshot.hasChildren() {
-                //Pulling Messages
-                for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
-                    self.messages.append(Message(
-                        messageID: (messageSnapshot as! DataSnapshot).key,
-                        content: (messageSnapshot as! DataSnapshot).value as! String
-                    ))
-                }
-            }else{
-                //Create a new Direct Dialogue with welcome messages from each messengee
-                for messengee in self.messengees {
-                    //make welcome message for the messengee
-                    let timeStamp = Int(Date.init().timeIntervalSince1970)
-                    let messengeeID = messengee.userID
-                    let messageID = String(timeStamp)+", "+messengeeID
-                    Database.database().reference().child("DirectDialogues/"+self.id+"/Messages/"+messageID).setValue("Hey, wassup?")
-                }
+        if snapshot.hasChildren() {
+            //Pulling Messages
+            for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
+                self.messages.append(Message(
+                    messageID: (messageSnapshot as! DataSnapshot).key,
+                    content: (messageSnapshot as! DataSnapshot).value as! String
+                ))
             }
-        //})
-        /*{ error in
+        }else{
             //Create a new Direct Dialogue with welcome messages from each messengee
             for messengee in self.messengees {
                 //make welcome message for the messengee
-                let timeStamp = Date.init().timeIntervalSince1970
+                let timeStamp = Int(Date.init().timeIntervalSince1970)
                 let messengeeID = messengee.userID
                 let messageID = String(timeStamp)+", "+messengeeID
-                Database.database().reference().child("DirectDialogues/"+self.id+"Messages/"+messageID).setValue("Hey, wassup?")
+                Database.database().reference().child("DirectDialogues/"+self.id+"/Messages/"+messageID).setValue("Hey, wassup?")
             }
-        }*/
+        }
+        //})
+        /*{ error in
+         //Create a new Direct Dialogue with welcome messages from each messengee
+         for messengee in self.messengees {
+         //make welcome message for the messengee
+         let timeStamp = Date.init().timeIntervalSince1970
+         let messengeeID = messengee.userID
+         let messageID = String(timeStamp)+", "+messengeeID
+         Database.database().reference().child("DirectDialogues/"+self.id+"Messages/"+messageID).setValue("Hey, wassup?")
+         }
+         }*/
         //DatabaseHousekeeping.handles.append(handle)
     }
     
@@ -210,13 +210,13 @@ class Messengee {
         //let handle = Database.database().reference().child("Users").observe(.value, with: { snapshot in
         let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users")
         self.messengees.removeAll()
-            for user in snapshot.children {
-                self.messengees.append(Messengee(userID: (user as! DataSnapshot).key))
-            }
+        for user in snapshot.children {
+            self.messengees.append(Messengee(userID: (user as! DataSnapshot).key))
+        }
         //})
         /*{ error in
-            print("Error: There seems to be no users in the database.")
-        }*/
+         print("Error: There seems to be no users in the database.")
+         }*/
         //DatabaseHousekeeping.handles.append(handle)
     }
     
@@ -234,15 +234,15 @@ class Messengee {
         self.userID = userID
         //let handle = Database.database().reference().child("Users/"+userID).observe(.value, with: { (snapshot) in
         let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+userID)
-            self.firstName = snapshot.childSnapshot(forPath: "First Name").value as? String ?? " ";
-            self.lastName = snapshot.childSnapshot(forPath: "Last Name").value as? String ?? " ";
-            self.brotherName = snapshot.childSnapshot(forPath: "BrotherName").value as? String ?? " ";
-            self.position = snapshot.childSnapshot(forPath: "Position").value as? String ?? " ";
+        self.firstName = snapshot.childSnapshot(forPath: "First Name").value as? String ?? " ";
+        self.lastName = snapshot.childSnapshot(forPath: "Last Name").value as? String ?? " ";
+        self.brotherName = snapshot.childSnapshot(forPath: "BrotherName").value as? String ?? " ";
+        self.position = snapshot.childSnapshot(forPath: "Position").value as? String ?? " ";
         //})
-    /*{ error in
-            print("Error: This brother does not exist.")
-        }
-        DatabaseHousekeeping.handles.append(handle)*/
+        /*{ error in
+         print("Error: This brother does not exist.")
+         }
+         DatabaseHousekeeping.handles.append(handle)*/
     }
     
 }
@@ -301,7 +301,11 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        DatabaseHousekeeping.chHandle = Database.database().reference().observe(.value, with: {snapshot in
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Database.database().reference().observeSingleEvent(of: .value, with: {snapshot in
             DatabaseHousekeeping.dbSnapshot = snapshot
             self.channelDialogues.removeAll()
             for channel in snapshot.childSnapshot(forPath: "ChannelDialogues").children {
@@ -321,7 +325,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     @IBAction func createChannelBTN(_ sender: UIBarButtonItem)
     {
-        self.performSegue(withIdentifier: "ChannelSettingsSegue", sender: "")
+        self.performSegue(withIdentifier: "ChannelSettingsSegue", sender: nil)
     }
     @IBAction func backBTN(_ sender: Any)
     {
@@ -360,7 +364,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
             (segue.destination as! ChatViewController).dialogue = (sender as! ChannelDialogue)
         }
         else if segue.identifier == "ChannelSettingsSegue" {
-            (segue.destination as! ChannelSettingsViewController).channelID = (sender as! ChannelDialogue).id
+            if sender != nil {
+                (segue.destination as! ChannelSettingsViewController).channelID = (sender as! ChannelDialogue).id
+                
+            }
         }
     }
     
@@ -431,7 +438,7 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
             }
         }
     }
-   
+    
     //-- IB Actions --//
     
     @IBAction func backBTN(_ sender: Any)
@@ -468,8 +475,8 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
         performSegue(withIdentifier: "ChatViewSegue", sender: directDialogues[indexPath.row])
     }
     /*func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        performSegue(withIdentifier: "ChatSettingsSegue", sender: directDialogues[indexPath.row])
-    }*/
+     performSegue(withIdentifier: "ChatSettingsSegue", sender: directDialogues[indexPath.row])
+     }*/
     
     
     //-- Prepare for Segues --//
@@ -616,51 +623,51 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
         DatabaseHousekeeping.chSettingsHandle = Database.database().reference().observe(.value, with: { snapshot in DatabaseHousekeeping.dbSnapshot = snapshot
-        let snapshot = DatabaseHousekeeping.dbSnapshot
-        // Get all potential messengees
-        for messengeeSnap in snapshot.childSnapshot(forPath: "Users").children
-        {
-            self.allMessengees.append(Messengee(userID: (messengeeSnap as! DataSnapshot).key))
-        }
-        // Get all channel data if channel exists and shove it into the fields
-        if snapshot.childSnapshot(forPath: "ChannelDialogues/"+self.channelID).exists() {
-            let channelSnap = snapshot.childSnapshot(forPath: "ChannelDialogues/"+self.channelID)
-            // Get channelID
-            self.channelID = channelSnap.key
-            // Get channelName
-            self.channelName = channelSnap.childSnapshot(forPath: "Name").value as! String
-            // Get the original Welcome Message
-            self.oldWelcomeMessage = (Array(channelSnap.childSnapshot(forPath: "Messages").children)[0] as! DataSnapshot).value as! String
-            self.welcomeMessage = self.oldWelcomeMessage
-            // Get messengeesInChannel
-            for messengeeID in (channelSnap.childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
+            let snapshot = DatabaseHousekeeping.dbSnapshot
+            // Get all potential messengees
+            for messengeeSnap in snapshot.childSnapshot(forPath: "Users").children
             {
-                self.isMessengeeInChannel[messengeeID] = true
+                self.allMessengees.append(Messengee(userID: (messengeeSnap as! DataSnapshot).key))
             }
-            //Check populate the messengeesNotInChannel
-            let messengeeIDIsInChannel = self.isMessengeeInChannel.keys
-            for messengee in self.allMessengees {
-                if !messengeeIDIsInChannel.contains(messengee.userID) {
-                    self.isMessengeeInChannel[messengee.userID] = false
+            // Get all channel data if channel exists and shove it into the fields
+            if self.channelID != "" && snapshot.childSnapshot(forPath: "ChannelDialogues/"+self.channelID).exists() {
+                let channelSnap = snapshot.childSnapshot(forPath: "ChannelDialogues/"+self.channelID)
+                // Get channelID
+                self.channelID = channelSnap.key
+                // Get channelName
+                self.channelName = channelSnap.childSnapshot(forPath: "Name").value as! String
+                // Get the original Welcome Message
+                self.oldWelcomeMessage = (Array(channelSnap.childSnapshot(forPath: "Messages").children)[0] as! DataSnapshot).value as! String
+                self.welcomeMessage = self.oldWelcomeMessage
+                // Get messengeesInChannel
+                for messengeeID in (channelSnap.childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
+                {
+                    self.isMessengeeInChannel[messengeeID] = true
+                }
+                //Check populate the messengeesNotInChannel
+                let messengeeIDIsInChannel = self.isMessengeeInChannel.keys
+                for messengee in self.allMessengees {
+                    if !messengeeIDIsInChannel.contains(messengee.userID) {
+                        self.isMessengeeInChannel[messengee.userID] = false
+                    }
+                }
+                // Shove data into the fields
+                self.channelNameField.text = self.channelName
+                self.welcomeMessageField.text = self.welcomeMessage
+            } else {
+                // If it doesn't exist, put all the messengees into the messengeesNotInChannel and put the logged in user into the messengeesInChannel
+                for messengee in self.allMessengees {
+                    if messengee.userID == (LoggedIn.User["UserID"] as! String) {
+                        self.isMessengeeInChannel[messengee.userID] = true
+                    }
+                    else {
+                        self.isMessengeeInChannel[messengee.userID] = false
+                    }
                 }
             }
-            // Shove data into the fields
-            self.channelNameField.text = self.channelName
-            self.welcomeMessageField.text = self.welcomeMessage
-        } else {
-            // If it doesn't exist, put all the messengees into the messengeesNotInChannel and put the logged in user into the messengeesInChannel
-            for messengee in self.allMessengees {
-                if messengee.userID == (LoggedIn.User["UserID"] as! String) {
-                    self.isMessengeeInChannel[messengee.userID] = true
-                }
-                else {
-                    self.isMessengeeInChannel[messengee.userID] = false
-                }
-            }
-        }
-        //Reload the table of messengees
+            //Reload the table of messengees
             self.tableOfMessengeesInChannel.reloadData()
-        
+            
         })
     }
     
