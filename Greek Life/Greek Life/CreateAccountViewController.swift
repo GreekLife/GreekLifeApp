@@ -138,8 +138,8 @@ class AccountDetails: UIViewController {
     
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").child(NewUser.userID).setValue(newPostData) { (error) in
-            completion(false, error)
+        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(NewUser.userID)").updateChildValues(newPostData) { _,_  in
+            completion(false, nil)
         }
         completion(true, nil)
         
@@ -430,11 +430,6 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         let pickerView = UIPickerView()
         emailEdit.layer.cornerRadius = 5
         
-        if LoggedIn.User["Position"] as! String == "Master" {
-            Position.isUserInteractionEnabled = false
-            Position.isEnabled = false
-
-        }
         
         pickerView.delegate = self
         imagePicker.delegate = self
@@ -444,6 +439,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         if NewUser.edit == true {
             if LoggedIn.User["Position"] as? String == "Master" {
                 Position.isUserInteractionEnabled = false
+                Position.isEnabled = false
                 Position.textColor = UIColor(displayP3Red: 255, green: 224, blue: 0, alpha: 1)
             }
             emailEdit.isHidden = false

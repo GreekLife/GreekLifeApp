@@ -38,7 +38,7 @@ class CreatePollViewController: UIViewController {
         let newestOption = Options[NumberOfOptons-1]
         let newOriginY = newestOption.frame.origin.y + newestOption.frame.size.height + 10
         let newOption = UITextField(frame: CGRect(x: newestOption.frame.origin.x, y: newOriginY, width: newestOption.frame.size.width, height: newestOption.frame.size.height))
-        newOption.textColor = UIColor.black
+        newOption.textColor = UIColor.white
         newOption.backgroundColor = UIColor.clear
         newOption.font = UIFont(name: newOption.font!.fontName, size: 11)
         newOption.textAlignment = .justified
@@ -53,6 +53,8 @@ class CreatePollViewController: UIViewController {
         
         let newLabel = UILabel(frame: CGRect(x: DefaultOptionLbl.frame.origin.x, y: newOriginY, width: DefaultOptionLbl.frame.size.height, height: DefaultOptionLbl.frame.size.height))
         newLabel.text = "\(NumberOfOptons)."
+        newLabel.font = newLabel.font.withSize(12)
+        newLabel.textColor = .white
         scrollView.addSubview(newLabel)
         OptionsLbl.append(newLabel)
         
@@ -110,7 +112,7 @@ class CreatePollViewController: UIViewController {
             OptionsLbl.remove(at: NumberOfOptons - 1)
             
             NumberOfOptons -= 1
-            self.CreatePoll.frame.origin.y -= option.frame.size.height
+            self.CreatePoll.frame.origin.y -= option.frame.size.height - 10
             //-- should adjust scroll view in some cases as well --//
         }
     }
@@ -205,6 +207,8 @@ class CreatePollViewController: UIViewController {
         scrollView.addSubview(AddAnOptionLbl)
         scrollView.addSubview(DefaultOptionLbl)
         scrollView.addSubview(DeleteOption)
+        
+        CreatePoll.layer.cornerRadius = 10
         
         scrollView.contentSize = CGSize(width: screenWidth, height: screenHeight)
         self.view.addSubview(scrollView)

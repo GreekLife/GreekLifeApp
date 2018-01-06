@@ -97,10 +97,6 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         return self.rowHeight
     }
     
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0.01
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = InnerTable.dequeueReusableCell(withIdentifier: "InnerCell") as! InnerPollTableViewCell
         cell.OptionText.isEditable = false
@@ -109,11 +105,14 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         cell.OptionText.textAlignment = .justified
         cell.OptionText.layer.cornerRadius = 5
         cell.OptionText.layer.borderWidth = 0.8
-        cell.OptionText.layer.borderColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1).cgColor
+        cell.OptionText.layer.borderColor = UIColor(displayP3Red: 38/255, green: 38/255, blue: 38/255, alpha: 1).cgColor
+        cell.OptionText.adjustsFontForContentSizeCategory = true
+
         cell.Vote.layer.borderWidth = 0.8
         cell.Vote.layer.cornerRadius = cell.Vote.frame.width/2
-        cell.Vote.layer.borderColor = UIColor(displayP3Red: 212/255, green: 175/255, blue: 55/255, alpha: 1).cgColor
         cell.Vote.backgroundColor = .clear
+        cell.Vote.textColor = .white
+        cell.Vote.adjustsFontSizeToFitWidth = true
 
         var placings:[Int] = []
         if Polling.fetched == true {
@@ -125,7 +124,7 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
             
             }
         }
-        cell.Vote.textColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1)
+        cell.Vote.textColor = .white
         cell.OptionText.text = Polling.ListOfPolls[Polling.OuterIndex].Options[indexPath.row]
         GenericTools.FrameToFitTextView(View: cell.OptionText)
         cell.Vote.text = String(Polling.ListOfPolls[Polling.OuterIndex].UpVotes[indexPath.row].count)
@@ -144,7 +143,6 @@ class PollTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     @IBOutlet weak var PollDate: UILabel!
     @IBOutlet weak var InnerTable: UITableView!
     
-    @IBOutlet weak var PollResults: UIButton!
     @IBOutlet weak var DeleteButton: UIButton!
     @IBOutlet weak var Vote: UIButton!
     
@@ -267,6 +265,8 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         self.view.backgroundColor = UIColor.lightGray
         self.TableView.allowsSelection = false
+        self.TableView.separatorColor =  .black
+        self.TableView.separatorStyle = .singleLineEtched
         //Get poll info for each existing poll
         if Reachability.isConnectedToNetwork() {
         GetListOfPolls() {(success, error) in
@@ -430,6 +430,13 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Voting" {
+            let clickedPoll = segue.destination as? PollVoting
+            clickedPoll?.PollViewed = Polling.ListOfPolls[votingIndex]
+        }
+    }
+    
     
     func DeleteSelectedPoll(button: UIButton) {
         if Reachability.isConnectedToNetwork() == true {
@@ -465,24 +472,6 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    var tempIndexPath = 0
-    @objc func ViewResults(button: UIButton) {
-        let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
-        let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
-        let indexPath = tbl.indexPath(for: cell)
-        self.tempIndexPath = indexPath!.row
-        performSegue(withIdentifier: "ViewResults", sender: self)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ViewResults" {
-            APoll.poll = Polling.ListOfPolls[tempIndexPath]
-        }
-        if segue.identifier == "Voting" {
-            let clickedPoll = segue.destination as? PollVoting
-            clickedPoll?.PollViewed = Polling.ListOfPolls[votingIndex]
-        }
-    }
     
     var votingIndex = 0
     @objc func VoteForPoll(button: UIButton) {
@@ -528,6 +517,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         Polling.OuterIndex = indexPath.row
         let date = CreateDate.getTimeSince(epoch: Polling.ListOfPolls[indexPath.row].Epoch)
         cell.PollerPicture.layer.cornerRadius = cell.PollerPicture.frame.size.width/2
+        cell.PollerPicture.layer.masksToBounds = true
         cell.InnerTable.separatorStyle = UITableViewCellSeparatorStyle.none
         cell.InnerTable.isScrollEnabled = false
         cell.InnerTable.allowsSelection = false
@@ -542,11 +532,12 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
         cell.Poster.text = Polling.ListOfPolls[indexPath.row].Poster
+        cell.setUpTable()
         cell.InnerTable.reloadData()
         //Get expected height of table
         var size: CGFloat = 0
         for option in Polling.ListOfPolls[indexPath.row].Options {
-            let newText = UITextView(frame: CGRect(x: 0, y: 0, width: 238, height: 0))
+            let newText = UITextView(frame: CGRect(x: 0, y: 0, width: 183, height: 0))
             newText.text = option
             GenericTools.FrameToFitTextView(View: newText)
             size += newText.frame.size.height
@@ -554,10 +545,12 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         cell.InnerTable.frame.size.height = size + CGFloat(Polling.ListOfPolls[indexPath.row].Options.count * 3)
         cell.InnerTable.frame.origin.y = cell.Poll.frame.origin.y + cell.Poll.frame.size.height + 10
-        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
-        cell.PollResults.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
-        cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
-        Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
+        cell.Vote.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height
+        cell.Vote.layer.cornerRadius = 10
+        cell.DeleteButton.frame.origin.y = cell.Vote.frame.origin.y
+
+        cell.PollDate.frame.origin.y = cell.Vote.frame.origin.y
+        Polling.RowHeight = cell.Vote.frame.origin.y + cell.Vote.frame.size.height + 10
         
         if self.deleteState == true {
             if UserId == Polling.ListOfPolls[indexPath.row].PosterId || self.Position == "Master" {
@@ -565,23 +558,19 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         cell.DeleteButton.layer.cornerRadius = 5
         cell.DeleteButton.accessibilityLabel = Polling.ListOfPolls[indexPath.row].PollId
         cell.DeleteButton.addTarget(self, action: #selector(DeleteSelectedPoll(button:)), for: .touchUpInside)
-        cell.DeleteButton.frame.origin.y = cell.InnerTable.frame.origin.y + cell.InnerTable.frame.size.height + 10
-        cell.PollResults.frame.origin.y = cell.DeleteButton.frame.origin.y + cell.DeleteButton.frame.size.height + 10
-        cell.PollDate.frame.origin.y = cell.PollResults.frame.origin.y
-        Polling.RowHeight = cell.PollResults.frame.origin.y + cell.PollResults.frame.size.height
+        cell.DeleteButton.frame.origin.y = cell.Vote.frame.origin.y
+        cell.PollDate.frame.origin.y = cell.Vote.frame.origin.y
+        Polling.RowHeight = cell.Vote.frame.origin.y + cell.Vote.frame.size.height + 10
             }
         }
         else {
             cell.DeleteButton.isHidden = true
         }
         
-        cell.PollResults.addTarget(self, action: #selector(ViewResults(button:)), for: .touchUpInside)
-
         if cell.isHidden {
             Polling.RowHeight = 0
         }
         
-        cell.Vote.frame.origin.y = cell.PollResults.frame.origin.y
         cell.Vote.addTarget(self, action: #selector(VoteForPoll(button:)), for: .touchUpInside)
         return cell
         
@@ -599,6 +588,7 @@ class PollVoting: UIViewController {
     @IBOutlet weak var Option: UIButton!
     @IBOutlet weak var Percent: UILabel!
     @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var Votes: UIButton!
     
     let screensize: CGRect = UIScreen.main.bounds
     var scrollView: UIScrollView!
@@ -607,7 +597,6 @@ class PollVoting: UIViewController {
     var UserId = LoggedIn.User["UserID"] as! String
     let first = LoggedIn.User["First Name"] as? String ?? "Unknown"
     let last = LoggedIn.User["Last Name"] as? String ?? "Unknown"
-    var maxHeight: CGFloat = 600
     
     
     @IBAction func Cancel(_ sender: Any) {
@@ -620,10 +609,13 @@ class PollVoting: UIViewController {
         Option.addTarget(self, action: #selector(UpVoteOption(button:)), for: .touchUpInside)
         let screenWidth = screensize.width
         let screenHeight = screensize.height
+        Votes.tag = 0
+        Votes.addTarget(self, action: #selector(ViewResults(button:)), for: .touchUpInside)
         scrollView = UIScrollView(frame: CGRect(x: 0, y: 64, width: screenWidth, height: screenHeight))
         scrollView.addSubview(PollQuestion)
         scrollView.addSubview(Option)
         scrollView.addSubview(Percent)
+        scrollView.addSubview(Votes)
         
         scrollView.contentSize = CGSize(width: screenWidth, height: screenHeight)
         self.view.addSubview(scrollView)
@@ -655,8 +647,10 @@ class PollVoting: UIViewController {
             self.DrawLayout()
         }
     }
+
     
     var ExistingOptions: [UIButton] = []
+    var ExistingVotes: [UIButton] = []
     var ExistingLabel: [UILabel] = []
     func DrawLayout() {
         let name = "\(first) \(last)"
@@ -664,28 +658,38 @@ class PollVoting: UIViewController {
         GenericTools.FrameToFitTextView(View: PollQuestion)
         PollQuestion.frame.origin.y = toolbar.frame.origin.y + toolbar.frame.size.height + 30
         for option in (0...PollViewed.Options.count - 1) {
-            let button = UIButton(frame: CGRect(x: Option.frame.origin.x, y: 0, width: screensize.width, height: Option.frame.size.height))
+            let button = UIButton(frame: CGRect(x: Option.frame.origin.x, y: 0, width: screensize.width - 46, height: Option.frame.size.height))
             button.tag = option + 1
             button.addTarget(self, action: #selector(UpVoteOption(button:)), for: .touchUpInside)
             ExistingOptions.append(button)
             let label = UILabel(frame: CGRect(x: Percent.frame.origin.x, y: 0, width: Percent.frame.size.width, height: Option.frame.size.height))
             label.tag = option
             ExistingLabel.append(label)
+            let vote = UIButton(frame: CGRect(x:Votes.frame.origin.x, y:0, width: Votes.frame.size.width, height: Option.frame.size.height))
+            vote.tag = option
+            vote.addTarget(self, action: #selector(ViewResults(button:)), for: .touchUpInside)
+            ExistingVotes.append(vote)
+            
         }
         for option in 0...(ExistingOptions.count - 1) {
             if option == 0 {
                 Option.frame.origin.y = PollQuestion.frame.origin.y + PollQuestion.frame.size.height + 40
-                Option.frame.size.width = screensize.width
-                let tempView = UITextView(frame: CGRect(x: 0, y: 0, width: screensize.width, height: 0))
+                Option.frame.size.width = screensize.width - 46
+                let tempView = UITextView(frame: CGRect(x: 0, y: 0, width: screensize.width - ExistingVotes[option].frame.size.width, height: 0))
                 tempView.text = PollViewed.Options[option]
                 GenericTools.FrameToFitTextView(View: tempView)
-                Option.frame.size.height = tempView.frame.size.height + 20
+                Option.frame.size.height = tempView.frame.size.height + 50
                 Option.setTitle(PollViewed.Options[option], for: .normal)
-                Option.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 5.0, bottom: 0.0, right: 48)
+                Option.titleEdgeInsets = UIEdgeInsets(top: 5, left: 5.0, bottom: 5.0, right: 43)
                 ExistingOptions[option].frame.size.height = Option.frame.size.height
                 ExistingOptions[option].frame.origin.y = Option.frame.origin.y
                 ExistingOptions[option].setTitle(PollViewed.Options[option], for: .normal)
-                ExistingOptions[option].titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 10.0, bottom: 0.0, right: 48)
+                ExistingOptions[option].titleEdgeInsets = UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 43)
+                
+                Votes.frame.origin.x = Option.frame.origin.x + Option.frame.size.width
+                Votes.frame.origin.y = Option.frame.origin.y
+                Votes.frame.size.height = Option.frame.size.height
+                ExistingVotes[option].frame = Votes.frame
                 
                 Percent.frame.origin.x = Option.frame.origin.x + (Option.frame.size.width - Percent.frame.size.width)
                 Percent.frame.origin.y = Option.frame.origin.y
@@ -703,18 +707,29 @@ class PollVoting: UIViewController {
 
             }
             else {
-                let tempView = UITextView(frame: CGRect(x: 0, y: 0, width: screensize.width, height: 0))
+                let tempView = UITextView(frame: CGRect(x: 0, y: 0, width: screensize.width - ExistingVotes[option].frame.size.width, height: 0))
                 tempView.text = PollViewed.Options[option]
                 GenericTools.FrameToFitTextView(View: tempView)
-                ExistingOptions[option].frame.size.height = tempView.frame.size.height + 20
+                ExistingOptions[option].frame.size.height = tempView.frame.size.height + 50
                 ExistingOptions[option].setTitle(PollViewed.Options[option], for: .normal)
                 ExistingOptions[option].backgroundColor = UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
                 ExistingOptions[option].frame.origin.y = ExistingOptions[option - 1].frame.origin.y + ExistingOptions[option - 1].frame.size.height + 20
                 ExistingOptions[option].tintColor = .white
                 ExistingOptions[option].contentHorizontalAlignment = .left
-                ExistingOptions[option].titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 10.0, bottom: 0.0, right: 48)
+                ExistingOptions[option].titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 10.0, bottom: 0.0, right: 43)
                 scrollView.addSubview(ExistingOptions[option])
                 ExistingOptions[option].titleLabel?.font = UIFont(name: "System Font", size: 14)
+                
+                ExistingVotes[option].frame.size.height = ExistingOptions[option].frame.size.height
+                ExistingVotes[option].frame.origin.y = ExistingOptions[option].frame.origin.y
+                ExistingVotes[option].frame.origin.x = ExistingOptions[option].frame.origin.x + ExistingOptions[option].frame.size.width
+                ExistingVotes[option].tintColor = .blue
+                ExistingVotes[option].backgroundColor = UIColor(displayP3Red: 38/255, green: 38/255, blue: 38/255, alpha: 1)
+                ExistingVotes[option].setTitleColor(UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1), for: .normal)
+                ExistingVotes[option].alpha = 0.5
+                ExistingVotes[option].titleLabel?.font =  UIFont(name: (ExistingVotes[option].titleLabel?.font.fontName)!, size: 14)
+                ExistingVotes[option].setTitle("Votes", for: .normal)
+                scrollView.addSubview(ExistingVotes[option])
                 
                 ExistingLabel[option].frame.size.height = ExistingOptions[option].frame.size.height
                 ExistingLabel[option].frame.origin.y = ExistingOptions[option].frame.origin.y
@@ -727,19 +742,41 @@ class PollVoting: UIViewController {
                 ExistingLabel[option].font = UIFont.boldSystemFont(ofSize: 15.0)
                 scrollView.addSubview(ExistingLabel[option])
                 
+                
+                let maxHeight: CGFloat = screensize.height - ExistingOptions[option].frame.size.height - 60
+                
                 for names in PollViewed.UpVoteNames[option] {
                     if names == name {
                         ExistingOptions[option].backgroundColor = UIColor(displayP3Red: 255/255, green: 224/255, blue: 0/255, alpha: 1)
                     }
                 }
                 if ExistingOptions[option].frame.origin.y >= maxHeight {
-                    let newScrollHeight = self.scrollView.contentSize.height + ExistingOptions[option].frame.size.height + 22
+                    let newScrollHeight = self.scrollView.contentSize.height + ExistingOptions[option].frame.size.height + 20
                     self.scrollView.contentSize = CGSize(width: self.scrollView.contentSize.width, height: newScrollHeight)
                 }
             }
         }
     }
     
+    func ViewResults(button: UIButton) {
+        let index = button.tag
+        let voters = self.PollViewed.UpVoteNames[index]
+        let alert = UIAlertController(title: "Votes", message: "", preferredStyle: .alert)
+
+        if voters.count == 0 {
+            let action = UIAlertAction(title: "No one has voted yet", style: .default, handler: { (action) -> Void in
+            })
+            alert.addAction(action)
+        }
+        else {
+            for vote in voters {
+                let action = UIAlertAction(title: vote, style: .default, handler: { (action) -> Void in
+                })
+                alert.addAction(action)
+            }
+        }
+        present(alert, animated: true, completion: nil)
+    }
     
     func UpVoteOption(button: UIButton) {
         if Reachability.isConnectedToNetwork() == true {

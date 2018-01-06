@@ -208,6 +208,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if LoggedIn.User["Position"] as! String != "Master" {
+            self.TableView.allowsSelection = false
+        }
         let id = LoggedIn.User["UserID"] as! String
         self.UserIsBlocked(userId: id){(blocked, value, success) in
             if success == true {

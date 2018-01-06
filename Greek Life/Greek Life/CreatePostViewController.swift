@@ -107,42 +107,48 @@ class CreatePostViewController: UIViewController {
         let posterId = LoggedIn.User["UserID"] as! String
         let Name = FirstName + " " + LastName
 
-        let Epoch = Date().timeIntervalSince1970
+        let Epoch: Double = Double(Date().timeIntervalSince1970)
         let Title = PostTitle.text
         let Posting = Post.text
         self.postId = UUID().uuidString
+       
+        
         
         if(Title != nil && Posting != nil){
-            let Post = [
-                "Post": Posting!,
-                "PostTitle": Title!,
-                "Poster": Name,
-                "Epoch": Epoch,
-                "Username": self.user,
-                "PostId": self.postId,
-                "PosterId": posterId
-                ] as [String : Any]
-            PostData(newPostData: Post){(success, error) in
-                guard success else{
-                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not write post.")
-                    BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
-                    self.view.addSubview(BadPostRequest)
-                    GenericTools.Logger(data: "\n Could not write post: \(error!)")
-                    return
+            if let post = Posting {
+                if let title = Title {
+                    let Post: [String: Any] = [
+                        "Post": post,
+                        "PostTitle": title,
+                        "Poster": Name,
+                        "Epoch": Epoch,
+                        "Username": self.user,
+                        "PostId": self.postId,
+                        "PosterId": posterId
+                        ]
+                    PostData(newPostData: Post){(success, error) in
+                        guard success else{
+                            let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not write post.")
+                            BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                            self.view.addSubview(BadPostRequest)
+                            GenericTools.Logger(data: "\n Could not write post:")
+                            return
+                        }
+                        self.activityIndicator.stopAnimating();
+                        UIApplication.shared.endIgnoringInteractionEvents();
+                        self.dismiss(animated: true, completion: nil)
+                    }
                 }
-                self.activityIndicator.stopAnimating();
-                UIApplication.shared.endIgnoringInteractionEvents();
-                self.dismiss(animated: true, completion: nil)
             }
         }
     }
     func PostData(newPostData: [String : Any], completion: @escaping (Bool, Error?) -> Void){
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").child(self.postId).setValue(newPostData){ error in
-            completion(false, error)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum/\(self.postId)").updateChildValues(newPostData){ _,Error in
+            completion(false, nil)
         }
         
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum/ForumIds").child(self.postId).setValue(self.postId){ error in
-            completion(false, error)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum/ForumIds").updateChildValues([self.postId:self.postId]){ _,Error in
+            completion(false, nil)
         }
         completion(true, nil)
     }

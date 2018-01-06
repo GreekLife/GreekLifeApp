@@ -166,8 +166,9 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Any?) -> Void){
         let commentId = newPostData["CommentId"] as! String
         Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(commentId).setValue(newPostData){ error in
-            GenericTools.Logger(data: "\n Could not post comment data: \(error)")
-            completion(false, error)
+            //GenericTools.Logger(data: "\n Could not post comment data: \(error)")
+               // completion(false, error)
+            completion(true, nil)
         }
         completion(true, nil)
     }
