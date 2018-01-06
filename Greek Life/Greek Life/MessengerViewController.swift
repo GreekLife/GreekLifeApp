@@ -76,7 +76,7 @@ class ChannelDialogue: Dialogue {
     // For innitializing a channel from database
     init(id:String) {
         super.init(dialogueType: "ChannelDialogues")
-        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "ChannelDialogues/"+id)
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/"+id)
         self.id = id
         self.name = snapshot.childSnapshot(forPath: "Name").value as! String
         for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
@@ -93,13 +93,13 @@ class ChannelDialogue: Dialogue {
     
     // Send a message to the channel
     func sendMessage(message:Message) {
-        Database.database().reference().child("ChannelDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
     }
     
     // --- Static Functions --- //
     //Creation of a Channel
     static func createChannel(channelName:String, messengees:[Messengee], welcomeMessage:Message) -> Void {
-        let dbChannelRef = Database.database().reference().child("ChannelDialogues/").childByAutoId()
+        let dbChannelRef = Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/").childByAutoId()
         dbChannelRef.setValue(["Name": channelName])
         dbChannelRef.child("Messages").setValue([welcomeMessage.id: welcomeMessage.content])
         var listOfMessengees = ""
@@ -155,7 +155,7 @@ class DirectDialogue: Dialogue {
         // Otherwise there will be an error and so,
         // create a new one with a welcome message from both messengees.
         //let handle = Database.database().reference().child("DirectDialogues/"+id).observe(.value, with: { snapshot in
-        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "DirectDialogues/"+id)
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/DirectDialogues/"+id)
         if snapshot.hasChildren() {
             //Pulling Messages
             for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
@@ -171,7 +171,7 @@ class DirectDialogue: Dialogue {
                 let timeStamp = Int(Date.init().timeIntervalSince1970)
                 let messengeeID = messengee.userID
                 let messageID = String(timeStamp)+", "+messengeeID
-                Database.database().reference().child("DirectDialogues/"+self.id+"/Messages/"+messageID).setValue("Hey, wassup?")
+                Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/DirectDialogues/"+self.id+"/Messages/"+messageID).setValue("Hey, wassup?")
             }
         }
         //})
@@ -191,7 +191,7 @@ class DirectDialogue: Dialogue {
     // --- Send Message to Dialogue --- //
     
     func sendMessage(message:Message) {
-        Database.database().reference().child("DirectDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/DirectDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
     }
     
 }
@@ -209,7 +209,7 @@ class Messengee {
     
     static func getAllFromDB () -> Void {
         //let handle = Database.database().reference().child("Users").observe(.value, with: { snapshot in
-        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users")
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users")
         self.messengees.removeAll()
         for user in snapshot.children {
             self.messengees.append(Messengee(userID: (user as! DataSnapshot).key))
@@ -234,7 +234,7 @@ class Messengee {
     init(userID:String) {
         self.userID = userID
         //let handle = Database.database().reference().child("Users/"+userID).observe(.value, with: { (snapshot) in
-        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+userID)
+        let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+userID)
         self.firstName = snapshot.childSnapshot(forPath: "First Name").value as? String ?? " ";
         self.lastName = snapshot.childSnapshot(forPath: "Last Name").value as? String ?? " ";
         self.brotherName = snapshot.childSnapshot(forPath: "BrotherName").value as? String ?? " ";
@@ -268,14 +268,14 @@ class Message {
         let idComponents = messageID.components(separatedBy: ", ")
         self.timeSent = idComponents[0]
         self.sentBy = idComponents[1]
-        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
+        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
     }
     //For sending a message
     init(senderID:String, content:String) {
         self.timeSent = String(Int(Date.init().timeIntervalSince1970))
         self.sentBy = senderID
         self.id = self.timeSent+", "+self.sentBy
-        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: "Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
+        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
         self.content = content
     }
     
@@ -315,7 +315,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
         Database.database().reference().observeSingleEvent(of: .value, with: {snapshot in
             DatabaseHousekeeping.dbSnapshot = snapshot
             self.channelDialogues.removeAll()
-            for channel in snapshot.childSnapshot(forPath: "ChannelDialogues").children {
+            for channel in snapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues").children {
                 let listOfChannelMembers = ((channel as! DataSnapshot).childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
                 if listOfChannelMembers.contains(LoggedIn.User["UserID"] as! String) ||
                     (LoggedIn.User["Position"] as! String == "Master" && LoggedIn.User["Validated"] as! Bool == true)
@@ -925,13 +925,13 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
         DatabaseHousekeeping.chSettingsHandle = Database.database().reference().observe(.value, with: { snapshot in DatabaseHousekeeping.dbSnapshot = snapshot
             let snapshot = DatabaseHousekeeping.dbSnapshot
             // Get all potential messengees
-            for messengeeSnap in snapshot.childSnapshot(forPath: "Users").children
+            for messengeeSnap in snapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users").children
             {
                 self.allMessengees.append(Messengee(userID: (messengeeSnap as! DataSnapshot).key))
             }
             // Get all channel data if channel exists and shove it into the fields
-            if self.channelID != "" && snapshot.childSnapshot(forPath: "ChannelDialogues/"+self.channelID).exists() {
-                let channelSnap = snapshot.childSnapshot(forPath: "ChannelDialogues/"+self.channelID)
+            if self.channelID != "" && snapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/"+self.channelID).exists() {
+                let channelSnap = snapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/"+self.channelID)
                 // Get channelID
                 self.channelID = channelSnap.key
                 // Get channelName
@@ -992,10 +992,10 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
         // Get or set referece/id for channelDialogue
         var channelDBReference = DatabaseReference()
         if self.channelID == "" {
-            channelDBReference = Database.database().reference().child("ChannelDialogues").childByAutoId()
+            channelDBReference = Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues").childByAutoId()
         }
         else {
-            channelDBReference = Database.database().reference().child("ChannelDialogues/"+self.channelID)
+            channelDBReference = Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/"+self.channelID)
         }
         // --- Update the messengees --- //
         // Make the string of IDs for the database

@@ -118,9 +118,9 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     
     @IBAction func Save(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
-        Database.database().reference().child("Users/\(mMembers.memberObj!.id)/Position").setValue(mPosition.text)
-        Database.database().reference().child("Users/\(mMembers.memberObj!.id)/BrotherName").setValue(mBrother.text)
-        Database.database().reference().child("Users/\(mMembers.memberObj!.id)/Validated").setValue(true)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Position").setValue(mPosition.text)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/BrotherName").setValue(mBrother.text)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Validated").setValue(true)
         
         mMembers.memberObj?.brotherName = mBrother.text!
         mMembers.memberObj?.position = mPosition.text!

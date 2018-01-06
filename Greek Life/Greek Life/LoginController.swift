@@ -16,8 +16,6 @@ struct LoggedIn {
     static var User: [String: Any] = [:]
 }
 
-
-
 class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var Username: UITextField!
     @IBOutlet weak var Title_Pic: UIImageView!
@@ -54,7 +52,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             return
         }
         ref = Database.database().reference()
-        ref.child("CreateAccount").child("GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/CreateAccount/GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
             let code = snapshot.value as? String
             if code == enteredCode {
                 self.activityIndicator.stopAnimating();
@@ -179,7 +177,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     func getEmail(name: String, completion: @escaping (Bool, Any?, Error?) -> Void){
         ref = Database.database().reference()
-        self.ref.child("Users").observeSingleEvent(of: .value, with: { (snapshot) in
+        self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:[String:Any]] {
                 for (key, _ ) in user {
                     if (user[key]!["Username"] as! String) == name || (user[key]!["Email"] as! String) == name {
@@ -216,10 +214,10 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     "Username": LoggedIn.User["Username"] as! String
                 ]
                 if self.NotifId != "" {
-                    Database.database().reference().child("NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
+                    Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
                         GenericTools.Logger(data: "\n Could not add notification id to list: \(error)")
                     }
-                    Database.database().reference().child("Users/"+(LoggedIn.User["UserID"] as! String)+"/NotificationId").setValue(self.NotifId){(error) in
+                    Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+(LoggedIn.User["UserID"] as! String)+"/NotificationId").setValue(self.NotifId){(error) in
                         GenericTools.Logger(data: "\n Could not change users notification id: \(error)")
                     }
                 }
@@ -240,6 +238,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
         if let notifId = defaults.string(forKey: "NotificationId") {
             self.NotifId = notifId
             if let username = defaults.string(forKey: "Username") {
@@ -258,8 +257,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
             self.present(alert, animated: true, completion: nil)
             return
         }
-        LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
-
         CodeBox1.delegate = self
         CodeBox2.delegate = self
         CodeBox3.delegate = self

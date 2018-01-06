@@ -104,7 +104,7 @@ class AccountDetails: UIViewController {
                                 "Blocked": false,
                                 "Delay": 0
                                 ] as [String : Any]
-                            Database.database().reference().child("Blocked/\(NewUser.userID)").setValue(value) { (error) in
+                            Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Blocked/\(NewUser.userID)").setValue(value) { (error) in
                                 GenericTools.Logger(data: "\n Error initializing block value: \(error)")
                             }
                             self.performSegue(withIdentifier: "Profile", sender: self);
@@ -138,7 +138,7 @@ class AccountDetails: UIViewController {
     
     func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         ref = Database.database().reference()
-        ref.child("Users").child(NewUser.userID).setValue(newPostData) { (error) in
+        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").child(NewUser.userID).setValue(newPostData) { (error) in
             completion(false, error)
         }
         completion(true, nil)
@@ -235,7 +235,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
             else {
                 image = LoggedIn.User["UserID"] as! String
             }
-            let storageRef = Storage.storage().reference().child("ProfilePictures/\(image).jpg")
+            let storageRef = Storage.storage().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ProfilePictures/\(image).jpg")
             if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
                 let newMetadata = StorageMetadata()
                 newMetadata.contentType = "image/jpeg";
@@ -369,7 +369,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         else {
             id = NewUser.userID
         }
-        Database.database().reference().child("Users").child(id).setValue(newPostData)
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").child(id).setValue(newPostData)
         completion(true, nil)
 
     }
@@ -405,7 +405,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     
     func getBrotherNames() {
             ref = Database.database().reference()
-            self.ref.child("Users").observe(.value, with: { (snapshot) in
+            self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").observe(.value, with: { (snapshot) in
                 for snap in snapshot.children{
                     if let childSnapshot = snap as? DataSnapshot
                     {

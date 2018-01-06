@@ -29,7 +29,7 @@ class ChapterInfoViewController: UIViewController {
 
     func getInfo(completion: @escaping (Dictionary<String, Any>, Error?) -> Void){
         let ref = Database.database().reference()
-        ref.child("Info").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Info").observeSingleEvent(of: .value, with: { (snapshot) in
             if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
                 completion(postDictionary,nil )
             }

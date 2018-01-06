@@ -137,11 +137,11 @@ class CreatePostViewController: UIViewController {
         }
     }
     func PostData(newPostData: [String : Any], completion: @escaping (Bool, Error?) -> Void){
-        Database.database().reference().child("Forum").child(self.postId).setValue(newPostData){ error in
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").child(self.postId).setValue(newPostData){ error in
             completion(false, error)
         }
         
-        Database.database().reference().child("Forum/ForumIds").child(self.postId).setValue(self.postId){ error in
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum/ForumIds").child(self.postId).setValue(self.postId){ error in
             completion(false, error)
         }
         completion(true, nil)

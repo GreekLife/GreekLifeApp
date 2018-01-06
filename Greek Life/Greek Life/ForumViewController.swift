@@ -244,7 +244,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func getPosts(completion: @escaping (Bool, Any?, Any?) -> Void){
         ref = Database.database().reference()
-        self.ref.child("Forum").observe(.value, with: { (snapshot) in
+        self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").observe(.value, with: { (snapshot) in
             var count = 1;
             var Posts:[ForumPost] = []
             for snap in snapshot.children{

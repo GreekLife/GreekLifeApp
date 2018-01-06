@@ -335,7 +335,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
         func GetListOfPolls(completion: @escaping (Bool, Any?) -> Void) {
             PollRef = Database.database().reference()
-            PollRef.child("Polls").observe(.value, with: { (snapshot) in
+            PollRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Polls").observe(.value, with: { (snapshot) in
                 Polling.ListOfPolls.removeAll()
                 let snapshot = snapshot.children
                 for snap in snapshot {
@@ -376,7 +376,7 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func CalculateUpVotes(completion: @escaping (Bool, Any?) -> Void) {
         PollRef = Database.database().reference()
-        PollRef.child("PollOptions").observe( .value, with: { (snapshot) in
+        PollRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").observe( .value, with: { (snapshot) in
             self.refreshPollUpvotes()
             let snapshot = snapshot.children
             for snap in snapshot {
@@ -453,10 +453,10 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     var buttonIdentifier: String = ""
     func DeleteSelectedPollInternal(action: UIAlertAction) {
         if action.title == "Delete"{
-            FirebaseDatabase.Database.database().reference(withPath: "Polls").child(self.buttonIdentifier).removeValue(){ error in
+            FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Polls").child(self.buttonIdentifier).removeValue(){ error in
                 GenericTools.Logger(data: "\n Could not delete poll: \(error)")
             }
-            FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.buttonIdentifier).removeValue(){ error in
+            FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.buttonIdentifier).removeValue(){ error in
                 GenericTools.Logger(data: "\n Could not delete poll option list: \(error)")
             }
             self.deleteState = false
@@ -708,7 +708,7 @@ class PollVoting: UIViewController {
                 GenericTools.FrameToFitTextView(View: tempView)
                 ExistingOptions[option].frame.size.height = tempView.frame.size.height + 20
                 ExistingOptions[option].setTitle(PollViewed.Options[option], for: .normal)
-                ExistingOptions[option].backgroundColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1)
+                ExistingOptions[option].backgroundColor = UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
                 ExistingOptions[option].frame.origin.y = ExistingOptions[option - 1].frame.origin.y + ExistingOptions[option - 1].frame.size.height + 20
                 ExistingOptions[option].tintColor = .white
                 ExistingOptions[option].contentHorizontalAlignment = .left
@@ -745,16 +745,16 @@ class PollVoting: UIViewController {
         if Reachability.isConnectedToNetwork() == true {
             let name = "\(self.first) \(self.last)"
             let ref = Database.database().reference()
-            ref.child("PollOptions").child(self.PollViewed.PollId).child("\"0\"/Names").updateChildValues([self.UserId : self.UserId]){ (error) in
+            ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"0\"/Names").updateChildValues([self.UserId : self.UserId]){ (error) in
                 GenericTools.Logger(data: "\n Couldn't update vote: \(error)")
             }
-            ref.child("PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
+            ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
                 if snapshot.hasChild(self.UserId){
-                    FirebaseDatabase.Database.database().reference(withPath: "PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").child(self.UserId).removeValue()
+                    FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").child(self.UserId).removeValue()
                     button.backgroundColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1)
                 }
                 else {
-                    ref.child("PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])
+                    ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])
                     button.backgroundColor = UIColor(displayP3Red: 255/255, green: 224/255, blue: 0/255, alpha: 1)
                 }
             }){ (error) in
@@ -769,7 +769,7 @@ class PollVoting: UIViewController {
     
     func CalculateVotes(completion: @escaping (Bool, Any?) -> Void) {
         let ref = Database.database().reference()
-        ref.child("PollOptions").child(self.PollViewed.PollId).observe( .value, with: { (snapshot) in
+        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).observe( .value, with: { (snapshot) in
             self.refreshPollUpvotes()
             let snapshot = snapshot.children
             for snap in snapshot {
