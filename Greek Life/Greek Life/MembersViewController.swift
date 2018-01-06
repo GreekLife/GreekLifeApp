@@ -80,6 +80,7 @@ class MembersViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let member = collectionView.dequeueReusableCell(withReuseIdentifier: "MemberCell", for: indexPath) as! MemberCollectionViewCell
+        member.MemberImage.layer.cornerRadius = member.MemberImage.frame.size.width / 2
         member.MemberSpecialty.text = mMembers.MemberList[indexPath.row].degree
         member.MemberName.text = "\(mMembers.MemberList[indexPath.row].first) \(mMembers.MemberList[indexPath.row].last)"
         member.MemberImage.image = mMembers.MemberList[indexPath.row].picture
@@ -143,7 +144,7 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
         
         First.text = mMembers.memberObj?.first
         Last.text = mMembers.memberObj?.last
-        Brother.text = "Brother \(mMembers.memberObj?.brotherName ?? "")"
+        Brother.text = "\(mMembers.memberObj?.brotherName ?? "")"
         Graduation.text = mMembers.memberObj?.graduateDay
         School.text = mMembers.memberObj?.school
         Birthday.text = mMembers.memberObj?.birthday
@@ -160,9 +161,9 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             Image.image = pic
         }
         
-        if self.position == "Master" && mMembers.memberObj?.position != "Master" {
+        if self.position == "Master" && mMembers.memberObj?.position != "Master" && mMembers.memberObj?.status == false {
             Position.isHidden = true
-            mPosition.frame.origin.y = Position.frame.origin.y
+            mPosition.frame.origin.y = Position.frame.origin.y + 3
             mPosition.frame.origin.x = Position.frame.origin.x
             mPosition.frame.size.width = Position.frame.size.width
             mPosition.isHidden = false
@@ -171,7 +172,7 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             Brother.isHidden = true
             mBrother.frame.origin.y = Brother.frame.origin.y
             mBrother.frame.origin.x = Brother.frame.origin.x
-            mBrother.frame.size.width = Brother.frame.size.width
+            mBrother.frame.size.width = Brother.frame.size.width - 15
             mBrother.isHidden = false
             mBrother.text = Brother.text
             

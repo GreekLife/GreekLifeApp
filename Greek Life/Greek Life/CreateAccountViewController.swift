@@ -148,7 +148,7 @@ class AccountDetails: UIViewController {
     
 }
 
-class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var Position: UITextField!
     @IBOutlet weak var FirstName: UITextField!
@@ -428,6 +428,13 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         ImageButton.layer.borderColor = UIColor.black.cgColor
         ImageButton.layer.borderWidth = 1
         let pickerView = UIPickerView()
+        emailEdit.layer.cornerRadius = 5
+        
+        if LoggedIn.User["Position"] as! String == "Master" {
+            Position.isUserInteractionEnabled = false
+            Position.isEnabled = false
+
+        }
         
         pickerView.delegate = self
         imagePicker.delegate = self
@@ -437,10 +444,10 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         if NewUser.edit == true {
             if LoggedIn.User["Position"] as? String == "Master" {
                 Position.isUserInteractionEnabled = false
+                Position.textColor = UIColor(displayP3Red: 255, green: 224, blue: 0, alpha: 1)
             }
             emailEdit.isHidden = false
             Cancel.isHidden = false
-            emailEdit.layer.cornerRadius = 5
             emailEdit.text = LoggedIn.User["Email"] as? String
             FirstName.text = LoggedIn.User["First Name"] as? String
             LastName.text = LoggedIn.User["Last Name"] as? String

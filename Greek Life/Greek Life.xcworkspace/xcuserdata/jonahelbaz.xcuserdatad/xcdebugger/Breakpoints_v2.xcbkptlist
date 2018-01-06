@@ -24,7 +24,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.504626"
+            timestampString = "536891373.669071"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -38,7 +38,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.505147"
+            timestampString = "536891373.66918"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -52,7 +52,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.505544"
+            timestampString = "536891373.669256"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -66,7 +66,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.505856"
+            timestampString = "536891373.669318"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -80,7 +80,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.506163"
+            timestampString = "536891373.6694"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -94,7 +94,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.506464"
+            timestampString = "536891373.6694911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -108,7 +108,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/ForumViewController.swift"
-            timestampString = "536777315.506773"
+            timestampString = "536891373.669572"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "447"
@@ -186,77 +186,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/MessengerViewController.swift"
-            timestampString = "536777315.507162"
+            timestampString = "536885227.601752"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "983"
             endingLineNumber = "983"
-            landmarkName = "doneBTN(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Greek Life/CreatePostViewController.swift"
-            timestampString = "536777315.508938"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
-            landmarkName = "PostData(newPostData:completion:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Greek_Life.CreatePostViewController.PostData(newPostData: Swift.Dictionary&lt;Swift.String, Any&gt;, completion: (Swift.Bool, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Greek Life"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonahelbaz/Desktop/Fraternity_IOS/GreekLife/Greek%20Life/Greek%20Life/CreatePostViewController.swift"
-                  timestampString = "536777315.936862"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "141"
-                  endingLineNumber = "141"
-                  offsetFromSymbolStart = "88">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Greek_Life.CreatePostViewController.PostData(newPostData: Swift.Dictionary&lt;Swift.String, Any&gt;, completion: (Swift.Bool, Swift.Optional&lt;Swift.Error&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Greek Life"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jonahelbaz/Desktop/Fraternity_IOS/GreekLife/Greek%20Life/Greek%20Life/CreatePostViewController.swift"
-                  timestampString = "536777315.939711"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "142"
-                  endingLineNumber = "142"
-                  offsetFromSymbolStart = "28">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Greek Life/CreatePostViewController.swift"
-            timestampString = "536777393.413426"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
-            landmarkName = "UploadPost()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

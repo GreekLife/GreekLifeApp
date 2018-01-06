@@ -390,7 +390,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
             cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
             cell.Post.text = Postings.AllPosts![indexPath.row].Post
-            let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
+            let date = CreateDate.getTimeSince(epoch: Postings.AllPosts![indexPath.row].PostDate)
             cell.PostDate.text = date
             if self.position == "Master" || Postings.AllPosts![indexPath.row].PosterId == self.userId {
                 cell.DeleteButton.accessibilityLabel = Postings.AllPosts![indexPath.row].PostId
@@ -412,7 +412,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.PosterName.text = Postings.AllPosts![indexPath.row].Poster
             cell.PostTitle.text = Postings.AllPosts![indexPath.row].PostTitle
             cell.Post.text = Postings.AllPosts![indexPath.row].Post
-            let date = CreateDate.getCurrentDate(epoch: Postings.AllPosts![indexPath.row].PostDate)
+            let date = CreateDate.getTimeSince(epoch: Postings.AllPosts![indexPath.row].PostDate)
             cell.PostDate.text = date
             
             if(ThisMonthClicked == true){

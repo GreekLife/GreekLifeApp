@@ -17,7 +17,7 @@ class News: Comparable {
         return lhs.postId == rhs.postId
     }
     static func < (lhs: News, rhs: News) -> Bool {
-        return lhs.Epoch > rhs.Epoch
+        return lhs.Epoch < rhs.Epoch
     }
     
     var Epoch: Double
@@ -237,6 +237,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 GenericTools.Logger(data: "\n Could not get posts from database!")
                 return
             }
+            self.NewsPosts.sort()
             self.NewsPosts = mergeSorting.mergeSort(self.NewsPosts)
             self.TableView.reloadData()
         }

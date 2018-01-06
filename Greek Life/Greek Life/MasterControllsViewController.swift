@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseAuth
+import FirebaseStorage
 
 class MasterControllsViewController: UIViewController {
     
@@ -20,6 +21,7 @@ class MasterControllsViewController: UIViewController {
     @IBOutlet weak var TempBan: UIButton!
     @IBOutlet weak var PostNews: UIButton!
     @IBOutlet weak var Validate: UIButton!
+    @IBOutlet weak var InfoPage: UIButton!
     @IBOutlet weak var Code: UILabel!
     
     var ref: DatabaseReference!
@@ -37,7 +39,8 @@ class MasterControllsViewController: UIViewController {
         GenerateNewCode.layer.cornerRadius = 5
         KickAMember.layer.cornerRadius = 5
         SendNotif.layer.cornerRadius = 5
-        CurrentCode.layer.cornerRadius = 6
+        CurrentCode.layer.cornerRadius = 5
+        InfoPage.layer.cornerRadius = 5
         
         ref = Database.database().reference()
         ref.child("CreateAccount").child("GeneratedKey").observe(.value, with: { (snapshot) in
@@ -205,6 +208,7 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBAction func Back(_ sender: Any) {
         self.dismiss(animated: true)
     }
+
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "KickCell", for: indexPath) as! KickPrototypeCell
@@ -221,19 +225,22 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return true
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if ListType.kick == true {
-        if (editingStyle == UITableViewCellEditingStyle.delete) {
-            let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly kick this member?", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "Kick", style: UIAlertActionStyle.default, handler: KickMember)
-            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
-            verify.addAction(okAction)
-            verify.addAction(destructorAction)
-            self.present(verify, animated: true, completion: nil)
-            tempIndex = indexPath.row
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let editAction = UITableViewRowAction(style: .destructive, title: "Kick") { (rowAction, indexPath) in
+            if ListType.kick == true {
+                    let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly kick this member?", preferredStyle: UIAlertControllerStyle.alert)
+                    let okAction = UIAlertAction(title: "Kick", style: UIAlertActionStyle.default, handler: self.KickMember)
+                    let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+                    verify.addAction(okAction)
+                    verify.addAction(destructorAction)
+                    self.present(verify, animated: true, completion: nil)
+                    self.tempIndex = indexPath.row
             }
         }
+        editAction.backgroundColor = .blue
+        return [editAction]
     }
+    
     var tempIndex = 0
     func KickMember(action: UIAlertAction) {
         FirebaseDatabase.Database.database().reference(withPath: "Users").child(self.memberId[tempIndex]).removeValue(){ (error) in
@@ -392,6 +399,192 @@ class Ban: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
 }
+
+class DefineInfo: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    
+    @IBAction func BackBTN(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func Save(_ sender: Any) {
+        
+        if ChapterName.text! == "" || FoundingDate.text! == "" || ActiveMaster.text! == "" {
+            let invalid = UIAlertController(title: "Empty", message: "Please do not leave any info empty", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            invalid.addAction(okAction)
+            self.present(invalid, animated: true, completion: nil)
+            return
+        }
+        
+        if self.pickedImage == nil {
+            let invalid = UIAlertController(title: "Picture", message: "Please upload a logo with your info", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+            invalid.addAction(okAction)
+            self.present(invalid, animated: true, completion: nil)
+            return
+        }
+        
+        
+        if self.pickedImage != nil {
+            let storageRef = Storage.storage().reference().child("Info/\(imageName).jpg")
+            if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
+                let newMetadata = StorageMetadata()
+                newMetadata.contentType = "image/jpeg";
+                
+                storageRef.putData(uploadData, metadata: newMetadata, completion:{ (metadata, error) in
+                    if error == nil {
+                        let infoObject = [
+                            "ChapterName": self.ChapterName.text!,
+                            "FoundingDate": self.FoundingDate.text!,
+                            "ActiveMaster": self.ActiveMaster.text!,
+                            "ChapterLogoURL": metadata!.downloadURL()!.description
+                            ] as [String: Any]
+                        
+                        Database.database().reference().child("Info").setValue(infoObject){ error in
+                                let invalid = UIAlertController(title: "Error", message: "There was an error saving your data", preferredStyle: UIAlertControllerStyle.alert)
+                                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                                invalid.addAction(okAction)
+                                self.present(invalid, animated: true, completion: nil)
+                                return
+                        }
+                        let saved = UIAlertController(title: "Saved", message: "Info has been updated", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                        saved.addAction(okAction)
+                        self.present(saved, animated: true, completion: nil)
+                        return
+                    }
+                    else {
+                        let invalid = UIAlertController(title: "Error", message: "There was an error handling your picture", preferredStyle: UIAlertControllerStyle.alert)
+                        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                        invalid.addAction(okAction)
+                        self.present(invalid, animated: true, completion: nil)
+                        return
+                    }
+                })
+            }
+            
+        }
+    }
+    
+    @IBAction func GetImage(_ sender: Any) {
+        imagePicker.allowsEditing = true
+        imagePicker.sourceType = .photoLibrary
+        
+        present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+            LogoImage.contentMode = .center //this aint right
+            
+            LogoImage.setImage(editedImage, for: .normal)
+            LogoImage.setTitle("", for: .normal)
+            self.pickedImage = editedImage
+        }
+        else if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            LogoImage.contentMode = .center //this aint right
+            LogoImage.setBackgroundImage(pickedImage, for: .normal)
+            LogoImage.setTitle("", for: .normal)
+            self.pickedImage = pickedImage
+        }
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    @IBOutlet weak var ChapterName: UITextField!
+    @IBOutlet weak var FoundingDate: UITextField!
+    @IBOutlet weak var ActiveMaster: UITextField!
+    @IBOutlet weak var LogoImage: UIButton!
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
+
+    var pickedImage: UIImage!
+    let imagePicker = UIImagePickerController()
+    let imageName = "InfoLogoImage"
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        getInfo()  {(dictionary ,error) in
+            if let chapterName = dictionary["ChapterName"] as? String {
+                if chapterName == "Empty" {
+                    self.ChapterName.text = ""
+                    return
+                }
+                self.ChapterName.text = chapterName
+            }
+            else {
+                self.ChapterName.text = ""
+            }
+            if let foundingDate = dictionary["FoundingDate"] as? String {
+                if foundingDate == "Empty" {
+                    self.FoundingDate.text = ""
+                    return
+                }
+                self.FoundingDate.text = foundingDate
+            }
+            else {
+                self.FoundingDate.text = ""
+            }
+            if let activeMaster = dictionary["ActiveMaster"] as? String {
+                if activeMaster == "Empty" {
+                    self.ActiveMaster.text = ""
+                    return
+                }
+                self.ActiveMaster.text = activeMaster
+            }
+            else {
+                self.ActiveMaster.text = ""
+            }
+            if let url = dictionary["ChapterLogoURL"] as? String {
+                if url == "Empty" {
+                    return
+                }
+                Storage.storage().reference(forURL: url).getData(maxSize: 10000000) { (data, error) -> Void in
+                    if error == nil {
+                        if let pic = UIImage(data: data!) {
+                            self.LogoImage.setImage(pic, for: .normal)
+                            self.pickedImage = self.LogoImage.currentImage
+
+                        }
+                        else {
+                            self.LogoImage.setTitle("Could not load the current image", for: .normal)
+                            GenericTools.Logger(data: "\n Error getting url data for info")
+                        }
+                    }
+                    else {
+                        GenericTools.Logger(data: "\n Error getting url data for info: \(error!)")
+                    }
+                }
+            }
+        }
+        imagePicker.delegate = self
+        
+    }
+    
+    func getInfo(completion: @escaping (Dictionary<String, Any>, Error?) -> Void){
+        let ref = Database.database().reference()
+        ref.child("Info").observeSingleEvent(of: .value, with: { (snapshot) in
+           if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                 completion(postDictionary,nil )
+            }
+           else {
+                completion([:], nil)
+            }
+        })
+   
+    }
+    
+    
+}
+
+
+
 
 
 

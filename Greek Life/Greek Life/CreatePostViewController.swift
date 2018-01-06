@@ -136,8 +136,7 @@ class CreatePostViewController: UIViewController {
             }
         }
     }
-    func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
-        let v = postId
+    func PostData(newPostData: [String : Any], completion: @escaping (Bool, Error?) -> Void){
         Database.database().reference().child("Forum").child(self.postId).setValue(newPostData){ error in
             completion(false, error)
         }
