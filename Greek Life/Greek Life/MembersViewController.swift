@@ -80,11 +80,12 @@ class MembersViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let member = collectionView.dequeueReusableCell(withReuseIdentifier: "MemberCell", for: indexPath) as! MemberCollectionViewCell
-        member.MemberImage.layer.cornerRadius = member.MemberImage.frame.size.width / 2
         member.MemberSpecialty.text = mMembers.MemberList[indexPath.row].degree
         member.MemberName.text = "\(mMembers.MemberList[indexPath.row].first) \(mMembers.MemberList[indexPath.row].last)"
         member.MemberImage.image = mMembers.MemberList[indexPath.row].picture
-        
+        member.MemberImage.layer.cornerRadius = member.MemberImage.frame.size.width / 2
+        member.MemberImage.layer.masksToBounds = true
+
         return member
     }
 

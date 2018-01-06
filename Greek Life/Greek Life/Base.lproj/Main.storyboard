@@ -45,37 +45,26 @@
                                             <rect key="frame" x="0.0" y="0.0" width="174" height="195"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cZg-KP-xiq">
-                                                    <rect key="frame" x="73" y="139" width="28.5" height="14"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cZg-KP-xiq">
+                                                    <rect key="frame" x="12" y="144" width="151" height="14"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oBP-QV-i0c">
-                                                    <rect key="frame" x="20" y="158" width="134" height="12"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oBP-QV-i0c">
+                                                    <rect key="frame" x="12" y="163" width="151" height="12"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Acp-0T-qiO">
-                                                    <rect key="frame" x="25" y="-3" width="125" height="125"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" secondItem="Acp-0T-qiO" secondAttribute="height" multiplier="1:1" id="3pE-Nq-pkx"/>
-                                                        <constraint firstAttribute="width" constant="125" id="L8Z-L5-NCV"/>
-                                                        <constraint firstAttribute="height" constant="125" id="pxe-YA-Blu"/>
-                                                    </constraints>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Acp-0T-qiO">
+                                                    <rect key="frame" x="25" y="8" width="125" height="125"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
                                             </subviews>
                                         </view>
-                                        <constraints>
-                                            <constraint firstItem="Acp-0T-qiO" firstAttribute="centerX" secondItem="cZg-KP-xiq" secondAttribute="centerX" id="BFb-dK-cEQ"/>
-                                            <constraint firstItem="oBP-QV-i0c" firstAttribute="leading" secondItem="t1j-Gz-kl2" secondAttribute="leadingMargin" constant="12" id="E5a-J7-0M5"/>
-                                            <constraint firstItem="Acp-0T-qiO" firstAttribute="top" secondItem="t1j-Gz-kl2" secondAttribute="topMargin" constant="-11" id="L0K-ZN-xAl"/>
-                                            <constraint firstItem="Acp-0T-qiO" firstAttribute="centerX" secondItem="t1j-Gz-kl2" secondAttribute="centerX" id="TO2-ts-Tm8"/>
-                                            <constraint firstItem="cZg-KP-xiq" firstAttribute="top" secondItem="Acp-0T-qiO" secondAttribute="bottom" constant="17" id="X4y-69-3PE"/>
-                                            <constraint firstItem="Acp-0T-qiO" firstAttribute="centerX" secondItem="oBP-QV-i0c" secondAttribute="centerX" id="dLZ-ak-4wN"/>
-                                            <constraint firstItem="oBP-QV-i0c" firstAttribute="top" secondItem="cZg-KP-xiq" secondAttribute="bottom" constant="5" id="uT8-BA-Hse"/>
-                                        </constraints>
                                         <connections>
                                             <outlet property="MemberImage" destination="Acp-0T-qiO" id="V8V-3m-KbA"/>
                                             <outlet property="MemberName" destination="cZg-KP-xiq" id="6Ah-Sf-Gxe"/>
