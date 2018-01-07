@@ -44,6 +44,12 @@ struct DatabaseHousekeeping {
     }
 }
 
+struct SelectedChannel {
+    
+    static var chatName = ""
+    static var image: UIImage!
+}
+
 //-----------------------------------------------------------------------------------------------------------
 //  Messenger Objects
 //-----------------------------------------------------------------------------------------------------------
@@ -420,11 +426,13 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
             chCell.lastMessageLabel.text?.append(Messengee(userID:(channelDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (channelDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
             chCell.lastMessageLabel.text?.append((channelDialogues[indexPath.row].messages.last?.content)!+"\"")
         }
-        
         return chCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        let chCell = (tableView.dequeueReusableCell(withIdentifier: "convoCell", for: indexPath) as! ChannelDialogueCell)
+
+        SelectedChannel.chatName = channelDialogues[indexPath.row].name
         performSegue(withIdentifier: "ChatViewSegue", sender: channelDialogues[indexPath.row])
     }
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
@@ -644,6 +652,16 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        let directDialogue = self.directDialogues[indexPath.row]
+        // Get the names of the other messengees and put them in a string
+        var otherMessengees = ""
+        for messengee in directDialogue.messengees {
+            if messengee.userID != (LoggedIn.User["UserID"] as! String) {
+                otherMessengees.append(messengee.firstName+" "+messengee.lastName+", ")
+            }
+        }
+        SelectedChannel.chatName = String(otherMessengees.dropLast(2))
+        
         performSegue(withIdentifier: "ChatViewSegue", sender: directDialogues[indexPath.row])
     }
     /*func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
@@ -688,6 +706,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     @IBOutlet weak var messagesTable: UITableView!
     @IBOutlet weak var Layout: UIStackView!
     @IBOutlet weak var TableView: UITableView!
+    @IBOutlet weak var Toolbar: UIToolbar!
+    @IBOutlet weak var TextHeader: UITextField!
     
     // --- View Did Load --- //
     
@@ -722,7 +742,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             self.messagesTable.reloadData()
             self.scrollToBottom()
         })
-
+        TextHeader.text = SelectedChannel.chatName
     }
     
     
