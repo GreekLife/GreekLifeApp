@@ -704,7 +704,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         messageInputField.layer.borderWidth = 0.5
         messageInputField.delegate = self
         messageInputField.layer.cornerRadius = 10
-
+        
         // --- Set up the table --- //
         //messagesTable.estimatedRowHeight = 85.0
         messagesTable.rowHeight = 100.0 //UITableViewAutomaticDimension
@@ -722,6 +722,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             self.messagesTable.reloadData()
             self.scrollToBottom()
         })
+
     }
     
     
@@ -794,7 +795,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         self.containerView.frame.size.height = 40
         textView.frame.size.height = 30
     }
-    
+
     
     
     // --- Function to scroll to end of the table --- //
@@ -861,11 +862,13 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             let touchPoint = longPressGestureRecognizer.location(in: self.TableView)
             if let indexPath = self.TableView.indexPathForRow(at: touchPoint) {
                 let alert = UIAlertController(title: dialogue.messages[indexPath.row].sentByName, message:"", preferredStyle: UIAlertControllerStyle.alert)
-                alert.addAction(UIAlertAction(title: "Sent at: " + dialogue.messages[indexPath.row].timeSent, style: UIAlertActionStyle.default, handler: nil))
+                let timeSince = CreateDate.getTimeSince(epoch: Double(dialogue.messages[indexPath.row].timeSent)!)
+                alert.addAction(UIAlertAction(title: "Sent " + timeSince + " ago", style: UIAlertActionStyle.default, handler: nil))
                 
                 if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy || (LoggedIn.User["Position"] as! String) == "Master"{
-                    let deleteAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: DeleteMessage)
+                    let deleteAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.destructive, handler: DeleteMessage)
                     deleteAction.accessibilityLabel = String(describing: indexPath.row)
+                    alert.addAction(deleteAction)
                 }
                 
                 self.present(alert, animated: true, completion: nil)
