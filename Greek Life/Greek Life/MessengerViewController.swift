@@ -893,8 +893,9 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         }
         else {
             messageCell.messageSender.isHidden = false
-            messageCell.message.textAlignment = .left
             messageCell.messageSender.textAlignment = .left
+            messageCell.messageSender.textColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
+            messageCell.message.textAlignment = .left
             messageCell.message.backgroundColor = UIColor.clear
             messageCell.message.textContainerInset = UIEdgeInsets(top: 2, left: 5.0, bottom: 10, right: 5)
             messageCell.textbubble.layer.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1).cgColor
