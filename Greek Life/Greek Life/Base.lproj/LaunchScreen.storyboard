@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="UmB-MX-avT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="UmB-MX-avT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,9 +21,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Docs/School.png" translatesAutoresizingMaskIntoConstraints="NO" id="LYO-Fa-yrD">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                            </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="smc-tw-WuD">
                                 <rect key="frame" x="67" y="177" width="240" height="128"/>
                                 <constraints>
@@ -31,7 +28,7 @@
                                     <constraint firstAttribute="height" constant="128" id="gY5-tl-dVe"/>
                                 </constraints>
                             </stackView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Docs/Logos/Logo3.png" translatesAutoresizingMaskIntoConstraints="NO" id="WWd-Qy-1ai">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Icons/LogoHighRez.png" translatesAutoresizingMaskIntoConstraints="NO" id="WWd-Qy-1ai">
                                 <rect key="frame" x="67" y="147" width="240" height="219"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="240" id="2o0-fB-qDs"/>
@@ -39,15 +36,11 @@
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1843137255" green="0.1843137255" blue="0.1843137255" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="smc-tw-WuD" firstAttribute="centerX" secondItem="X1F-UX-sHm" secondAttribute="centerX" id="1lv-rn-gtj"/>
-                            <constraint firstItem="LYO-Fa-yrD" firstAttribute="top" secondItem="X1F-UX-sHm" secondAttribute="top" id="DI7-lk-rcj"/>
-                            <constraint firstItem="zDU-i1-ACS" firstAttribute="top" secondItem="LYO-Fa-yrD" secondAttribute="bottom" id="Esu-0t-eig"/>
-                            <constraint firstAttribute="trailing" secondItem="LYO-Fa-yrD" secondAttribute="trailing" id="Fsa-R3-uPW"/>
                             <constraint firstItem="WWd-Qy-1ai" firstAttribute="centerY" secondItem="X1F-UX-sHm" secondAttribute="centerY" constant="-77" id="H3x-21-a65"/>
                             <constraint firstItem="smc-tw-WuD" firstAttribute="centerY" secondItem="X1F-UX-sHm" secondAttribute="centerY" constant="-92.5" id="mJ6-b2-9Vy"/>
-                            <constraint firstItem="LYO-Fa-yrD" firstAttribute="leading" secondItem="X1F-UX-sHm" secondAttribute="leading" id="oZa-1X-4zp"/>
                             <constraint firstItem="WWd-Qy-1ai" firstAttribute="centerX" secondItem="X1F-UX-sHm" secondAttribute="centerX" id="wXP-uf-5DL"/>
                         </constraints>
                     </view>
@@ -58,7 +51,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Docs/Logos/Logo3.png" width="16" height="16"/>
-        <image name="Docs/School.png" width="16" height="16"/>
+        <image name="Icons/LogoHighRez.png" width="16" height="16"/>
     </resources>
 </document>

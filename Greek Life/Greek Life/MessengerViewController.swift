@@ -693,6 +693,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
+        self.view.addGestureRecognizer(longPressRecognizer)
         IQKeyboardManager.sharedManager().enable = false
         TableView.allowsSelection = false
         TableView.keyboardDismissMode = .interactive
@@ -810,6 +812,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         presentingViewController?.dismiss(animated: true)
     }
     func sendMsgBTN(button: UIButton) {
+        if Reachability.isConnectedToNetwork() {
         let messageToSend = Message(senderID: (LoggedIn.User["UserID"] as! String), content: messageInputField.text)
         if self.dialogue.type == "DirectDialogues" {
             (self.dialogue as! DirectDialogue).sendMessage(message: messageToSend)
@@ -818,6 +821,14 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             (self.dialogue as! ChannelDialogue).sendMessage(message: messageToSend)
         }
         self.messageInputField.text = ""
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "Internet Connection not available")
+            self.view.addSubview(error)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                error.isHidden = true
+            }
+        }
     }
     
     //--- Table of Messages in Direct Message or Channel ---//
@@ -830,13 +841,49 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         return self.rowHeight
     }
     
+    func DeleteMessage(Alert: UIAlertAction) {
+        let indexStr = Alert.accessibilityLabel
+        let index = Int(indexStr!)
+        let message = dialogue.messages[index!]
+        if self.dialogue.type == "DirectDialogues" {
+          
+            
+        }
+        else if self.dialogue.type == "ChannelDialogue" {
+            
+        }
+    }
+    
+    func longPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
+        
+        if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
+            
+            let touchPoint = longPressGestureRecognizer.location(in: self.TableView)
+            if let indexPath = self.TableView.indexPathForRow(at: touchPoint) {
+                let alert = UIAlertController(title: dialogue.messages[indexPath.row].sentByName, message:"", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Sent at: " + dialogue.messages[indexPath.row].timeSent, style: UIAlertActionStyle.default, handler: nil))
+                
+                if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy || (LoggedIn.User["Position"] as! String) == "Master"{
+                    let deleteAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: DeleteMessage)
+                    deleteAction.accessibilityLabel = String(describing: indexPath.row)
+                }
+                
+                self.present(alert, animated: true, completion: nil)
+                
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let messageCell = messagesTable.dequeueReusableCell(withIdentifier: "messageCell") as! MessageCell
         messageCell.message.becomeFirstResponder() //biggest patch in existance - done at 7:21am post all nighter -- should fix
+        
         if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy {
             messageCell.messageSender.textAlignment = .right
             messageCell.message.textAlignment = .right
+            messageCell.message.textContainerInset = UIEdgeInsets(top: 10, left: 0.0, bottom: 10, right: 10)
+
             messageCell.textbubble.layer.backgroundColor = UIColor(displayP3Red: 36/255, green: 91/255, blue: 155/255, alpha: 1).cgColor
             messageCell.message.backgroundColor = UIColor.clear
             messageCell.messageSender.isHidden = true
@@ -846,6 +893,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             messageCell.message.textAlignment = .left
             messageCell.messageSender.textAlignment = .left
             messageCell.message.backgroundColor = UIColor.clear
+            messageCell.message.textContainerInset = UIEdgeInsets(top: 2, left: 5.0, bottom: 10, right: 5)
             messageCell.textbubble.layer.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1).cgColor
         }
         messageCell.messageSender.text = dialogue.messages[indexPath.row].sentByName
@@ -863,15 +911,27 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         messageCell.message.frame.size = newFrame
         GenericTools.FrameToFitTextView(View: messageCell.message)
 
-        self.rowHeight = (messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 17)
+        self.rowHeight = (messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 12)
         messageCell.addSubview(messageCell.textbubble)
-        messageCell.textbubble.addSubview(messageCell.messageSender)
         messageCell.textbubble.addSubview(messageCell.message)
         
+        let messageSize = messageCell.message.text!.count
+        let nameSize = messageCell.messageSender.text!.count
+        
+        if messageSize < nameSize {
+            let subName = messageCell.messageSender.text!.index(messageCell.messageSender.text!.startIndex, offsetBy: 0)..<messageCell.message.text!.endIndex
+            messageCell.messageSender.text = messageCell.messageSender.text![subName]
+        }
+        
         if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy {
-            messageCell.textbubble.frame = CGRect(x: UIScreen.main.bounds.width - (messageCell.message.frame.size.width + 20), y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
+            messageCell.message.textAlignment = .left
+            messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y
+            messageCell.textbubble.frame = CGRect(x: UIScreen.main.bounds.width - (messageCell.message.frame.size.width + 20), y: messageCell.message.frame.origin.y, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + 3)
+            self.rowHeight = messageCell.textbubble.frame.size.height + 6
         }
         else {
+            messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y + messageCell.messageSender.frame.size.height + 1
+            messageCell.textbubble.addSubview(messageCell.messageSender)
             messageCell.textbubble.frame = CGRect(x: 10, y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
 
         }

@@ -191,7 +191,7 @@ class CreatePollViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.Option1.textColor = UIColor.black
+        self.Option1.textColor = UIColor.white
         self.Option1.backgroundColor = UIColor.clear
         Question.layer.cornerRadius = 5
         Options.append(self.Option1)

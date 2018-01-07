@@ -185,17 +185,17 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func BackHome(_ sender: Any) {
         self.presentingViewController?.dismiss(animated: true)
     }
-    
+    let filterColor = UIColor(displayP3Red: 38/255, green: 38/255, blue: 38/255, alpha: 1)
     @IBAction func Newest(_ sender: Any) {
         thisMonthClicked = false
         thisWeekClicked = false
         if oldestClicked == true {
         Polling.ListOfPolls.reverse()
         }
-       Newest.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-        Oldest.backgroundColor = UIColor.clear
-        ThisWeek.backgroundColor = UIColor.clear
-        ThisMonth.backgroundColor = UIColor.clear
+        Newest.backgroundColor = .black
+        Oldest.backgroundColor = filterColor
+        ThisWeek.backgroundColor = filterColor
+        ThisMonth.backgroundColor = filterColor
         oldestClicked = false
         newestClicked = true
         self.TableView.reloadData()
@@ -206,10 +206,10 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         thisMonthClicked = false
         thisWeekClicked = false
         Polling.ListOfPolls.reverse()
-        Oldest.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-        Newest.backgroundColor = UIColor.clear
-        ThisWeek.backgroundColor = UIColor.clear
-        ThisMonth.backgroundColor = UIColor.clear
+        Oldest.backgroundColor = .black
+        Newest.backgroundColor = filterColor
+        ThisWeek.backgroundColor = filterColor
+        ThisMonth.backgroundColor = filterColor
         newestClicked = false
         oldestClicked = true
         self.TableView.reloadData()
@@ -219,10 +219,10 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         if oldestClicked == true {
             Polling.ListOfPolls.reverse()
         }
-        ThisWeek.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-        Newest.backgroundColor = UIColor.clear
-        Oldest.backgroundColor = UIColor.clear
-        ThisMonth.backgroundColor = UIColor.clear
+        ThisWeek.backgroundColor = .black
+        Newest.backgroundColor = filterColor
+        Oldest.backgroundColor = filterColor
+        ThisMonth.backgroundColor = filterColor
         thisMonthClicked = false
         newestClicked = false
         oldestClicked = false
@@ -233,10 +233,10 @@ class PollViewController: UIViewController, UITableViewDelegate, UITableViewData
         if oldestClicked == true {
             Polling.ListOfPolls.reverse()
         }
-        ThisMonth.backgroundColor = UIColor(displayP3Red: 60/255, green: 146/255, blue: 255/255, alpha: 1)
-        Newest.backgroundColor = UIColor.clear
-        Oldest.backgroundColor = UIColor.clear
-        ThisWeek.backgroundColor = UIColor.clear
+        ThisMonth.backgroundColor = .black
+        Newest.backgroundColor = filterColor
+        Oldest.backgroundColor = filterColor
+        ThisWeek.backgroundColor = filterColor
         thisMonthClicked = true
         newestClicked = false
         oldestClicked = false
