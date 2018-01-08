@@ -225,12 +225,12 @@ forumRef.on('value', function(snapshot) {
 //Keep track of polls
 var FirstRoundPoll = true; //skip over the first read
 var pollRef = firebase.database().ref("GammaLambda/Polls/PollIds");
-pollRef.on('value', function(snapshot) {
+pollRef.on('value', snapshot => {
     if(!FirstRoundPoll) {
-        IOSIds.forEach(function(id) {
+        IOSIds.forEach(id => {
             SendIOSNotification(id, "A new Poll has been added!", 'ping.aiff', 3, 3 );
         });
-        AndroidIds.forEach(function(id) {
+        AndroidIds.forEach(id => {
             SendAndroidNotification(id, "A new Poll has been added!","");
         }); 
     }
@@ -275,7 +275,35 @@ setTimeout(function() {
 
 //Comments to come
 
+
+
+
 //Calendar to come
+var Events = [];
+var FirstRoundCalendar = true; //skip over the first read
+var calendarRef = firebase.database().ref("GammaLambda/Calendar");
+calendarRef.on('value', snapshot => {
+    if(FirstRoundCalendar) {
+        snapshot.forEach(snapshot => {
+            Events.push(snapshot.key);
+        });
+        FirstRoundCalendar = false;
+        console.log(Events);
+    }
+    if(!FirstRoundCalendar) {
+        snapshot.forEach(snapshot => {
+            if(Events.indexOf(snapshot.key) < 0) {
+                IOSIds.forEach(function(id) {
+                SendIOSNotification(id, "A new event has been added. Go confirm your attendance", 'ping.aiff', 3, 3 );
+                });
+                AndroidIds.forEach(function(id) {
+                    SendAndroidNotification(id, "A new event has been added. Go confirm your attendance","");
+                }); 
+            }
+        }); 
+    }
+    FirstRoundPoll = false;
+});
 
 
 //IM updates to come
