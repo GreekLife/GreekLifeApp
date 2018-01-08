@@ -68,79 +68,149 @@ var config = {
 var AndroidIds = [];
 var IOSIds = [];
 var UserIds = [];
+var MasterId = "";
+var MasterNotificationID = "";
+var MasterNotificationType = "";
+var NewsArray = [];
+var IdAndNotification = [];
 
 //get apple notification Ids
 firebase.initializeApp(config);
 
-var iosRef = firebase.database().ref("NotificationIds/IOS");
-iosRef.on('value', function(snapshot) {
+var iosRef = firebase.database().ref("GammaLambda/NotificationIds/IOS");
+iosRef.on('value', snapshot => {
     snapshot.forEach(function(id) {
         var wId = id.val().Id;
         IOSIds.push(wId);
+        if(snapshot.child("Username") == "Master") {
+            MasterNotificationID = id.val().Id;
+            MasterNotificationType = "IOS";
+        }
     }) 
     console.log("IOS");
     console.log(IOSIds);       
 });
 
 //get Android notification Ids
-var androidRef = firebase.database().ref("NotificationIds/Android");
-androidRef.on('value', function(snapshot) {
+var androidRef = firebase.database().ref("GammaLambda/NotificationIds/Android");
+androidRef.on('value', snapshot => {
     snapshot.forEach(function(id) {
         var wId = id.val().Id;
         AndroidIds.push(wId);
-    })        
-});
-
-//Get User ids
-var idRef = firebase.database().ref("Users");
-idRef.on('value', function(snapshot) {
-    var ids = Object.keys(snapshot.val());
-        ids.forEach(function(id) {
-            UserIds.push(id);
-        });
+        if(snapshot.child("Username") == "Master") {
+            MasterNotificationID = id.val().Id;
+            MasterNotificationType = "Android";
+        }
+    })      
     console.log("Android");
     console.log(AndroidIds);
 });
-//var masterIdRef = firebase.database().ref("Users/Master/UserId");
-//masterIdRef.on('value', function(snapshot) {
-//    UserIds.push(snapshot.val());
-//    var index = UserIds.indexOf('Master');
-//    UserIds.splice(index, 1);
-//});
+
+//Get User ids
+//notif for new user
+var FirstRoundNewUser = true;
+var idRef = firebase.database().ref("GammaLambda/Users");
+idRef.on('value', snapshot => {
+
+
+ snapshot.forEach(snapshot => {
+    var idStored = {
+        NotificationId: snapshot.child("NotificationId").val(),
+        Id: snapshot.child("UserID").val()
+    }; 
+        IdAndNotification.push(idStored);
+
+    if(snapshot.child("Position").val() == "Master") {
+            MasterId = snapshot.child("UserID").val();
+            MasterNotificationID = snapshot.child("NotificationId");
+            console.log("MasterID: " + MasterId);
+        }                                                               
+        });                        
+    var ids = Object.keys(snapshot.val());
+        ids.forEach(id =>{
+            if(!FirstRoundNewUser) {
+                if(UserIds.indexOf(id) < 0) {
+                    //user doesnt already exist -> new user
+                    if(MasterNotificationType == "IOS") {
+                        SendIOSNotification(MasterNotificationID, "You have a new user to verify!", 'ping.aiff', 1, 3 );
+                    }
+                    if(MasterNotificationType == "Android") {
+                        SendAndroidNotification(MasterNotificationID, "You have a new user to verify","");
+                     }
+                    UserIds.push(id);
+                }
+            }
+            else {
+            UserIds.push(id);
+            }
+        });
+    console.log("User Ids");
+    console.log(UserIds);
+    FirstRoundNewUser = false;
+});
+
+
+//New news on home page
+var FirstRoundNews = true;
+var newsRef = firebase.database().ref("GammaLambda/News");
+newsRef.on('value', snapshot => {
+    snapshot.forEach(snapshot => {
+        if(FirstRoundNews) {
+             NewsArray.push(snapshot.key);
+            }
+        else {
+            if(NewsArray.indexOf(snapshot.key) < 0) {
+                //news is new
+                NewsArray.push(snapshot.key);
+                IOSIds.forEach(id => {
+                    SendIOSNotification(id, "There is a new post on the home page!", 'ping.aiff', 1, 3 );
+                });
+                AndroidIds.forEach(id => {
+                    SendAndroidNotification(id, "There is a new post on the home page!" ,"");
+                });
+            }
+        }
+    });
+    FirstRoundNews = false;
+
+});
 
  //Custom master notification.
 var FirstRoundMaster = true; //skip over the first read
-var masterRef = firebase.database().ref("GeneralMessage/Master");
-masterRef.on('value', function(snapshot) {
+var masterRef = firebase.database().ref("GammaLambda/GeneralMessage/Master");
+masterRef.on('value', snapshot => {
     if(!FirstRoundMaster) {
-        IOSIds.forEach(function(id) {
+        if(snapshot.val() != "") {
+        IOSIds.forEach(id => {
             SendIOSNotification(id, snapshot.val(), 'ping.aiff', 1, 3 );
         });
-        AndroidIds.forEach(function(id) {
+        AndroidIds.forEach(id => {
             SendAndroidNotification(id, snapshot.val(),"");
         });
+     }
     }
     FirstRoundMaster = false;
 });
 
 //App notifications
 var FirstRoundApp = true; //skip over the first read
-var appRef = firebase.database().ref("GeneralMessage/Message");
-appRef.on('value', function(snapshot) {
+var appRef = firebase.database().ref("GammaLambda/GeneralMessage/Message");
+appRef.on('value', snapshot => {
     if(!FirstRoundApp) {
-        IOSIds.forEach(function(id) {
+        IOSIds.forEach(id => {
             SendIOSNotification(id, snapshot.val(), 'ping.aiff', 2, 3 );
         });  
-        AndroidIds.forEach(function(id) {
+        AndroidIds.forEach(id => {
             SendAndroidNotification(id, snapshot.val(),"");
         });
     }
     FirstRoundApp = false;
 });
 
+
 //Keep track of forum posts
 var FirstRoundForum = true; //skip over the first read
-var forumRef = firebase.database().ref("Forum/ForumIds");
+var forumRef = firebase.database().ref("GammaLambda/Forum/ForumIds");
 forumRef.on('value', function(snapshot) {
     if(!FirstRoundForum) {
         IOSIds.forEach(function(id) {
@@ -153,8 +223,9 @@ forumRef.on('value', function(snapshot) {
     FirstRoundForum = false;
 });
 
+//Keep track of polls
 var FirstRoundPoll = true; //skip over the first read
-var pollRef = firebase.database().ref("Polls/PollIds");
+var pollRef = firebase.database().ref("GammaLambda/Polls/PollIds");
 pollRef.on('value', function(snapshot) {
     if(!FirstRoundPoll) {
         IOSIds.forEach(function(id) {
@@ -177,41 +248,31 @@ Added calendar events
 setTimeout(function() {
     CheckForUnansweredPolls();
 }, (21600000*2)); //check if polls have been answered every 12h 
-function CheckForUnansweredPolls() {
+ function CheckForUnansweredPolls() {
     var hasntAnsweredAPoll = [];
-    var pollOpRef = firebase.database().ref("PollOptions");
-    pollOpRef.on('value', function(snapshot) {
-        var options = Object.keys(snapshot.val());
-         var index = options.indexOf('PollIds');
-        options.splice(index, 1); //gotta eliminate pollids key
-
-        options.forEach(function(id) {
-            var pollOpIdRef = firebase.database().ref("PollOptions/"+id+"/\"0\"/Names");
-            pollOpIdRef.on('value', function(snap) {
-                var idHasVoted = Object.keys(snap.val());
-                UserIds.forEach(function(exists) {
-                    if (idHasVoted.indexOf(exists) < 0) {
-                         var userIdRef = firebase.database().ref("Users/"+exists+"/NotificationId"); 
-                         userIdRef.on('value', function(snap) { 
-                             if(snap.val() != null) {
-                                 if (hasntAnsweredAPoll.indexOf(snap.val()) < 0) {
-                                    hasntAnsweredAPoll.push(snap.val());
-                                 }
-                             }
-                         });
-                    }
+    var pollOpRef = firebase.database().ref("GammaLambda/PollOptions");
+    pollOpRef.once('value', snapshot => {
+        var arrayOfVoters = [];
+        snapshot.forEach(snapshot => {
+            var ids = snapshot.child("\"0\"").child("Names");
+                ids.forEach(id => {
+                    arrayOfVoters.push(id.key);
                 });
+                IdAndNotification.forEach(idStored => {
+                    if(arrayOfVoters.indexOf(idStored.Id) < 0) {
+                        if(IOSIds.indexOf(idStored.NotificationId) == 0) {
+                           SendIOSNotification(idStored.NotificationId, "There are existing polls you haven't answered", 'ping.aiff', 3, 3 );
+                        }
+                         if(AndroidIds.indexOf(idStored.NotificationId) == 0) {
+                           SendAndroidNotification(idStored.NotificationId, "There are existing polls you haven't answered","");
+                        }
+                    }
+                })
             });
-        });
 
-        console.log("Hasnt Voted:");
-        console.log(hasntAnsweredAPoll);
-        hasntAnsweredAPoll.forEach(function(notif) {
-                SendIOSNotification(notif, "You have an unanswered poll.", 'ping.aiff', 4, 3 ); 
-                SendAndroidNotification(notif, "You have an unanswered poll.", "");
-         });
-    });
-}
+       });
+
+ }
 
 //Let master know a user needs to be revalidated
 

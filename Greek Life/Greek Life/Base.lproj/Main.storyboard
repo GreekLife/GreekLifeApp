@@ -2413,11 +2413,11 @@
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="GE5-ZB-um5"/>
                                         </items>
                                     </toolbar>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="5Y9-7e-BvO">
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="5Y9-7e-BvO">
                                         <rect key="frame" x="0.0" y="58" width="375" height="100"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZOe-jt-SmC">
-                                                <rect key="frame" x="0.0" y="0.0" width="111.5" height="100"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="182.5" height="100"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="100" id="s0N-Fv-cXC"/>
                                                 </constraints>
@@ -2427,10 +2427,10 @@
                                                 </connections>
                                             </button>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="A2D-Vs-MEM">
-                                                <rect key="frame" x="121.5" y="0.0" width="253.5" height="100"/>
+                                                <rect key="frame" x="192.5" y="0.0" width="182.5" height="100"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uUT-yv-mMK">
-                                                        <rect key="frame" x="0.0" y="0.0" width="253.5" height="30"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="182.5" height="30"/>
                                                         <color key="backgroundColor" red="0.3529437780380249" green="0.3529365062713623" blue="0.35294145345687866" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="30" id="QbC-qo-4u3"/>
@@ -2440,7 +2440,7 @@
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" textContentType="given-name"/>
                                                     </textField>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6Fm-CR-Oti">
-                                                        <rect key="frame" x="0.0" y="70" width="253.5" height="30"/>
+                                                        <rect key="frame" x="0.0" y="70" width="182.5" height="30"/>
                                                         <color key="backgroundColor" red="0.3529437780380249" green="0.3529365062713623" blue="0.35294145345687866" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>

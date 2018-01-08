@@ -788,7 +788,7 @@ class PollVoting: UIViewController {
             ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").observeSingleEvent(of: .value, with: { (snapshot) in
                 if snapshot.hasChild(self.UserId){
                     FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").child(self.UserId).removeValue()
-                    button.backgroundColor = UIColor(displayP3Red: 20/255, green: 26/255, blue: 110/255, alpha: 1)
+                    button.backgroundColor = UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
                 }
                 else {
                     ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])

@@ -430,8 +430,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        let chCell = (tableView.dequeueReusableCell(withIdentifier: "convoCell", for: indexPath) as! ChannelDialogueCell)
-
         SelectedChannel.chatName = channelDialogues[indexPath.row].name
         performSegue(withIdentifier: "ChatViewSegue", sender: channelDialogues[indexPath.row])
     }
