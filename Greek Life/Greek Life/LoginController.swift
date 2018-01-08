@@ -102,17 +102,6 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     
     @IBAction func Login(_ sender: Any?) {
-        /*if let notifId = defaults.string(forKey: "NotificationId") {
-            self.NotifId = notifId
-        }
-        else {
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            let alert = UIAlertController(title: "Notifications", message: "You must accept notifications to sign in", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            return
-        }*/
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");

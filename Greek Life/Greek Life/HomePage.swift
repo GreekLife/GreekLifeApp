@@ -348,8 +348,8 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                                     if let image = user["Image"] as? String {
                                                                         let imageHolder = UIImage(named: "Icons/Placeholder.png")
                                                                         let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, status: status, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id)
+                                                                            mMembers.MemberList.append(member)
                                                                         
-                                                                        mMembers.MemberList.append(member)
                                                                         
                                                                         if id == LoggedIn.User["UserID"] as! String {
                                                                             LoggedIn.User["BrotherName"] = member.brotherName
