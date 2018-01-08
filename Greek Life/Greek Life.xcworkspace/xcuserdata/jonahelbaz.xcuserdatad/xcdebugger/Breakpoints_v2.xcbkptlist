@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Greek Life/MessengerViewController.swift"
-            timestampString = "537065769.123513"
+            timestampString = "537070312.74154"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "743"
-            endingLineNumber = "743"
+            startingLineNumber = "746"
+            endingLineNumber = "746"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>

@@ -3819,7 +3819,7 @@
                                         <rect key="frame" x="0.0" y="324.5" width="375" height="314.5"/>
                                         <subviews>
                                             <searchBar hidden="YES" contentMode="redraw" placeholder="Not Functional Yet" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zuy-HZ-SzI">
-                                                <rect key="frame" x="0.0" y="-352.5" width="375" height="54"/>
+                                                <rect key="frame" x="0.0" y="-54" width="375" height="54"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="54" id="Ebs-9z-w34"/>
                                                 </constraints>
@@ -3827,10 +3827,10 @@
                                                 <textInputTraits key="textInputTraits"/>
                                             </searchBar>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gth-C3-2Mo">
-                                                <rect key="frame" x="0.0" y="0.0" width="375" height="314.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="287"/>
                                                 <color key="backgroundColor" red="0.18823686242103577" green="0.18823254108428955" blue="0.18823543190956116" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                 <prototypes>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ChannelMessengeeCell" rowHeight="96" id="4rn-V3-8RI" customClass="ChannelSettingsMessengeeCell" customModule="Greek_Life" customModuleProvider="target">
+                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ChannelMessengeeCell" rowHeight="96" id="4rn-V3-8RI" customClass="ChannelSettingsMessengeeCell" customModule="Greek_Life" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="28" width="375" height="96"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4rn-V3-8RI" id="7Xl-zh-BtG">
@@ -3838,16 +3838,16 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="PDF-aX-Wrc">
-                                                                    <rect key="frame" x="8" y="20" width="359" height="55.5"/>
+                                                                    <rect key="frame" x="15" y="20" width="16" height="55.5"/>
                                                                     <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FirstName LastName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dhf-eK-lZX" userLabel="Messengee">
-                                                                            <rect key="frame" x="0.0" y="17.5" width="310" height="20.5"/>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="FirstName LastName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dhf-eK-lZX" userLabel="Messengee">
+                                                                            <rect key="frame" x="0.0" y="17.5" width="16" height="20.5"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
-                                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IeA-SB-2eC">
-                                                                            <rect key="frame" x="310" y="12.5" width="51" height="31"/>
+                                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IeA-SB-2eC">
+                                                                            <rect key="frame" x="16" y="12.5" width="2" height="31"/>
                                                                             <connections>
                                                                                 <action selector="channelMemberSwitch:" destination="4rn-V3-8RI" eventType="valueChanged" id="pW5-QK-mQ8"/>
                                                                             </connections>
@@ -3874,12 +3874,23 @@
                                                     <outlet property="delegate" destination="Qux-EQ-qw0" id="dgC-nb-Zy7"/>
                                                 </connections>
                                             </tableView>
+                                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2OK-5l-Kf6">
+                                                <rect key="frame" x="0.0" y="287" width="375" height="27.5"/>
+                                                <color key="backgroundColor" red="0.96620899438858032" green="0.083387423886846099" blue="0.016792174606979023" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="15"/>
+                                                <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                <state key="normal" title="DELETE CHANNEL">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="DeleteChannel:" destination="Qux-EQ-qw0" eventType="touchUpInside" id="byX-hI-ooC"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                     </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="vfZ-9C-oXr" secondAttribute="trailing" id="1oj-d2-g02"/>
-                                    <constraint firstItem="PKh-w8-xgW" firstAttribute="leading" secondItem="hOk-ay-VAm" secondAttribute="leading" constant="20" symbolic="YES" id="8VP-QD-fzx"/>
                                     <constraint firstAttribute="trailing" secondItem="PKh-w8-xgW" secondAttribute="trailing" constant="20" symbolic="YES" id="FOL-QA-wun"/>
                                     <constraint firstItem="vfZ-9C-oXr" firstAttribute="leading" secondItem="hOk-ay-VAm" secondAttribute="leading" id="IG3-0r-d3d"/>
                                     <constraint firstItem="rtJ-bz-RH5" firstAttribute="leading" secondItem="hOk-ay-VAm" secondAttribute="leading" id="MOf-U6-Rko"/>
@@ -3896,6 +3907,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="DeleteChannelBTN" destination="2OK-5l-Kf6" id="Qbr-Px-C0B"/>
                         <outlet property="channelNameField" destination="rcv-wh-Bnp" id="mes-uE-87m"/>
                         <outlet property="tableOfMessengeesInChannel" destination="gth-C3-2Mo" id="a2H-GX-ZAy"/>
                         <outlet property="welcomeMessageField" destination="uY6-2j-ogm" id="09K-5m-RQZ"/>

@@ -84,16 +84,18 @@ class ChannelDialogue: Dialogue {
         super.init(dialogueType: "ChannelDialogues")
         let snapshot = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/"+id)
         self.id = id
-        self.name = snapshot.childSnapshot(forPath: "Name").value as! String
+        self.name = snapshot.childSnapshot(forPath: "Name").value as? String ?? ""
         for messageSnapshot in snapshot.childSnapshot(forPath: "Messages").children {
             self.messages.append(Message(
                 messageID: (messageSnapshot as! DataSnapshot).key,
                 content: (messageSnapshot as! DataSnapshot).value as! String
             ))
         }
-        let messengeesArrayOfIDs = (snapshot.childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
-        for messengeeID in messengeesArrayOfIDs {
-            messengees.append(Messengee(userID: messengeeID))
+        let messengeesArrayOfIDs = (snapshot.childSnapshot(forPath: "Messengees").value as? String ?? "").components(separatedBy: ", ")
+        if self.name != "" {
+            for messengeeID in messengeesArrayOfIDs {
+                messengees.append(Messengee(userID: messengeeID))
+            }
         }
     }
     
@@ -274,14 +276,14 @@ class Message {
         let idComponents = messageID.components(separatedBy: ", ")
         self.timeSent = idComponents[0]
         self.sentBy = idComponents[1]
-        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
+        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+sentBy+"/First Name").value as? String ?? "Error"
     }
     //For sending a message
     init(senderID:String, content:String) {
         self.timeSent = String(Int(Date.init().timeIntervalSince1970))
         self.sentBy = senderID
         self.id = self.timeSent+", "+self.sentBy
-        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+sentBy+"/First Name").value as? String ?? "Error: Couldn't find this user's first name."
+        self.sentByName = DatabaseHousekeeping.dbSnapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+sentBy+"/First Name").value as? String ?? "Error"
         self.content = content
     }
     
@@ -329,7 +331,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
                     self.channelDialogues.append(ChannelDialogue(id: (channel as! DataSnapshot).key ))
                 }
             }
-            
+            self.channelDialogues = self.channelDialogues.sorted(by: { Double(($0.messages.last!.timeSent))! > Double(($1.messages.last!.timeSent))! })
             self.channelsTable.reloadData()
         })
     }
@@ -505,6 +507,7 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 DatabaseHousekeeping.dbSnapshot = snapshot
                 Messengee.getAllFromDB()
                 self.initDirectDialogues()
+                self.directDialogues = self.directDialogues.sorted(by: { Double(($0.messages.last!.timeSent))! > Double(($1.messages.last!.timeSent))! })
                 self.directDialogueTable.reloadData()
             })
             
@@ -995,6 +998,7 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
     
     var didUpdateSnapshot = false
     
+    @IBOutlet weak var DeleteChannelBTN: UIButton!
     // --- IB Outlets --- //
     @IBOutlet weak var channelNameField: UITextField!
     @IBOutlet weak var welcomeMessageField: UITextField!
@@ -1038,6 +1042,7 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
                 self.welcomeMessageField.text = self.welcomeMessage
             } else {
                 // If it doesn't exist, put all the messengees into the messengeesNotInChannel and put the logged in user into the messengeesInChannel
+                self.DeleteChannelBTN.isHidden = true
                 for messengee in self.allMessengees {
                     if messengee.userID == (LoggedIn.User["UserID"] as! String) {
                         self.isMessengeeInChannel[messengee.userID] = true
@@ -1052,6 +1057,24 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
             
         })
     }
+    
+    @IBAction func DeleteChannel(_ sender: Any) {
+        
+        let delete = UIAlertController(title: "Delete", message: "Are you sure you would like to delete this channel?", preferredStyle: UIAlertControllerStyle.alert)
+        let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.destructive, handler: DeleteChannel)
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+        delete.addAction(cancelAction)
+        delete.addAction(okAction)
+        self.present(delete, animated: true, completion: nil)
+        
+    }
+    
+    func DeleteChannel(alert: UIAlertAction) {
+        var currentChannelId = self.channelID
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/" + currentChannelId).removeValue();
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     
     // --- IB Actions --- //
     @IBAction func cancelBTN(_ sender: UIBarButtonItem)
