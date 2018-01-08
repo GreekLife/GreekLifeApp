@@ -297,6 +297,10 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         }
         self.calendar.initUI()
         initCalendar()
+        self.reloadCalendar()
+        self.calendar.initUI()
+        initCalendar()
+        self.reloadCalendar()
         calendarDataHandle = dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar").observe(.value, with: {(calendarSnapshot) in
             self.calendar.eventList = (calendarSnapshot.value as? [String : [String : Any]])!
             self.reloadCalendar()
@@ -355,6 +359,8 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
+            //let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
+            //let keyForCurrentDay =  sortedDayKeys[section]
             let weekday = Calendar.current.component(.weekday, from: Date(timeIntervalSince1970:Double(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[section])[0].key)!))
             let date = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!)[section].key
             return "\(calendar.weekdayToString(weekday)) the \(date)\(calendar.stndrdth(date))"

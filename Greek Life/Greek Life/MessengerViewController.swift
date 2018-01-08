@@ -867,13 +867,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let indexStr = Alert.accessibilityLabel
         let index = Int(indexStr!)
         let message = dialogue.messages[index!]
-        if self.dialogue.type == "DirectDialogues" {
-          
-            
-        }
-        else if self.dialogue.type == "ChannelDialogue" {
-            
-        }
+        // DB call to delete the message
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/"+dialogue.type+"/"+dialogue.id+"/Messages/"+message.id).removeValue();
     }
     
     func longPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
