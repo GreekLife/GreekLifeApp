@@ -79,11 +79,11 @@ firebase.initializeApp(config);
 
 var iosRef = firebase.database().ref("GammaLambda/NotificationIds/IOS");
 iosRef.on('value', snapshot => {
-    snapshot.forEach(function(id) {
+    snapshot.forEach(id => {
         var wId = id.val().Id;
         IOSIds.push(wId);
-        if(snapshot.child("Username") == "Master") {
-            MasterNotificationID = id.val().Id;
+        if(id.child("Username").val() == "Master") {
+            MasterNotificationID = id.child("Id").val();
             MasterNotificationType = "IOS";
         }
     }) 
@@ -97,8 +97,8 @@ androidRef.on('value', snapshot => {
     snapshot.forEach(function(id) {
         var wId = id.val().Id;
         AndroidIds.push(wId);
-        if(snapshot.child("Username") == "Master") {
-            MasterNotificationID = id.val().Id;
+        if(id.child("Username").val() == "Master") {
+            MasterNotificationID = id.child("Id").val();
             MasterNotificationType = "Android";
         }
     })      
@@ -120,10 +120,9 @@ idRef.on('value', snapshot => {
     }; 
         IdAndNotification.push(idStored);
 
-    if(snapshot.child("Position").val() == "Master") {
+        if(snapshot.child("Position").val() == "Master") {
             MasterId = snapshot.child("UserID").val();
-            MasterNotificationID = snapshot.child("NotificationId");
-            console.log("MasterID: " + MasterId);
+            MasterNotificationID = snapshot.child("NotificationId").val();
         }                                                               
         });                        
     var ids = Object.keys(snapshot.val());
@@ -274,10 +273,12 @@ setTimeout(function() {
 
  }
 
-//Let master know a user needs to be revalidated
+//Comments to come
+
+//Calendar to come
 
 
-//IM updates
+//IM updates to come
 
 
 
