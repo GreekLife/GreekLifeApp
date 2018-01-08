@@ -235,7 +235,12 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var editBTN: UIBarButtonItem!
     @IBAction func editBTN(_ sender: Any)
     {
-        self.canDeleteEvents = true
+        if self.canDeleteEvents == true {
+            self.canDeleteEvents = false
+        }
+        else {
+            self.canDeleteEvents = true
+        }
         self.reloadCalendar()
     }
     //Action called to delete event
