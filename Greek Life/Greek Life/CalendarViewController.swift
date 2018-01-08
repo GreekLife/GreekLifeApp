@@ -359,10 +359,10 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
-            //let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
-            //let keyForCurrentDay =  sortedDayKeys[section]
-            let weekday = Calendar.current.component(.weekday, from: Date(timeIntervalSince1970:Double(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[section])[0].key)!))
-            let date = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!)[section].key
+            let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
+            let keyForCurrentDay =  sortedDayKeys[section]
+            let weekday = Calendar.current.component(.weekday, from: Date(timeIntervalSince1970:Double(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![keyForCurrentDay]!)[0].key)!))
+            let date = keyForCurrentDay
             return "\(calendar.weekdayToString(weekday)) the \(date)\(calendar.stndrdth(date))"
         }
         else{
