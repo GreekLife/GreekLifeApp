@@ -121,6 +121,8 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.textField.centerYAnchor.constraint(equalTo: self.containerView.centerYAnchor).isActive = true
         self.textField.rightAnchor.constraint(equalTo: sendButton.rightAnchor).isActive = true
         self.textField.heightAnchor.constraint(equalTo: self.containerView.heightAnchor).isActive = true
+        self.textField.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1)
+        self.textField.textColor = .white
         
         let separatorLineView = UIView()
         let color = UIColor(red: 220/255.0, green: 220/255.0, blue: 220/255.0, alpha: 1.0)

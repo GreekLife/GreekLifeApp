@@ -725,7 +725,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         messageInputField.layer.borderWidth = 0.5
         messageInputField.delegate = self
         messageInputField.layer.cornerRadius = 10
-        
+        self.messageInputField.textColor = .white
+
         // --- Set up the table --- //
         //messagesTable.estimatedRowHeight = 85.0
         messagesTable.rowHeight = 100.0 //UITableViewAutomaticDimension
@@ -868,7 +869,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let index = Int(indexStr!)
         let message = dialogue.messages[index!]
         // DB call to delete the message
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/"+dialogue.type+"/"+dialogue.id+"/Messages/"+message.id).removeValue();
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/"+dialogue.type+"/"+dialogue.id+"/Messages/"+message.id).setValue("Deleted Message*");
     }
     
     func longPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
@@ -918,6 +919,15 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         }
         messageCell.messageSender.text = dialogue.messages[indexPath.row].sentByName
         messageCell.message.text = dialogue.messages[indexPath.row].content
+        
+        if messageCell.message.text == "Deleted Message*" {
+            messageCell.message.text = "This message has been removed"
+            messageCell.message.textColor = .red
+        }
+        else {
+            messageCell.message.textColor = .white
+            messageCell.message.text = messageCell.message.text
+        }
         
          GenericTools.FrameToFitTextView(View: messageCell.message)
          var newSize = messageCell.message.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))

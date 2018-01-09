@@ -47,6 +47,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
         //should actually be testing for nil on type cast
         if CodeBox1.text == "" || CodeBox2.text == "" || CodeBox3.text == "" || CodeBox4.text == "" {
             self.CodeBox1.becomeFirstResponder()
+            let alert = UIAlertController(title: "Code", message: "You must enter the code. You can get the correct code from your master.", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
             self.activityIndicator.stopAnimating();
             UIApplication.shared.endIgnoringInteractionEvents();
             return

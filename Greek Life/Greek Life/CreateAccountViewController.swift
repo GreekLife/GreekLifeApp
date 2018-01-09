@@ -89,17 +89,6 @@ class AccountDetails: UIViewController {
                                 "Validated": false
                                 ] as [String : Any]
                             
-                            self.CreateProfile(newPostData: newUserData) {(success ,error) in
-                                self.activityIndicator.stopAnimating();
-                                UIApplication.shared.endIgnoringInteractionEvents();
-                                if error != nil {
-                                    GenericTools.Logger(data: "\n Error creating new user: \(error!)")
-                                    let invalid = UIAlertController(title: "Internal Error", message: "Could not create your account", preferredStyle: UIAlertControllerStyle.alert)
-                                    let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
-                                    invalid.addAction(okAction)
-                                    self.present(invalid, animated: true, completion: nil)
-                                }
-                            }
                             let value = [
                                 "Blocked": false,
                                 "Delay": 0
@@ -136,15 +125,6 @@ class AccountDetails: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
-        ref = Database.database().reference()
-        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(NewUser.userID)").updateChildValues(newPostData) { _,_  in
-            completion(false, nil)
-        }
-        completion(true, nil)
-        
-    }
-    
     
 }
 
@@ -169,7 +149,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
 
     
-    let positionOptions = ["Brother", "Alumni", "Pledge", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
+    let positionOptions = ["Brother", "Alumni", "Brother at Large", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
     var existingBrotherNames: [String] = []
     var notifId = ""
     var defaultEmail = ""

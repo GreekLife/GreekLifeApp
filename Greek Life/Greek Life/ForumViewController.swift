@@ -244,7 +244,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func getPosts(completion: @escaping (Bool, Any?, Any?) -> Void){
         ref = Database.database().reference()
-        self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").observe(.value, with: { (snapshot) in
+        self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").observeSingleEvent(of: .value, with: { (snapshot) in
             var count = 1;
             var Posts:[ForumPost] = []
             for snap in snapshot.children{
@@ -286,6 +286,39 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
 
+    @IBAction func Refresh(_ sender: Any) {
+        
+        if Reachability.isConnectedToNetwork(){
+            self.getPosts(){(success, response, error) in
+                guard success, let PostList = response as? [ForumPost] else{
+                    let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not get posts from database.")
+                    BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                    self.view.addSubview(BadPostRequest)
+                    GenericTools.Logger(data: "\n Could not get posts from database: \(error!)")
+                    if(response != nil){
+                        print(response!)
+                    }
+                    return
+                }
+                Postings.AllPosts = PostList
+                self.numberOfCells = PostList.count
+                self.SortByDate(Posts: Postings.AllPosts!)
+                self.TableView.reloadData();
+                self.activityIndicator.stopAnimating();
+                UIApplication.shared.endIgnoringInteractionEvents();
+            }
+        }
+        else {
+            let internetError =  Banner.ErrorBanner(errorTitle:"You're not connected to the Internet")
+            self.view.addSubview(internetError)
+            GenericTools.Logger(data: "\n You're not connected to the Internet")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                internetError.isHidden = true
+            }
+            self.activityIndicator.stopAnimating();
+            UIApplication.shared.endIgnoringInteractionEvents();
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = backgroundColor

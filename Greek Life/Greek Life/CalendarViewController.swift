@@ -288,7 +288,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //View Lifecycle Things
     override func viewDidLoad() {
         super.viewDidLoad()
-        if LoggedIn.User["Position"] as! String == "Master" || LoggedIn.User["Position"] as! String == "Scribe" || LoggedIn.User["Position"] as! String == "LT Master" {
+        if LoggedIn.User["Position"] as! String == "Master" || LoggedIn.User["Position"] as! String == "Scribe" || LoggedIn.User["Position"] as! String == "LT Master" || LoggedIn.User["Position"] as! String == "Pledge Master" || LoggedIn.User["Position"] as! String == "Rush Chair" {
             self.editBTN.isEnabled = true
             self.createEventBTN.isEnabled = true
         }else{
