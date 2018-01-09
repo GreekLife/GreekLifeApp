@@ -3837,16 +3837,16 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="PDF-aX-Wrc">
-                                                                    <rect key="frame" x="15" y="20" width="16" height="55.5"/>
-                                                                    <subviews>
+                                                                <rect key="frame" x="15" y="20" width="107" height="55.5"/>
+                                                            <subviews>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="FirstName LastName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dhf-eK-lZX" userLabel="Messengee">
-                                                                            <rect key="frame" x="0.0" y="17.5" width="16" height="20.5"/>
-                                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                    <rect key="frame" x="0.0" y="17.5" width="107" height="20.5"/>      
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IeA-SB-2eC">
-                                                                            <rect key="frame" x="16" y="12.5" width="2" height="31"/>
+                                                                           <rect key="frame" x="107" y="12.5" width="2" height="31"/>
                                                                             <connections>
                                                                                 <action selector="channelMemberSwitch:" destination="4rn-V3-8RI" eventType="valueChanged" id="pW5-QK-mQ8"/>
                                                                             </connections>

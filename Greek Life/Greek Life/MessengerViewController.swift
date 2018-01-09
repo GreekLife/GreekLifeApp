@@ -1065,7 +1065,7 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
     }
     
     func DeleteChannel(alert: UIAlertAction) {
-        var currentChannelId = self.channelID
+        let currentChannelId = self.channelID
         Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues/" + currentChannelId).removeValue();
         self.dismiss(animated: true, completion: nil)
     }
