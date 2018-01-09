@@ -246,7 +246,7 @@ Added calendar events
 //Query PollOptions and iterate through to get ids.
 setTimeout(function() {
     CheckForUnansweredPolls();
-}, (21600000*2)); //check if polls have been answered every 12h 
+}, (10800000*2)); //check if polls have been answered every 12h 
  function CheckForUnansweredPolls() {
     var hasntAnsweredAPoll = [];
     var pollOpRef = firebase.database().ref("GammaLambda/PollOptions");
