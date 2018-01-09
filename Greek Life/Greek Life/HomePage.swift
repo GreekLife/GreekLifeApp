@@ -151,7 +151,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             performSegue(withIdentifier: "PersonalProfile", sender: self)
             break;
         case 8:
-           // performSegue(withIdentifier: "GoogleDrive", sender: self)
+            performSegue(withIdentifier: "GoogleDrive", sender: self)
             break;
         case 9:
             performSegue(withIdentifier: "Info", sender: self)

@@ -1289,10 +1289,10 @@
             </objects>
             <point key="canvasLocation" x="-2594.4000000000001" y="-0.44977511244377816"/>
         </scene>
-        <!--Home Page-->
+        <!--GoogleDrive-->
         <scene sceneID="RdM-ae-tBV">
             <objects>
-                <viewController id="SdP-Ra-Y4K" customClass="HomePage" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="GoogleDrive" id="SdP-Ra-Y4K" customClass="HomePage" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Yn3-5x-j4P"/>
                         <viewControllerLayoutGuide type="bottom" id="ZA0-1T-Yd2"/>
@@ -1520,6 +1520,7 @@
                         <segue destination="MvD-bz-Z13" kind="presentation" identifier="PersonalProfile" id="kBA-p2-XRe"/>
                         <segue destination="ikx-Du-edX" kind="presentation" identifier="Beta" id="mqy-1Y-70f"/>
                         <segue destination="iWX-Ue-v2w" kind="presentation" identifier="InstantMessaging" id="i0K-VP-pnZ"/>
+                        <segue destination="4AT-5y-y85" kind="presentation" identifier="GoogleDrive" id="0Jq-CT-boQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r49-Zd-0mz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2594,6 +2595,57 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mjp-jr-5lD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-3722.4000000000001" y="-0.44977511244377816"/>
+        </scene>
+        <!--Google Drive-->
+        <scene sceneID="uiT-5a-yyj">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vb3-1T-WAC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="4AT-5y-y85" customClass="GoogleDriveViewController" customModule="Greek_Life" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="pKI-Ai-Zma"/>
+                        <viewControllerLayoutGuide type="bottom" id="Xw0-kC-36b"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Ujl-nL-ijT">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0LI-kX-Xpw">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </webView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="cyy-PT-j8Y">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <items>
+                                    <barButtonItem image="Icons/Back.png" id="gX3-JL-okX">
+                                        <color key="tintColor" red="1" green="0.87450980389999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <connections>
+                                            <action selector="Back:" destination="4AT-5y-y85" id="lvw-er-Wwy"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="cyy-PT-j8Y" firstAttribute="top" secondItem="pKI-Ai-Zma" secondAttribute="bottom" id="Cic-cE-2UN"/>
+                            <constraint firstAttribute="trailing" secondItem="0LI-kX-Xpw" secondAttribute="trailing" id="TdB-wv-Ody"/>
+                            <constraint firstAttribute="trailing" secondItem="cyy-PT-j8Y" secondAttribute="trailing" id="Tt4-8E-JFi"/>
+                            <constraint firstItem="cyy-PT-j8Y" firstAttribute="leading" secondItem="Ujl-nL-ijT" secondAttribute="leading" id="Ycp-AH-CH0"/>
+                            <constraint firstItem="0LI-kX-Xpw" firstAttribute="top" secondItem="pKI-Ai-Zma" secondAttribute="bottom" constant="44" id="fVA-Xa-5Mk"/>
+                            <constraint firstItem="Xw0-kC-36b" firstAttribute="top" secondItem="0LI-kX-Xpw" secondAttribute="bottom" id="uEc-xF-elo"/>
+                            <constraint firstItem="0LI-kX-Xpw" firstAttribute="leading" secondItem="Ujl-nL-ijT" secondAttribute="leading" id="ygH-bI-MtE"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Google Drive" id="pVe-OE-rvG">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="oI4-ru-n1C"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="WebView" destination="0LI-kX-Xpw" id="KgD-8M-f6v"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="-3007" y="1628"/>
         </scene>
         <!--Constitution-->
         <scene sceneID="Mqg-C4-M6Y">

@@ -13,6 +13,7 @@
 		6D18966B1FB6C5080087C3EC /* FoundingFatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */; };
 		6D2C8C481FD2409F00C62222 /* MasterControllsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2C8C471FD2409F00C62222 /* MasterControllsViewController.swift */; };
 		6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2E2E3C1FA67B0D001BF8D0 /* ForumViewController.swift */; };
+		6D2F8F6920053B4E00351085 /* GoogleDriveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2F8F6820053B4E00351085 /* GoogleDriveViewController.swift */; };
 		6D39D94D1FB27FFA001CE6D8 /* MembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */; };
 		6D42ED641FCA0473003FFB07 /* CreatePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */; };
 		6D70983D1FE0CB2800BFDD97 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D70983C1FE0CB2800BFDD97 /* UserNotifications.framework */; };
@@ -74,6 +75,7 @@
 		6D1896691FB6C5080087C3EC /* FoundingFatherViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundingFatherViewController.swift; sourceTree = "<group>"; };
 		6D2C8C471FD2409F00C62222 /* MasterControllsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterControllsViewController.swift; sourceTree = "<group>"; };
 		6D2E2E3C1FA67B0D001BF8D0 /* ForumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumViewController.swift; sourceTree = "<group>"; };
+		6D2F8F6820053B4E00351085 /* GoogleDriveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDriveViewController.swift; sourceTree = "<group>"; };
 		6D39D94C1FB27FFA001CE6D8 /* MembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembersViewController.swift; sourceTree = "<group>"; };
 		6D42ED631FCA0473003FFB07 /* CreatePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostViewController.swift; sourceTree = "<group>"; };
 		6D70983B1FE0CAA000BFDD97 /* Greek Life.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Greek Life.entitlements"; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				6D2C8C471FD2409F00C62222 /* MasterControllsViewController.swift */,
 				6D0372B31FD341AB00FDD947 /* HomePage.swift */,
 				6DD31F411FE74191006500AF /* UserHelpViewController.swift */,
+				6D2F8F6820053B4E00351085 /* GoogleDriveViewController.swift */,
 			);
 			path = "Greek Life";
 			sourceTree = "<group>";
@@ -580,6 +583,7 @@
 				6D2E2E3D1FA67B0D001BF8D0 /* ForumViewController.swift in Sources */,
 				6DD31F421FE74191006500AF /* UserHelpViewController.swift in Sources */,
 				6DE7156F1FB7A36E0061A7AC /* CreatePollViewController.swift in Sources */,
+				6D2F8F6920053B4E00351085 /* GoogleDriveViewController.swift in Sources */,
 				6D42ED641FCA0473003FFB07 /* CreatePostViewController.swift in Sources */,
 				6D0372B41FD341AB00FDD947 /* HomePage.swift in Sources */,
 				6DF68DB71FACD989006E0B76 /* CommentViewController.swift in Sources */,
