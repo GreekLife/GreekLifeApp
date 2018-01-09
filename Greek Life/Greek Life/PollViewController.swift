@@ -890,6 +890,22 @@ class PollVoting: UIViewController {
     }
     
     func UpVoteOption(button: UIButton) {
+        
+        self.upVotes(button: button) {(success, error) in
+            if error != nil {
+                GenericTools.Logger(data: "\n Error posting comment: \(error!)")
+                let emptyError = UIAlertController(title: "Internal Server Error", message: "Error voting", preferredStyle: UIAlertControllerStyle.alert)
+                let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
+                emptyError.addAction(okAction)
+                self.present(emptyError, animated: true, completion: nil)
+            }
+            else {
+               
+            }
+        }
+    }
+    
+    func upVotes(button: UIButton, completion: @escaping (Bool, Any?) -> Void) {
         if Reachability.isConnectedToNetwork() == true {
             let name = "\(self.first) \(self.last)"
             let ref = Database.database().reference()
@@ -905,13 +921,46 @@ class PollVoting: UIViewController {
                     ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").child(self.PollViewed.PollId).child("\"\(button.tag)\"").child("Names").updateChildValues([self.UserId : name])
                     button.backgroundColor = UIColor(displayP3Red: 255/255, green: 224/255, blue: 0/255, alpha: 1)
                 }
+                completion(true, nil)
             }){ (error) in
                 GenericTools.Logger(data: "\n Couldnt update vote: \(error)")
+                completion(false, error)
             }
+            
         }
         else {
             //should help user handle error
             GenericTools.Logger(data: "\n Internet connection not available")
+        }
+    }
+    
+    func callCalculateVotes() {
+        self.CalculateVotes(){(success, error) in
+            guard success else{
+                let BadPostRequest = Banner.ErrorBanner(errorTitle: "Could not retrieve votes.")
+                BadPostRequest.backgroundColor = UIColor.black.withAlphaComponent(1)
+                self.view.addSubview(BadPostRequest)
+                GenericTools.Logger(data: "\n Could not retreve polls: \(error!)")
+                return
+            }
+            //Calculate Percentages --
+            var VoteNumber = 0
+            var totalVotes = 0
+            for option in self.PollViewed.UpVoteNames {
+                totalVotes += option.count
+            }
+            for _ in self.PollViewed.UpVoteNames {
+                let votesForOption = self.PollViewed.UpVoteNames[VoteNumber].count
+                var voteResult: Float = 0
+                if totalVotes != 0 {
+                    voteResult = (Float(votesForOption) / Float(totalVotes)) * Float(100)
+                }
+                self.PollViewed.Placing[VoteNumber] = String(String(Int(voteResult)) + "%")
+                VoteNumber += 1
+            }
+            self.ExistingOptions.removeAll()
+            self.ExistingLabel.removeAll()
+            self.DrawLayout()
         }
     }
     

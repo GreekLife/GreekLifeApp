@@ -28,6 +28,13 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     let userName = "\(LoggedIn.User["First Name"] as! String) \(LoggedIn.User["Last Name"] as! String)"
     let userId = LoggedIn.User["UserID"] as! String
     var InteractedCommentIndex = 0
+    
+    func scrollToBottom(){
+        DispatchQueue.main.async {
+            let indexPath = IndexPath(row: self.CommentList.count-1, section: 0)
+            self.TableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
+    }
 
     @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var Toolbar: UIToolbar!
@@ -75,6 +82,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
                 }
                 else {
                     self.textField.text = ""
+                    self.scrollToBottom()
                 }
             }
 
