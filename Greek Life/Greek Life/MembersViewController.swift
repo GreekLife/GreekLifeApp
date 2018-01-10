@@ -24,9 +24,10 @@ class Member {
     var position: String
     var school: String
     var id: String
+    var contribution: String
     var imageURL: String
     
-    init(brotherName: String, first: String, last: String, degree: String, status: Bool, birthday: String, email: String, graduate: String, picture: UIImage, ImageURL: String, position: String, school: String, id: String){
+    init(brotherName: String, first: String, last: String, degree: String, status: Bool, birthday: String, email: String, graduate: String, picture: UIImage, ImageURL: String, position: String, school: String, id: String, contribution: String){
         self.brotherName = brotherName
         self.first = first
         self.last = last
@@ -40,6 +41,7 @@ class Member {
         self.school = school
         self.id = id
         self.imageURL = ImageURL
+        self.contribution = contribution
     }
     
     
@@ -162,7 +164,7 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             Image.image = pic
         }
         
-        if self.position == "Master" && mMembers.memberObj?.position != "Master" && mMembers.memberObj?.status == false {
+        if self.position == "Master" && mMembers.memberObj?.position != "Master" && mMembers.memberObj?.status == false || LoggedIn.User["Contribution"] as! String == "Developer" {
             Position.isHidden = true
             mPosition.frame.origin.y = Position.frame.origin.y + 3
             mPosition.frame.origin.x = Position.frame.origin.x
@@ -195,5 +197,7 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         mPosition.text = positionOptions[row]
     }
+    
+    
     
 }

@@ -326,7 +326,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
             for channel in snapshot.childSnapshot(forPath: (Configuration.Config!["DatabaseNode"] as! String)+"/ChannelDialogues").children {
                 let listOfChannelMembers = ((channel as! DataSnapshot).childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
                 if listOfChannelMembers.contains(LoggedIn.User["UserID"] as! String) ||
-                    (LoggedIn.User["Position"] as! String == "Master" && LoggedIn.User["Validated"] as! Bool == true)
+                    (LoggedIn.User["Position"] as! String == "Master" && LoggedIn.User["Validated"] as! Bool == true || LoggedIn.User["Contribution"] as! String == "Developer")
                 {
                     self.channelDialogues.append(ChannelDialogue(id: (channel as! DataSnapshot).key ))
                 }

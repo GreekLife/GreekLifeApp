@@ -72,22 +72,6 @@ class AccountDetails: UIViewController {
                             print("Account created")
                             NewUser.email = self.Email.text!
                             NewUser.userID = (user?.uid)!
-                            let newUserData = [
-                                "BrotherName": "",
-                                "Degree": "",
-                                "First Name": "",
-                                "Last Name": "",
-                                "School": "",
-                                "GraduationDate": "",
-                                "Birthday": "",
-                                "Position": "",
-                                "Username": "",
-                                "Email": NewUser.email,
-                                "Image": "",
-                                "UserID": NewUser.userID,
-                                "NotificationId": "",
-                                "Validated": false
-                                ] as [String : Any]
                             
                             let value = [
                                 "Blocked": false,
@@ -248,6 +232,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         "Username": username,
                         "Email": NewUser.email,
                         "Image": image,
+                        "Contribution": "none",
                         "UserID": NewUser.userID,
                         "NotificationId": self.notifId,
                         "Validated": false
@@ -296,6 +281,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "Username": changedUser,
                             "Email": self.emailEdit.text!,
                             "Image": image,
+                            "Contribution": "none",
                             "UserID": LoggedIn.User["UserID"] as! String,
                             "NotificationId": self.notifId,
                             "Validated": validated
@@ -315,7 +301,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             }
                         }
                         
-                        self.CreateProfile(newPostData: updatedData) {(success ,error) in
+                        self.upDateProfile(newPostData: updatedData) {(success ,error) in
                             self.activityIndicator.stopAnimating();
                             UIApplication.shared.endIgnoringInteractionEvents();
                             if error != nil {
@@ -341,7 +327,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
          }
     }
     
-    func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
+    func upDateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         var id = ""
         if LoggedIn.User["Username"] != nil {
             id = LoggedIn.User["UserID"] as! String
@@ -349,6 +335,15 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         else {
             id = NewUser.userID
         }
+        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").child(id).setValue(newPostData)
+        completion(true, nil)
+        
+    }
+    
+    func CreateProfile(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
+        var id = ""
+        id = NewUser.userID
+        
         Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").child(id).setValue(newPostData)
         completion(true, nil)
 

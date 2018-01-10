@@ -43,7 +43,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(position == "Master") {
+        if(position == "Master" || LoggedIn.User["Contribution"] as! String == "Developer") {
             deleteNews(index: indexPath.row);
             TableView.deselectRow(at: indexPath, animated: true)
         }
@@ -121,6 +121,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         do {
             try firebaseAuth.signOut()
             GenericTools.Logger(data: "\n Succesfully signed out")
+            LoggedIn.User = [:]
         } catch let signOutError as NSError {
             GenericTools.Logger(data: "\n Error signing out: \(signOutError)")
         }
@@ -208,7 +209,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if LoggedIn.User["Position"] as! String != "Master" {
+        if LoggedIn.User["Position"] as! String != "Master" || LoggedIn.User["Contribution"] as! String == "Developer" {
             self.TableView.allowsSelection = false
         }
         let id = LoggedIn.User["UserID"] as! String
@@ -245,7 +246,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             self.TableView.reloadData()
         }
         
-        if (LoggedIn.User["Position"] as! String) != "Master" {
+        if (LoggedIn.User["Position"] as! String) != "Master" || LoggedIn.User["Contribution"] as! String == "Developer" {
             MasterControls.isEnabled = false
             MasterControls.image = UIImage(named: "")
         }
@@ -346,12 +347,13 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                             if let school = user["School"] as? String {
                                                                 if let id = user["UserID"] as? String {
                                                                     if let image = user["Image"] as? String {
+                                                                        let contribution = user["Contribution"] as? String ?? "none"
                                                                         let imageHolder = UIImage(named: "Icons/Placeholder.png")
-                                                                        let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, status: status, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id)
+                                                                        let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, status: status, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id, contribution: contribution)
                                                                             mMembers.MemberList.append(member)
                                                                         
                                                                         
-                                                                        if id == LoggedIn.User["UserID"] as! String {
+                                                                        if id == LoggedIn.User["UserID"] as? String {
                                                                             LoggedIn.User["BrotherName"] = member.brotherName
                                                                             LoggedIn.User["First Name"] = member.first
                                                                             LoggedIn.User["Last Name"] = member.last
@@ -364,6 +366,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                                             LoggedIn.User["School"] = member.school
                                                                             LoggedIn.User["UserID"] = member.id
                                                                             LoggedIn.User["Image"] = member.imageURL
+                                                                            LoggedIn.User["Contribution"] = member.contribution
                                                                         }
                                                                         completion(true)
                                                                     }
