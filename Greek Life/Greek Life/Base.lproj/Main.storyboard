@@ -1318,7 +1318,7 @@
                                                 </connections>
                                             </barButtonItem>
                                             <barButtonItem style="plain" systemItem="flexibleSpace" id="dRf-x9-rUM"/>
-                                            <barButtonItem tag="10" title="BETA" id="GeQ-Dk-SlJ">
+                                            <barButtonItem tag="10" title="Report a bug" id="GeQ-Dk-SlJ">
                                                 <color key="tintColor" red="0.14037224650382996" green="0.35753273963928223" blue="0.60642224550247192" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <connections>
                                                     <action selector="Beta:" destination="SdP-Ra-Y4K" id="12G-VN-DaZ"/>
