@@ -743,9 +743,36 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             }
             self.messagesTable.reloadData()
             self.scrollToBottom()
+
         })
         TextHeader.text = SelectedChannel.chatName
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
     }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc func adjustForKeyboard(notification: Notification) {
+        let userInfo = notification.userInfo!
+        
+        let keyboardScreenEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == Notification.Name.UIKeyboardWillHide {
+            TableView.contentInset = UIEdgeInsets.zero
+        } else {
+            TableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        }
+        
+        TableView.scrollIndicatorInsets = TableView.contentInset
+        
+        scrollToBottom()
+    }
+    
+
     
     
     //----Create chat box ----/ --> NOt fucking working fucking shit
@@ -811,11 +838,19 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             self.containerView.frame.origin.y -= diff
             self.containerView.frame.size.height += diff
         }
+        print(self.containerView.frame.origin.y)
+
+        //self.TableView.contentInset = UIEdgeInsetsMake(0, 0, self.containerView.frame.origin.y, 0)
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         self.containerView.frame.size.height = 40
         textView.frame.size.height = 30
+
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        print(self.containerView.frame.origin.y)
     }
 
     
@@ -855,7 +890,6 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     }
     
     //--- Table of Messages in Direct Message or Channel ---//
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dialogue.messages.count
     }
@@ -895,7 +929,6 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let messageCell = messagesTable.dequeueReusableCell(withIdentifier: "messageCell") as! MessageCell
         messageCell.message.becomeFirstResponder() //biggest patch in existance - done at 7:21am post all nighter -- should fix
         

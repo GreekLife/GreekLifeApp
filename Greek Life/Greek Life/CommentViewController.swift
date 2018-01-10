@@ -104,7 +104,30 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
         textField.backgroundColor = UIColor.white
         textField.delegate = self
         textField.layer.cornerRadius = 10
-
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
+    }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func adjustForKeyboard(notification: Notification) {
+        let userInfo = notification.userInfo!
+        
+        let keyboardScreenEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == Notification.Name.UIKeyboardWillHide {
+            TableView.contentInset = UIEdgeInsets.zero
+        } else {
+            TableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+        }
+        
+        TableView.scrollIndicatorInsets = TableView.contentInset
+        
+        scrollToBottom()
     }
     
     lazy var inputContainerView: UIView = {
