@@ -112,7 +112,7 @@ class AccountDetails: UIViewController {
     
 }
 
-class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class CreateAccountViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var Position: UITextField!
     @IBOutlet weak var FirstName: UITextField!
@@ -133,7 +133,7 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
 
     
-    let positionOptions = ["Brother", "Alumni", "Brother at Large", "LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair"]
+    let positionOptions = ["Brother"]
     var existingBrotherNames: [String] = []
     var notifId = ""
     var defaultEmail = ""
@@ -228,14 +228,13 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                         "School": self.School.text!,
                         "GraduationDate": self.GradDate.text!,
                         "Birthday": self.Birthday.text!,
-                        "Position": self.Position.text!,
+                        "Position": "Brother",
                         "Username": username,
                         "Email": NewUser.email,
                         "Image": image,
                         "Contribution": "none",
                         "UserID": NewUser.userID,
-                        "NotificationId": self.notifId,
-                        "Validated": false
+                        "NotificationId": self.notifId
                         ] as [String : Any]
                     
                         self.CreateProfile(newPostData: newUserData) {(success ,error) in
@@ -277,14 +276,13 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
                             "School": self.School.text!,
                             "GraduationDate": self.GradDate.text!,
                             "Birthday": self.Birthday.text!,
-                            "Position": self.Position.text!,
+                            "Position": "Brother",
                             "Username": changedUser,
                             "Email": self.emailEdit.text!,
                             "Image": image,
                             "Contribution": "none",
                             "UserID": LoggedIn.User["UserID"] as! String,
-                            "NotificationId": self.notifId,
-                            "Validated": validated
+                            "NotificationId": self.notifId
                             ] as [String : Any]
                         
                         if self.defaultEmail != self.emailEdit.text! {
@@ -406,9 +404,8 @@ class CreateAccountViewController: UIViewController, UIPickerViewDelegate, UIIma
         ImageButton.layer.borderWidth = 1
         let pickerView = UIPickerView()
         emailEdit.layer.cornerRadius = 5
-        
-        
-        pickerView.delegate = self
+        Position.isEnabled = false
+        Position.text = "Brother"
         imagePicker.delegate = self
 
         Position.inputView = pickerView

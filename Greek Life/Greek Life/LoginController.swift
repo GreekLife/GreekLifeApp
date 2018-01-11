@@ -20,6 +20,10 @@ struct Configuration {
     static var Config: [String: Any] = [:]
 }
 
+struct isEboard {
+    static var member = ["LT Master", "Scribe", "Exchequer", "Pledge Master", "Rush Chair", "Master", "Developer"]
+}
+
 class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate {
     @IBOutlet weak var Username: UITextField!
     @IBOutlet weak var Title_Pic: UIImageView!

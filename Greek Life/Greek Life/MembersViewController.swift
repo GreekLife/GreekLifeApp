@@ -16,7 +16,6 @@ class Member {
     var first: String
     var last: String
     var degree: String
-    var status: Bool
     var birthday: String
     var email: String
     var graduateDay: String
@@ -27,12 +26,11 @@ class Member {
     var contribution: String
     var imageURL: String
     
-    init(brotherName: String, first: String, last: String, degree: String, status: Bool, birthday: String, email: String, graduate: String, picture: UIImage, ImageURL: String, position: String, school: String, id: String, contribution: String){
+    init(brotherName: String, first: String, last: String, degree: String, birthday: String, email: String, graduate: String, picture: UIImage, ImageURL: String, position: String, school: String, id: String, contribution: String){
         self.brotherName = brotherName
         self.first = first
         self.last = last
         self.degree = degree
-        self.status = status
         self.birthday = birthday
         self.email = email
         self.graduateDay = graduate
@@ -103,14 +101,13 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     @IBOutlet weak var Save: UIButton!
     
     @IBOutlet weak var mPosition: UITextField!
-    @IBOutlet weak var Status: UILabel!
     @IBOutlet weak var Image: UIImageView!
     @IBOutlet weak var Birthday: UILabel!
     @IBOutlet weak var Degree: UILabel!
     @IBOutlet weak var Email: UILabel!
     @IBOutlet weak var Position: UILabel!
-    @IBOutlet weak var mBrother: UITextField!
     
+    @IBOutlet weak var PositionStack: UIStackView!
     @IBOutlet weak var ImageContainer: UIView!
     
     let position = LoggedIn.User["Position"] as? String
@@ -123,13 +120,9 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     @IBAction func Save(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Position").setValue(mPosition.text)
-        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/BrotherName").setValue(mBrother.text)
-        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Validated").setValue(true)
         
-        mMembers.memberObj?.brotherName = mBrother.text!
         mMembers.memberObj?.position = mPosition.text!
-        mMembers.memberObj?.status = true
-        let success = UIAlertController(title: "Success", message: "The user has been updated and validated", preferredStyle: UIAlertControllerStyle.alert)
+        let success = UIAlertController(title: "Success", message: "The users position has been updated", preferredStyle: UIAlertControllerStyle.alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
         success.addAction(okAction)
         self.present(success, animated: true, completion: nil)
@@ -159,18 +152,15 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
         Degree.text = mMembers.memberObj?.degree
         Email.text = mMembers.memberObj?.email
         Position.text = mMembers.memberObj?.position
-        if mMembers.memberObj?.status == false {
-            Status.text = "Unverified"
-        }
-        else {
-            Status.text = "Verified"
-        }
+        
         if let pic = mMembers.memberObj?.picture {
             Image.image = pic
         }
         
-        if self.position == "Master" && mMembers.memberObj?.position != "Master" && mMembers.memberObj?.status == false || LoggedIn.User["Contribution"] as! String == "Developer" {
+        if self.position == "Master" && mMembers.memberObj?.position != "Master" || LoggedIn.User["Contribution"] as! String == "Developer" {
             Position.isHidden = true
+            self.PositionStack.removeArrangedSubview(Position)
+            self.PositionStack.addArrangedSubview(mPosition)
             mPosition.frame.origin.y = Position.frame.origin.y + 3
             mPosition.frame.origin.x = Position.frame.origin.x
             mPosition.frame.size.width = Position.frame.size.width
@@ -178,17 +168,10 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             mPosition.text = Position.text
             
             Brother.isHidden = true
-            mBrother.frame.origin.y = Brother.frame.origin.y
-            mBrother.frame.origin.x = Brother.frame.origin.x
-            mBrother.frame.size.width = Brother.frame.size.width - 15
-            mBrother.isHidden = false
-            mBrother.text = Brother.text
-            
         }
         else {
             Save.isHidden = true
             mPosition.isHidden = true
-            mBrother.isHidden = true
         }
         
     }

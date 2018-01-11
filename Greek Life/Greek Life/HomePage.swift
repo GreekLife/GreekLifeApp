@@ -38,55 +38,6 @@ class HomePageCell: UITableViewCell {
 }
 
 class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.NewsPosts.count
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if(position == "Master" || LoggedIn.User["Contribution"] as! String == "Developer") {
-            deleteNews(index: indexPath.row);
-            TableView.deselectRow(at: indexPath, animated: true)
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! HomePageCell
-        cell.news.text = self.NewsPosts[indexPath.row].Post
-        GenericTools.FrameToFitTextView(View: cell.news)
-        self.newsHeight = cell.news.frame.origin.y + cell.news.frame.size.height
-        return cell
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.newsHeight
-    }
-    
-    var buttonIdentifier = ""
-    func deleteNews(index: Int) {
-        if Reachability.isConnectedToNetwork() == true {
-            self.buttonIdentifier = self.NewsPosts[index].postId
-            let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
-            let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: deleteNewsInternal)
-            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
-            verify.addAction(okAction)
-            verify.addAction(destructorAction)
-            self.present(verify, animated: true, completion: nil)
-        }
-        else {
-            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
-            error.backgroundColor = UIColor.black.withAlphaComponent(1)
-            self.view.addSubview(error)
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5){
-            error.removeFromSuperview()
-            }
-            GenericTools.Logger(data: "\n Internet Connection not Available!")
-        }
-    }
-    
-    func deleteNewsInternal(action: UIAlertAction) {
-        FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config["DatabaseNode"] as! String)+"/News").child(self.buttonIdentifier).removeValue()
-        self.TableView.reloadData()
-    }
-    
     
     
     @IBOutlet weak var InstantMessaging: UIButton!
@@ -100,20 +51,22 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var MasterControls: UIBarButtonItem!
     @IBOutlet weak var Beta: UIBarButtonItem!
-    
+    @IBOutlet weak var ChapterHeader: UILabel!
+
     var newsHeight: CGFloat = 0
     var ref: DatabaseReference!
     let defaults:UserDefaults = UserDefaults.standard
     let position = LoggedIn.User["Position"] as! String
-    
     var NewsPosts: [News] = []
     
     @IBAction func Beta(_ sender: Any) {
         performSegue(withIdentifier: "Beta", sender: self)
     }
+    
     @IBAction func MasterControls(_ sender: Any) {
         performSegue(withIdentifier: "MasterControls", sender: self)
     }
+    
     @IBAction func Signout(_ sender: Any) {
         let firebaseAuth = Auth.auth()
         do {
@@ -127,84 +80,6 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         self.presentingViewController?.dismiss(animated: true)
     }
     
-    func buttonClicked(sender: UIButton)
-    {
-        switch sender.tag {
-        case 2:
-            performSegue(withIdentifier: "InstantMessaging", sender: self)
-            break;
-        case 3:
-            performSegue(withIdentifier: "Forum", sender: self)
-            break;
-        case 4:
-            performSegue(withIdentifier: "Calendar", sender: self)
-            break;
-        case 5:
-            performSegue(withIdentifier: "Poll", sender: self)
-            break;
-        case 6:
-            performSegue(withIdentifier: "Members", sender: self)
-            break;
-        case 7:
-            NewUser.edit = true
-            performSegue(withIdentifier: "PersonalProfile", sender: self)
-            break;
-        case 8:
-            performSegue(withIdentifier: "GoogleDrive", sender: self)
-            break;
-        case 9:
-            performSegue(withIdentifier: "Info", sender: self)
-            break;
-        case 10:
-            performSegue(withIdentifier: "Beta", sender: self)
-            break;
-        default: ()
-            break;
-        }
-    }
-    
-    func ReadNews(completion: @escaping (Bool) -> Void){
-        ref = Database.database().reference()
-        self.ref.child((Configuration.Config["DatabaseNode"] as! String)+"/News").observe(.value, with: { (snapshot) in
-            self.NewsPosts.removeAll()
-            for snap in snapshot.children{
-                if let childSnapshot = snap as? DataSnapshot
-                {
-                  if let postDictionary = childSnapshot.value as? [String:AnyObject] , postDictionary.count > 0{
-                    if let post = postDictionary["Post"] as? String {
-                        if let postId = postDictionary["PostId"] as? String {
-                            if let date = postDictionary["Epoch"] as? Double {
-                                let news = News(Epoch: date, Post: post, Id: postId)
-                                self.NewsPosts.append(news)
-                   }
-                  }
-                 }
-                }
-               }
-             }
-            completion(true);
-            }){ (error) in
-                GenericTools.Logger(data: "\n Error reading news from database: \(error)")
-            completion(false)
-        }
-    }
-    
-    func UserIsBlocked(userId: String, completion: @escaping (Bool, Any?, Bool) -> Void) {
-        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Blocked/\(userId)").observe(.value, with: { (snapshot) in
-                    if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
-                        if let blocked = postDictionary["Blocked"] as? Bool {
-                            if let delay = postDictionary["Delay"] as? Int {
-                                    completion(blocked, delay, true)
-                            }
-                        }
-                    }
-         }){ (error) in
-            GenericTools.Logger(data: "\n Error reading blocked user from database: \(error)")
-            completion(false, nil, false)
-        }
-    }
-    
-    @IBOutlet weak var ChapterHeader: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         ChapterHeader.text = defaults.string(forKey: "DatabaseNode")
@@ -217,7 +92,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 if blocked == true {
                     let time = String(describing: value)
                     let blocked = UIAlertController(title: "Get Wrecked", message: "Your Master has temporarily disabled your access. It will return in " + time + " minutes?", preferredStyle: .alert)
-                   let presentViewController: UIViewController! = UIApplication.shared.keyWindow?.currentViewController()
+                    let presentViewController: UIViewController! = UIApplication.shared.keyWindow?.currentViewController()
                     presentViewController.present(blocked, animated: true, completion: nil)
                     let ban = (value as! Int) * 60
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(ban)){
@@ -304,9 +179,87 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             }
         }
     }
+    
+    func buttonClicked(sender: UIButton)
+    {
+        switch sender.tag {
+        case 2:
+            performSegue(withIdentifier: "InstantMessaging", sender: self)
+            break;
+        case 3:
+            performSegue(withIdentifier: "Forum", sender: self)
+            break;
+        case 4:
+            performSegue(withIdentifier: "Calendar", sender: self)
+            break;
+        case 5:
+            performSegue(withIdentifier: "Poll", sender: self)
+            break;
+        case 6:
+            performSegue(withIdentifier: "Members", sender: self)
+            break;
+        case 7:
+            NewUser.edit = true
+            performSegue(withIdentifier: "PersonalProfile", sender: self)
+            break;
+        case 8:
+            performSegue(withIdentifier: "GoogleDrive", sender: self)
+            break;
+        case 9:
+            performSegue(withIdentifier: "Info", sender: self)
+            break;
+        case 10:
+            performSegue(withIdentifier: "Beta", sender: self)
+            break;
+        default: ()
+        break;
+        }
+    }
+    
+    func ReadNews(completion: @escaping (Bool) -> Void){
+        ref = Database.database().reference()
+        self.ref.child((Configuration.Config["DatabaseNode"] as! String)+"/News").observe(.value, with: { (snapshot) in
+            self.NewsPosts.removeAll()
+            for snap in snapshot.children{
+                if let childSnapshot = snap as? DataSnapshot
+                {
+                    if let postDictionary = childSnapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                        if let post = postDictionary["Post"] as? String {
+                            if let postId = postDictionary["PostId"] as? String {
+                                if let date = postDictionary["Epoch"] as? Double {
+                                    let news = News(Epoch: date, Post: post, Id: postId)
+                                    self.NewsPosts.append(news)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            completion(true);
+        }){ (error) in
+            GenericTools.Logger(data: "\n Error reading news from database: \(error)")
+            completion(false)
+        }
+    }
+    
+    func UserIsBlocked(userId: String, completion: @escaping (Bool, Any?, Bool) -> Void) {
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Blocked/\(userId)").observe(.value, with: { (snapshot) in
+            if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
+                if let blocked = postDictionary["Blocked"] as? Bool {
+                    if let delay = postDictionary["Delay"] as? Int {
+                        completion(blocked, delay, true)
+                    }
+                }
+            }
+        }){ (error) in
+            GenericTools.Logger(data: "\n Error reading blocked user from database: \(error)")
+            completion(false, nil, false)
+        }
+    }
+    
     func getPics(completion: @escaping (Bool) -> Void) {
         for index in 0...(mMembers.MemberList.count - 1) {
-            if mMembers.MemberList[index].imageURL != "Empty" {
+            if mMembers.MemberList[index].imageURL != "Empty" &&  mMembers.MemberList[index].imageURL != ""{
             Storage.storage().reference(forURL: mMembers.MemberList[index].imageURL).getData(maxSize: 10000000) { (data, error) -> Void in
                 if error == nil {
                     if let pic = UIImage(data: data!) {
@@ -338,7 +291,6 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                             if let first = user["First Name"] as? String {
                                 if let last = user["Last Name"] as? String {
                                     if let degree = user["Degree"] as? String {
-                                        if let status = user["Validated"] as? Bool {
                                             if let birthday = user["Birthday"] as? String {
                                                 if let email = user["Email"] as? String {
                                                     if let grad = user["GraduationDate"] as? String {
@@ -348,7 +300,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                                     if let image = user["Image"] as? String {
                                                                         let contribution = user["Contribution"] as? String ?? "none"
                                                                         let imageHolder = UIImage(named: "Icons/Placeholder.png")
-                                                                        let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, status: status, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id, contribution: contribution)
+                                                                        let member = Member(brotherName: brotherName, first: first, last: last, degree: degree, birthday: birthday, email: email, graduate: grad, picture: imageHolder!,ImageURL: image, position: position, school: school, id: id, contribution: contribution)
                                                                             mMembers.MemberList.append(member)
                                                                         
                                                                         
@@ -357,7 +309,6 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                                             LoggedIn.User["First Name"] = member.first
                                                                             LoggedIn.User["Last Name"] = member.last
                                                                             LoggedIn.User["Degree"] = member.degree
-                                                                            LoggedIn.User["Validated"] = member.status
                                                                             LoggedIn.User["Birthday"] = member.birthday
                                                                             LoggedIn.User["Email"] = member.email
                                                                             LoggedIn.User["GraduationDate"] = member.graduateDay
@@ -374,7 +325,6 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                                                         }
                                                     }
                                                 }
-                                            }
                                         }
                                     }
                                 }
@@ -390,6 +340,55 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }){ (error) in
             GenericTools.Logger(data: "\n Error getting Users: \(error)")
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.NewsPosts.count
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if(position == "Master" || LoggedIn.User["Contribution"] as! String == "Developer") {
+            deleteNews(index: indexPath.row);
+            TableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! HomePageCell
+        cell.news.text = self.NewsPosts[indexPath.row].Post
+        GenericTools.FrameToFitTextView(View: cell.news)
+        self.newsHeight = cell.news.frame.origin.y + cell.news.frame.size.height
+        return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.newsHeight
+    }
+    
+    var buttonIdentifier = ""
+    func deleteNews(index: Int) {
+        if Reachability.isConnectedToNetwork() == true {
+            self.buttonIdentifier = self.NewsPosts[index].postId
+            let verify = UIAlertController(title: "Alert!", message: "Are you sure you want to permanantly delete this post?", preferredStyle: UIAlertControllerStyle.alert)
+            let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.default, handler: deleteNewsInternal)
+            let destructorAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)
+            verify.addAction(okAction)
+            verify.addAction(destructorAction)
+            self.present(verify, animated: true, completion: nil)
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
+            error.backgroundColor = UIColor.black.withAlphaComponent(1)
+            self.view.addSubview(error)
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5){
+                error.removeFromSuperview()
+            }
+            GenericTools.Logger(data: "\n Internet Connection not Available!")
+        }
+    }
+    
+    func deleteNewsInternal(action: UIAlertAction) {
+        FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config["DatabaseNode"] as! String)+"/News").child(self.buttonIdentifier).removeValue()
+        self.TableView.reloadData()
     }
 
 }

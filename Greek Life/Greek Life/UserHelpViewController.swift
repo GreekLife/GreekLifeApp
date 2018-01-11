@@ -34,7 +34,7 @@ class UserHelpViewController: UIViewController, MFMailComposeViewControllerDeleg
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
             mail.setSubject("BETA: Message from user")
-            mail.setToRecipients(["fraternity.ios.dev@gmail.com"])
+            mail.setToRecipients(["fraternity.ios.dev@gmail.com", "Jonah-elbaz@hotmail.com", "j.zlotnik@live.ca"])
             mail.setMessageBody(EmailText.text, isHTML: true)
             
             present(mail, animated: true)

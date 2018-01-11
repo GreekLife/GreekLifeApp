@@ -255,7 +255,7 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
         memberId = []
         if ListType.kick == false {
             for mem in mMembers.MemberList {
-                if mem.status == false {
+                if isEboard.member.contains(mem.position) {
                     memberList.append(mem)
                 }
             }
