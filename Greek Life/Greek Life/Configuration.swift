@@ -10,15 +10,13 @@
 
 import Foundation
 
-struct Configuration{
-    static var Config: NSDictionary?
-}
+
 
 public class LoadConfiguration {
     
     class func loadConfig(){
         if let path = Bundle.main.path(forResource: "MainConfig", ofType: "plist"){
-            Configuration.Config = NSDictionary(contentsOfFile: path)
+            //Configuration.Config = NSDictionary(contentsOfFile: path)
             }
     }
 }

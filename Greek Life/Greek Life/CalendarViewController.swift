@@ -175,7 +175,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     {
         if Reachability.isConnectedToNetwork(){
             
-            self.dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar").observeSingleEvent(of: .value, with: {(snapshot) in
+            self.dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar").observeSingleEvent(of: .value, with: {(snapshot) in
                 if let eventList = snapshot.value as? [String:[String:Any]]
                 {
                     self.calendar.eventList = eventList
@@ -186,7 +186,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
             }){ (error) in
                 print("Could not retrieve object from database");
             }
-            self.dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/CalendarControls").observeSingleEvent(of: .value, with: {(snapshot) in
+            self.dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/CalendarControls").observeSingleEvent(of: .value, with: {(snapshot) in
                 if let settings = snapshot.value as? [String:Any]
                 {
                     self.calendar.settings = settings
@@ -213,7 +213,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         {
             
             //Writing event data to database
-            dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar").child(String(Int(date.timeIntervalSince1970.magnitude))).setValue([
+            dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar").child(String(Int(date.timeIntervalSince1970.magnitude))).setValue([
                 "title" : title,
                 "duration" : duration.magnitude,
                 "location" : location,
@@ -252,7 +252,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         let confirmDeleteEvent = UIAlertController(title: "Delete Event", message: "Are you sure you want to delete this event \(String(describing: eventKey))?", preferredStyle: UIAlertControllerStyle.alert)
         confirmDeleteEvent.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in confirmDeleteEvent.dismiss(animated: true)}))
         confirmDeleteEvent.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(action) in
-            self.dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar/"+eventKey!).removeValue(){ (error) in
+            self.dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+eventKey!).removeValue(){ (error) in
                 
             }
             confirmDeleteEvent.dismiss(animated: true)
@@ -301,7 +301,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         self.calendar.initUI()
         initCalendar()
         self.reloadCalendar()
-        calendarDataHandle = dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar").observe(.value, with: {(calendarSnapshot) in
+        calendarDataHandle = dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar").observe(.value, with: {(calendarSnapshot) in
             self.calendar.eventList = (calendarSnapshot.value as? [String : [String : Any]])!
             self.reloadCalendar()
         })
@@ -471,10 +471,10 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
         let calView = (presentingViewController as! CalendarViewController)
         let dataRef = calView.dataRef
         if sender.isOn{
-            dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).setValue(LoggedIn.User["BrotherName"])
+            dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).setValue(LoggedIn.User["BrotherName"])
         }else{
             //if calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]?["attendees"].contains(where: (LoggedIn.User["UserID"] as? String)
-            dataRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).removeValue(){error in
+            dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).removeValue(){error in
                 print("user wasn't attending in the first place")
             }
         }

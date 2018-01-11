@@ -198,7 +198,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     //---Write comment data to database---//
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Any?) -> Void){
         let commentId = newPostData["CommentId"] as! String
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(commentId).setValue(newPostData){ error in
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(commentId).setValue(newPostData){ error in
             //GenericTools.Logger(data: "\n Could not post comment data: \(error)")
                // completion(false, error)
             completion(true, nil)
@@ -207,7 +207,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     public func ReadCommentsForPost() {
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").observe(.value, with: { (snapshot) in
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").observe(.value, with: { (snapshot) in
             self.CommentList.removeAll();
             for snap in snapshot.children{
                 if let childSnapshot = snap as? DataSnapshot
@@ -251,9 +251,7 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func DeleteComment(action: UIAlertAction) {
-            Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(CommentList[self.InteractedCommentIndex - 1].CommentId).removeValue(){ error in
-            GenericTools.Logger(data: "\n Could not remove comment: \(error)")
-        }
+            Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Forum").child(Postings.AllPosts![Postings.myIndex].PostId).child("Comments").child(CommentList[self.InteractedCommentIndex - 1].CommentId).removeValue()
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

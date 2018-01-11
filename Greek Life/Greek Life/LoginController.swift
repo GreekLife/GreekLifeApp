@@ -16,7 +16,11 @@ struct LoggedIn {
     static var User: [String: Any] = [:]
 }
 
-class LoginController: UIViewController, UITextFieldDelegate {
+struct Configuration {
+    static var Config: [String: Any] = [:]
+}
+
+class LoginController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate {
     @IBOutlet weak var Username: UITextField!
     @IBOutlet weak var Title_Pic: UIImageView!
     @IBOutlet weak var Password: UITextField!
@@ -27,6 +31,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var CodeBox3: UITextField!
     @IBOutlet weak var CodeBox4: UITextField!
     
+    @IBOutlet weak var DatabaseNodePicker: UITextField!
     
     @IBOutlet weak var Login: UIButton!
     
@@ -35,6 +40,8 @@ class LoginController: UIViewController, UITextFieldDelegate {
     var ref: DatabaseReference!
     var email:String = ""
     var NotifId = ""
+    let nodeOptions = ["Generic", "GammaLambda"]
+
     
     @IBOutlet weak var ForgotPassword: UIButton!
     @IBOutlet weak var CreateAccount: UIButton!
@@ -55,7 +62,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
             return
         }
         ref = Database.database().reference()
-        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/CreateAccount/GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child((Configuration.Config["DatabaseNode"] as! String)+"/CreateAccount/GeneratedKey").observeSingleEvent(of: .value, with: { (snapshot) in
             let code = snapshot.value as? String
             if code == enteredCode {
                 self.activityIndicator.stopAnimating();
@@ -105,6 +112,25 @@ class LoginController: UIViewController, UITextFieldDelegate {
 
     
     @IBAction func Login(_ sender: Any?) {
+        if DatabaseNodePicker.text! == "Generic" {
+            Configuration.Config["DatabaseNode"] = "Development"
+        }
+        else{
+            Configuration.Config["DatabaseNode"]  = DatabaseNodePicker.text!
+        }
+        if !nodeOptions.contains(DatabaseNodePicker.text!) {
+            let internetError = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 70))
+            internetError.textColor = .red
+            internetError.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+            internetError.textAlignment = .center
+            internetError.text = "Your group is not valid"
+            self.view.addSubview(internetError)
+            GenericTools.Logger(data: "\n Inputed invalid node")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                internetError.isHidden = true
+           }
+            return
+        }
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
         if(Username.text == ""){
             self.LoginAlert(problem: "Empty");
@@ -169,7 +195,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     }
     func getEmail(name: String, completion: @escaping (Bool, Any?, Error?) -> Void){
         ref = Database.database().reference()
-        self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").observeSingleEvent(of: .value, with: { (snapshot) in
+        self.ref.child((Configuration.Config["DatabaseNode"] as! String)+"/Users").observeSingleEvent(of: .value, with: { (snapshot) in
             if let user = snapshot.value as? [String:[String:Any]] {
                 for (key, _ ) in user {
                     if (user[key]!["Username"] as! String) == name || (user[key]!["Email"] as! String) == name {
@@ -199,6 +225,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 UIApplication.shared.endIgnoringInteractionEvents();
                 self.defaults.set(self.Username.text!, forKey: "Username")
                 self.defaults.set(self.Password.text!, forKey: "Password")
+                self.defaults.set(Configuration.Config["DatabaseNode"] as! String, forKey: "DatabaseNode")
                 self.Password.text = ""
                 let user: [String: Any] = [
                     "Id": self.NotifId,
@@ -206,10 +233,10 @@ class LoginController: UIViewController, UITextFieldDelegate {
                     "Username": LoggedIn.User["Username"] as! String
                 ]
                 if self.NotifId != "" {
-                    Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
+                    Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/NotificationIds/IOS/\(self.NotifId)").setValue(user){(error) in
                         GenericTools.Logger(data: "\n Could not add notification id to list: \(error)")
                     }
-                    Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/"+(LoggedIn.User["UserID"] as! String)+"/NotificationId").setValue(self.NotifId){(error) in
+                    Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/"+(LoggedIn.User["UserID"] as! String)+"/NotificationId").setValue(self.NotifId){(error) in
                         GenericTools.Logger(data: "\n Could not change users notification id: \(error)")
                     }
                 }
@@ -227,9 +254,38 @@ class LoginController: UIViewController, UITextFieldDelegate {
             }
         }
     }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return nodeOptions.count
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return nodeOptions[row]
+    }
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        DatabaseNodePicker.text = nodeOptions[row]
+    }
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+        return 1
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let pickerView = UIPickerView()
+        pickerView.delegate = self
+        DatabaseNodePicker.inputView = pickerView
+        if var node = defaults.string(forKey: "DatabaseNode") {
+            if node == "Development" {
+                node = "Generic"
+            }
+                Configuration.Config["DatabaseNode"] = node
+        }
+        else {
+            Configuration.Config["DatabaseNode"] = "Generic"
+        }
+        
+        DatabaseNodePicker.text = Configuration.Config["DatabaseNode"] as? String
+
         LoadConfiguration.loadConfig(); //load config and store in structure to always be available.
         if let notifId = defaults.string(forKey: "NotificationId") {
             self.NotifId = notifId
@@ -241,14 +297,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
                 }
             }
         }
-        else {
-            self.activityIndicator.stopAnimating();
-            UIApplication.shared.endIgnoringInteractionEvents();
-            let alert = UIAlertController(title: "Notifications", message: "You must accept notifications to sign in", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
+    
         CodeBox1.delegate = self
         CodeBox2.delegate = self
         CodeBox3.delegate = self

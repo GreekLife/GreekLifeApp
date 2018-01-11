@@ -111,6 +111,8 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     @IBOutlet weak var Position: UILabel!
     @IBOutlet weak var mBrother: UITextField!
     
+    @IBOutlet weak var ImageContainer: UIView!
+    
     let position = LoggedIn.User["Position"] as? String
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
 
@@ -120,9 +122,9 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
     
     @IBAction func Save(_ sender: Any) {
         ActivityWheel.CreateActivity(activityIndicator: activityIndicator,view: self.view);
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Position").setValue(mPosition.text)
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/BrotherName").setValue(mBrother.text)
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Validated").setValue(true)
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Position").setValue(mPosition.text)
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/BrotherName").setValue(mBrother.text)
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users/\(mMembers.memberObj!.id)/Validated").setValue(true)
         
         mMembers.memberObj?.brotherName = mBrother.text!
         mMembers.memberObj?.position = mPosition.text!
@@ -144,6 +146,9 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
         let pickerView = UIPickerView()
         pickerView.delegate = self
         mPosition.inputView = pickerView
+        
+        ImageContainer.layer.cornerRadius = 15
+        ImageContainer.layer.masksToBounds = true
         
         First.text = mMembers.memberObj?.first
         Last.text = mMembers.memberObj?.last

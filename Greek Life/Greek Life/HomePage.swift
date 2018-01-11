@@ -83,9 +83,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func deleteNewsInternal(action: UIAlertAction) {
-        FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config!["DatabaseNode"] as! String)+"/News").child(self.buttonIdentifier).removeValue(){ (error) in
-            GenericTools.Logger(data: "\n Error writing news: \(error)")
-        }
+        FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config["DatabaseNode"] as! String)+"/News").child(self.buttonIdentifier).removeValue()
         self.TableView.reloadData()
     }
     
@@ -167,7 +165,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func ReadNews(completion: @escaping (Bool) -> Void){
         ref = Database.database().reference()
-        self.ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/News").observe(.value, with: { (snapshot) in
+        self.ref.child((Configuration.Config["DatabaseNode"] as! String)+"/News").observe(.value, with: { (snapshot) in
             self.NewsPosts.removeAll()
             for snap in snapshot.children{
                 if let childSnapshot = snap as? DataSnapshot
@@ -192,7 +190,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func UserIsBlocked(userId: String, completion: @escaping (Bool, Any?, Bool) -> Void) {
-         Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Blocked/\(userId)").observe(.value, with: { (snapshot) in
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Blocked/\(userId)").observe(.value, with: { (snapshot) in
                     if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
                         if let blocked = postDictionary["Blocked"] as? Bool {
                             if let delay = postDictionary["Delay"] as? Int {
@@ -206,9 +204,10 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-
+    @IBOutlet weak var ChapterHeader: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
+        ChapterHeader.text = defaults.string(forKey: "DatabaseNode")
         if LoggedIn.User["Position"] as! String != "Master" || LoggedIn.User["Contribution"] as! String == "Developer" {
             self.TableView.allowsSelection = false
         }
@@ -223,7 +222,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     let ban = (value as! Int) * 60
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(ban)){
                         blocked.dismiss(animated: true, completion: nil)
-                        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Blocked/\(id)").updateChildValues(["Blocked": false]) { (error) in
+                        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Blocked/\(id)").updateChildValues(["Blocked": false]) { (error) in
                             GenericTools.Logger(data: "\n Error editing blocked user in database: \(error)")
                         }
                     }
@@ -329,7 +328,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func getUsers(completion: @escaping (Bool) -> Void){
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Users").observe(.value, with: { (snapshot) in
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Users").observe(.value, with: { (snapshot) in
             mMembers.MemberList.removeAll()
             for snap in snapshot.children{
                 if let childSnapshot = snap as? DataSnapshot

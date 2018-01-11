@@ -150,10 +150,10 @@ class CreatePollViewController: UIViewController {
         let ThePollKey = [poll.PollId : ThePoll]
         ref = Database.database().reference()
         let pId = ThePoll["PostId"] as! String
-            ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Polls").updateChildValues(ThePollKey){ error in
+            ref.child((Configuration.Config["DatabaseNode"] as! String)+"/Polls").updateChildValues(ThePollKey){ error in
                 GenericTools.Logger(data: "\n Couldn't create poll")
             }
-            ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Polls/PollIds/\(pId)").setValue(pId){ error in
+            ref.child((Configuration.Config["DatabaseNode"] as! String)+"/Polls/PollIds/\(pId)").setValue(pId){ error in
                 GenericTools.Logger(data: "\n Couldn't create poll id")
             }
             var masterId = ""
@@ -171,7 +171,7 @@ class CreatePollViewController: UIViewController {
                 ]
             ]
         ]
-            ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/PollOptions").updateChildValues(ThePollOptionKey){ error in
+            ref.child((Configuration.Config["DatabaseNode"] as! String)+"/PollOptions").updateChildValues(ThePollOptionKey){ error in
                 GenericTools.Logger(data: "\n Couldn't create new poll option")
             }
         self.activityIndicator.stopAnimating();

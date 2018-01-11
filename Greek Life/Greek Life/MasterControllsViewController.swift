@@ -43,7 +43,7 @@ class MasterControllsViewController: UIViewController {
         InfoPage.layer.cornerRadius = 5
         
         ref = Database.database().reference()
-        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/CreateAccount").child("GeneratedKey").observe(.value, with: { (snapshot) in
+        ref.child((Configuration.Config["DatabaseNode"] as! String)+"/CreateAccount").child("GeneratedKey").observe(.value, with: { (snapshot) in
             let code = snapshot.value as? String
             self.CurrentCode.text = code
             
@@ -61,7 +61,7 @@ class MasterControllsViewController: UIViewController {
 
         let newCode = "\(val1)\(val2)\(val3)\(val4)"
         ref = Database.database().reference()
-        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/CreateAccount").child("GeneratedKey").setValue(newCode){ (error) in
+        ref.child((Configuration.Config["DatabaseNode"] as! String)+"/CreateAccount").child("GeneratedKey").setValue(newCode){ (error) in
             GenericTools.Logger(data: "\n Error generating key: \(error)")
         }
     }
@@ -177,7 +177,7 @@ class PostNews: UIViewController {
     func PostData(newPostData: Dictionary<String, Any>, completion: @escaping (Bool, Error?) -> Void){
         CreatePostRef = Database.database().reference()
         let pID = newPostData["PostId"] as! String
-        self.CreatePostRef.child((Configuration.Config!["DatabaseNode"] as! String)+"/News").child(pID).setValue(newPostData){ (error) in
+        self.CreatePostRef.child((Configuration.Config["DatabaseNode"] as! String)+"/News").child(pID).setValue(newPostData){ (error) in
             GenericTools.Logger(data: "\n Couldn't post news: \(error)")
         }
         completion(true, nil)
@@ -243,9 +243,8 @@ class KickMember: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var tempIndex = 0
     func KickMember(action: UIAlertAction) {
-        FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config!["DatabaseNode"] as! String)+"/Users").child(self.memberId[tempIndex]).removeValue(){ (error) in
-            GenericTools.Logger(data: "\n Could not kick user: \(error)")
-        }
+        FirebaseDatabase.Database.database().reference(withPath: (Configuration.Config["DatabaseNode"] as! String)+"/Users").child(self.memberId[tempIndex]).removeValue()
+        
         GenericTools.Logger(data: "\n kicked user:")
         tempIndex = 0
     }
@@ -279,10 +278,10 @@ class CustomNotification: UIViewController {
     @IBAction func SendNotification(_ sender: Any) {
         if(Notification.text != "") {
             var old = ""
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/GeneralMessage/Master").observe(.value, with: { (snapshot) in
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/GeneralMessage/Master").observe(.value, with: { (snapshot) in
             old = snapshot.value as! String
             if self.Notification.text! != old {
-                Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/GeneralMessage/Master").setValue(self.Notification.text!)
+                Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/GeneralMessage/Master").setValue(self.Notification.text!)
                 let verify = UIAlertController(title: "Sent!", message: "", preferredStyle: UIAlertControllerStyle.alert)
                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                 verify.addAction(okAction)
@@ -394,7 +393,7 @@ class Ban: UIViewController, UITableViewDelegate, UITableViewDataSource {
             "Blocked": true,
             "Delay": time
             ] as [String : Any]
-        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Blocked/\(mMembers.MemberList[selectedIndex].id)").setValue(value) { (error) in
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Blocked/\(mMembers.MemberList[selectedIndex].id)").setValue(value) { (error) in
             GenericTools.Logger(data: "\n Error editing time for desired block: \(error)")
         }
     }
@@ -427,7 +426,7 @@ class DefineInfo: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
         
         if self.pickedImage != nil {
-            let storageRef = Storage.storage().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Info/\(imageName).jpg")
+            let storageRef = Storage.storage().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Info/\(imageName).jpg")
             if let uploadData = UIImageJPEGRepresentation(self.pickedImage!, 0.5){
                 let newMetadata = StorageMetadata()
                 newMetadata.contentType = "image/jpeg";
@@ -441,7 +440,7 @@ class DefineInfo: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                             "ChapterLogoURL": metadata!.downloadURL()!.description
                             ] as [String: Any]
                         
-                        Database.database().reference().child((Configuration.Config!["DatabaseNode"] as! String)+"/Info").setValue(infoObject){ error in
+                        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Info").setValue(infoObject){ error in
                                 let invalid = UIAlertController(title: "Error", message: "There was an error saving your data", preferredStyle: UIAlertControllerStyle.alert)
                                 let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default)
                                 invalid.addAction(okAction)
@@ -569,7 +568,7 @@ class DefineInfo: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     func getInfo(completion: @escaping (Dictionary<String, Any>, Error?) -> Void){
         let ref = Database.database().reference()
-        ref.child((Configuration.Config!["DatabaseNode"] as! String)+"/Info").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child((Configuration.Config["DatabaseNode"] as! String)+"/Info").observeSingleEvent(of: .value, with: { (snapshot) in
            if let postDictionary = snapshot.value as? [String:AnyObject] , postDictionary.count > 0{
                  completion(postDictionary,nil )
             }
