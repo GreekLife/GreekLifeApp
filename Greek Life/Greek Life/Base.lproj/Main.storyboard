@@ -639,7 +639,6 @@
                                             <action selector="Cancel:" destination="UWB-3L-Dk6" id="zjb-nE-RXB"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem width="64" style="plain" systemItem="fixedSpace" id="En0-Jx-3fy"/>
                                 </items>
                             </toolbar>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" text="The post" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LuE-W0-3Or">

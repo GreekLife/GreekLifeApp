@@ -696,6 +696,7 @@ class PollVoting: UIViewController {
     @IBOutlet weak var Percent: UILabel!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var Votes: UIButton!
+
     
     let screensize: CGRect = UIScreen.main.bounds
     var scrollView: UIScrollView!
@@ -754,6 +755,7 @@ class PollVoting: UIViewController {
             self.DrawLayout()
         }
     }
+   
 
     
     var ExistingOptions: [UIButton] = []
