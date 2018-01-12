@@ -166,8 +166,6 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             mPosition.frame.size.width = Position.frame.size.width
             mPosition.isHidden = false
             mPosition.text = Position.text
-            
-            Brother.isHidden = true
         }
         else {
             Save.isHidden = true

@@ -393,7 +393,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var buttonIdentifier: String = ""
     func DeleteSelectedPollInternal(action: UIAlertAction) {
-            Database.database().reference(withPath: "Forum").child(self.buttonIdentifier).removeValue()
+            Database.database().reference(withPath: (Configuration.Config["DatabaseNode"] as! String)+"/Forum").child(self.buttonIdentifier).removeValue()
             self.deleting = false
             self.DeleteBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
             self.TableView.reloadData()

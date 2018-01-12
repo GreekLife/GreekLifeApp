@@ -101,6 +101,9 @@ class ChannelDialogue: Dialogue {
     
     // Send a message to the channel
     func sendMessage(message:Message) {
+        if message.content.isEmpty || message.content == "" {
+            return
+        }
         Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/ChannelDialogues/"+self.id+"/Messages/"+message.id).setValue(message.content)
     }
     
@@ -750,6 +753,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
+        
+        scrollToBottom()
     }
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -867,10 +872,16 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     @IBAction func backBTN(_ sender: Any)
     {
+        self.messageInputField.endEditing(true)
+        self.messageInputField.resignFirstResponder()
+        self.containerView.isHidden = true
         presentingViewController?.dismiss(animated: true)
     }
     func sendMsgBTN(button: UIButton) {
         if Reachability.isConnectedToNetwork() {
+            if messageInputField.text == "" || messageInputField.text.isEmpty {
+                return
+            }
         let messageToSend = Message(senderID: (LoggedIn.User["UserID"] as! String), content: messageInputField.text)
         if self.dialogue.type == "DirectDialogues" {
             (self.dialogue as! DirectDialogue).sendMessage(message: messageToSend)
@@ -879,6 +890,13 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             (self.dialogue as! ChannelDialogue).sendMessage(message: messageToSend)
         }
         self.messageInputField.text = ""
+            let originalHeight = messageInputField.frame.size.height
+        GenericTools.FrameToFitTextView(View: self.messageInputField)
+            let newHeight = messageInputField.frame.size.height
+            let diff = newHeight - originalHeight
+            self.containerView.frame.origin.y -= diff
+            self.containerView.frame.size.height += diff
+
         }
         else {
             let error = Banner.ErrorBanner(errorTitle: "Internet Connection not available")
@@ -1078,6 +1096,7 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
                 // Shove data into the fields
                 self.channelNameField.text = self.channelName
                 self.welcomeMessageField.text = self.welcomeMessage
+                
             } else {
                 // If it doesn't exist, put all the messengees into the messengeesNotInChannel and put the logged in user into the messengeesInChannel
                 self.DeleteChannelBTN.isHidden = true
@@ -1097,7 +1116,6 @@ class ChannelSettingsViewController:UIViewController, UITableViewDelegate, UITab
     }
     
     @IBAction func DeleteChannel(_ sender: Any) {
-        
         let delete = UIAlertController(title: "Delete", message: "Are you sure you would like to delete this channel?", preferredStyle: UIAlertControllerStyle.alert)
         let okAction = UIAlertAction(title: "Delete", style: UIAlertActionStyle.destructive, handler: DeleteChannel)
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default)

@@ -124,6 +124,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
             MasterControls.isEnabled = false
             MasterControls.image = UIImage(named: "")
         }
+
         //Add targets
         InstantMessaging.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)
         Forum.addTarget(self, action: #selector(buttonClicked(sender:)), for: .touchUpInside)

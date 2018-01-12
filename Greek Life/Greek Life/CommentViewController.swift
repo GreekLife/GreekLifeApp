@@ -31,8 +31,10 @@ class CommentViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func scrollToBottom(){
         DispatchQueue.main.async {
-            let indexPath = IndexPath(row: self.CommentList.count-1, section: 0)
-            self.TableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            if self.CommentList.count > 0 {
+                let indexPath = IndexPath(row: self.CommentList.count-1, section: 0)
+                self.TableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
         }
     }
 

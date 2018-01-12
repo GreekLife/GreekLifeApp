@@ -8,6 +8,7 @@ target 'Greek Life' do
 	pod 'Firebase/Auth’
 	pod ‘Firebase/Storage’
 	pod 'IQKeyboardManagerSwift'
+	pod 'Whisper'
   use_frameworks!
 
   # Pods for Greek Life

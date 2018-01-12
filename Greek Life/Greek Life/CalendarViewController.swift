@@ -448,12 +448,21 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
         }
         
     }
-    
+    func getNameById(id: String) -> String {
+        var name = ""
+        for user in mMembers.MemberList {
+            if user.id == id {
+                name = user.first + " " + user.last
+            }
+        }
+        return name
+    }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let calView = (presentingViewController as! CalendarViewController)
         let attendees = calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]!["attendees"] as! [String:String]
         let cell = UITableViewCell.init(style: .default, reuseIdentifier: "attendeeCell")
-        cell.textLabel?.text = Array(attendees)[indexPath.row].value
+        let name = getNameById(id: Array(attendees)[indexPath.row].value)
+        cell.textLabel?.text = name
         return cell
     }
     
@@ -471,7 +480,7 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
         let calView = (presentingViewController as! CalendarViewController)
         let dataRef = calView.dataRef
         if sender.isOn{
-            dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).setValue(LoggedIn.User["BrotherName"])
+            dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).setValue(LoggedIn.User["UserID"])
         }else{
             //if calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]?["attendees"].contains(where: (LoggedIn.User["UserID"] as? String)
             dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+String(Int((eventData["date"] as? Double)!))+"/attendees/"+(LoggedIn.User["UserID"] as? String)!).removeValue(){error in
