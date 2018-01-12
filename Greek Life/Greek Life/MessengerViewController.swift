@@ -320,6 +320,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         SearchBar.delegate = self
         TableView.keyboardDismissMode = .interactive
+        TableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0);
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -515,6 +516,8 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
             })
             
         })
+        
+        TableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0);
     }
     
     // --- Initialize directDialogues --- //

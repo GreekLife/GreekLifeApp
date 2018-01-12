@@ -3515,7 +3515,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a0U-QK-RRm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-615" y="3070"/>
+            <point key="canvasLocation" x="-615.20000000000005" y="3069.7151424287858"/>
         </scene>
         <!--ChannelsViewController-->
         <scene sceneID="lUA-Sf-acG">
