@@ -3547,6 +3547,12 @@
                                                     <action selector="createChannelBTN:" destination="69d-Jd-O1t" id="NVJ-Vd-S3P"/>
                                                 </connections>
                                             </barButtonItem>
+                                            <barButtonItem systemItem="refresh" id="hcp-IM-Cld">
+                                                <color key="tintColor" red="1" green="0.87843137250000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <connections>
+                                                    <action selector="RefreshChannels:" destination="69d-Jd-O1t" id="80Y-b8-Ed1"/>
+                                                </connections>
+                                            </barButtonItem>
                                         </items>
                                         <color key="barTintColor" red="0.10196178409999999" green="0.10195901239999999" blue="0.1019608751" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                     </toolbar>
@@ -4181,7 +4187,7 @@
         <image name="Icons/Signout" width="16" height="16"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="6nq-ve-hg4"/>
+        <segue reference="27z-0v-7aw"/>
         <segue reference="kBA-p2-XRe"/>
         <segue reference="Ues-xD-fNG"/>
     </inferredMetricsTieBreakers>

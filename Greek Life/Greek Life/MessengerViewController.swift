@@ -312,6 +312,23 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var channelsTable: UITableView!
     @IBOutlet weak var SearchBar: UISearchBar!
     @IBOutlet weak var TableView: UITableView!
+    @IBAction func RefreshChannels(_ sender: Any) {
+        Database.database().reference().observeSingleEvent(of: .value, with: {snapshot in
+            DatabaseHousekeeping.dbSnapshot = snapshot
+            self.channelDialogues.removeAll()
+            for channel in snapshot.childSnapshot(forPath: (Configuration.Config["DatabaseNode"] as! String)+"/ChannelDialogues").children {
+                let listOfChannelMembers = ((channel as! DataSnapshot).childSnapshot(forPath: "Messengees").value as! String).components(separatedBy: ", ")
+                if listOfChannelMembers.contains(LoggedIn.User["UserID"] as! String) ||
+                    (LoggedIn.User["Position"] as! String == "Master" || LoggedIn.User["Contribution"] as! String == "Developer")
+                {
+                    self.channelDialogues.append(ChannelDialogue(id: (channel as! DataSnapshot).key ))
+                }
+            }
+            self.channelDialogues = self.channelDialogues.sorted(by: { Double(($0.messages.last!.timeSent))! > Double(($1.messages.last!.timeSent))! })
+            self.channelsTable.reloadData()
+        })
+    }
+    
     
     
     // --- View Did Load --- //
@@ -1009,9 +1026,9 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y + messageCell.messageSender.frame.size.height + 1
             messageCell.textbubble.addSubview(messageCell.messageSender)
             messageCell.textbubble.frame = CGRect(x: 10, y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
-            if(75 > messageCell.message.frame.size.width) {
+            if(80 > messageCell.message.frame.size.width) {
                 //Should be wrapping content of name and then accomodating that. but for now ill leave it as a maximum of 60
-                messageCell.textbubble.frame.size.width = 60
+                messageCell.textbubble.frame.size.width = 80
             }
 
         }
