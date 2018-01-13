@@ -999,14 +999,6 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         messageCell.addSubview(messageCell.textbubble)
         messageCell.textbubble.addSubview(messageCell.message)
         
-        let messageSize = messageCell.message.text!.count
-        let nameSize = messageCell.messageSender.text!.count
-        
-        if messageSize < nameSize {
-            let subName = messageCell.messageSender.text!.index(messageCell.messageSender.text!.startIndex, offsetBy: 0)..<messageCell.message.text!.endIndex
-            messageCell.messageSender.text = messageCell.messageSender.text![subName]
-        }
-        
         if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy {
             messageCell.message.textAlignment = .left
             messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y
@@ -1017,6 +1009,10 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y + messageCell.messageSender.frame.size.height + 1
             messageCell.textbubble.addSubview(messageCell.messageSender)
             messageCell.textbubble.frame = CGRect(x: 10, y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
+            if(60 > messageCell.message.frame.size.width) {
+                //Should be wrapping content of name and then accomodating that. but for now ill leave it as a maximum of 60
+                messageCell.textbubble.frame.size.width = 60
+            }
 
         }
         return messageCell

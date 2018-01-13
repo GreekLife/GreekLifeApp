@@ -83,6 +83,9 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         ChapterHeader.text = defaults.string(forKey: "DatabaseNode")
+        if ChapterHeader.text == "Developer" {
+            ChapterHeader.text = "Generic"
+        }
         if LoggedIn.User["Position"] as! String != "Master" || LoggedIn.User["Contribution"] as! String == "Developer" {
             self.TableView.allowsSelection = false
         }
