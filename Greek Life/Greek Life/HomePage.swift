@@ -52,7 +52,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var MasterControls: UIBarButtonItem!
     @IBOutlet weak var Beta: UIBarButtonItem!
     @IBOutlet weak var ChapterHeader: UILabel!
-
+    
     var newsHeight: CGFloat = 0
     var ref: DatabaseReference!
     let defaults:UserDefaults = UserDefaults.standard

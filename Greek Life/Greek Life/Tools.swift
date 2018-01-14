@@ -105,6 +105,16 @@ public class ActivityWheel {
         activityIndicator.startAnimating()
         UIApplication.shared.beginIgnoringInteractionEvents();
     }
+    
+    class func CreateActivityNotBlocked(activityIndicator: UIActivityIndicatorView, view: UIView) {
+        activityIndicator.center = view.center;
+        activityIndicator.hidesWhenStopped = true;
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
+        activityIndicator.color = UIColor.blue;
+        view.addSubview(activityIndicator);
+        activityIndicator.startAnimating()
+    }
+    
 }
 
 public class CreateDate {

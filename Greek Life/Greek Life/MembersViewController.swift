@@ -155,6 +155,8 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
         
         if let pic = mMembers.memberObj?.picture {
             Image.image = pic
+            ImageContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:))))
+
         }
         
         if self.position == "Master" && mMembers.memberObj?.position != "Master" || LoggedIn.User["Contribution"] as! String == "Developer" {
@@ -172,6 +174,26 @@ class MemberProfile: UIViewController, UIPickerViewDelegate {
             mPosition.isHidden = true
         }
         
+    }
+    
+    func imageTapped(_ sender: UITapGestureRecognizer) {
+        let imageView = sender.view?.subviews[0] as! UIImageView
+        let newImageView = UIImageView(image: imageView.image)
+        newImageView.frame = UIScreen.main.bounds
+        newImageView.backgroundColor = .black
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+        newImageView.addGestureRecognizer(tap)
+        self.view.addSubview(newImageView)
+        self.navigationController?.isNavigationBarHidden = true
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        self.navigationController?.isNavigationBarHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {

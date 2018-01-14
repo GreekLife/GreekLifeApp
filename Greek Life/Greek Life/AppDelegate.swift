@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 import IQKeyboardManagerSwift
+import Whisper
 import UserNotifications
 
 @UIApplicationMain
@@ -42,10 +43,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GenericTools.Logger(data: "\n APNs registration failed: \(error)")
     }
     
-    // Push notification received
+    //not handling if app was closed and just launched
+    
+    // Push notification received while application is in use!!!
     func application(_ application: UIApplication, didReceiveRemoteNotification data: [AnyHashable : Any]) {
-        print("Push notification received: \(data)")
+        //For DMS we recieve the recievers id
+        if let payload = data["id"] as? String {
+            let index1 = payload.index(payload.startIndex, offsetBy: 3)
+            let myNotifIdIndex = payload[..<index1]
+            let myNotifId = String(myNotifIdIndex)
+            
+            
+            if myNotifId == "DDM" { //direct
+                let index2 = payload.index(payload.startIndex, offsetBy: 3)..<payload.endIndex
+                let senderId = String(payload[index2])
+                let aps = data[AnyHashable("aps")] as? NSDictionary
+                if let body = aps!["alert"] as? String {
+                    let sender = (body.components(separatedBy: ":"))[0]
+                    let message = (body.components(separatedBy: ":"))[1]
+                    let state: UIApplicationState = UIApplication.shared.applicationState
+                    if state == .active && UIApplication.shared.keyWindow?.currentViewController()! is ChatViewController {
+                        let announcement = Announcement(title: sender, subtitle: message, image: UIImage(named: "Icons/Logo2.png"))
+                        Whisper.show(shout: announcement, to: (UIApplication.shared.keyWindow?.currentViewController())!, completion: {
+                        })
+                        if DMNotifications.UnreadIds.contains(senderId!) == false {
+                            DMNotifications.UnreadIds.append(senderId!)
+                        }
+                    }
+                }
+            }
+            if myNotifId == "CDM" { //channel
+                let index2 = payload.index(payload.startIndex, offsetBy: 3)..<payload.endIndex
+                let senderId = String(payload[index2])
+                let aps = data[AnyHashable("aps")] as? NSDictionary
+                if let body = aps!["alert"] as? String {
+                    let sender = (body.components(separatedBy: ":"))[0]
+                    let message = (body.components(separatedBy: ":"))[1]
+                    let state: UIApplicationState = UIApplication.shared.applicationState
+                    if state == .active && UIApplication.shared.keyWindow?.currentViewController()! is ChatViewController {
+                        let announcement = Announcement(title: sender, subtitle: message, image: UIImage(named: "Icons/Logo2.png"))
+                        Whisper.show(shout: announcement, to: (UIApplication.shared.keyWindow?.currentViewController())!, completion: {
+                        })
+                        if ChannelNotifications.UnreadIds.contains(senderId!) == false {
+                            ChannelNotifications.UnreadIds.append(senderId!)
+                        }
+                    }
+                }
+            }
+            
+        }
+        //here we just wanna whisper
     }
+
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         UIApplication.shared.applicationIconBadgeNumber = -1

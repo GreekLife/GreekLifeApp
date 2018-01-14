@@ -21,11 +21,17 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseStorage
 import IQKeyboardManagerSwift
 
 //-----------------------------------------------------------------------------------------------------------
 //  Database Objects
 //-----------------------------------------------------------------------------------------------------------
+struct ConvoImages {
+    
+    static var imagesForConversation: [String: [UIImage]] = [:]
+    
+}
 
 struct DatabaseHousekeeping {
     
@@ -307,12 +313,15 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     var channelDialogues = [ChannelDialogue]()
     var filtered = [ChannelDialogue]()
     var searchActive : Bool = false
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
     // --- IB Outlets --- //
     
     @IBOutlet weak var channelsTable: UITableView!
     @IBOutlet weak var SearchBar: UISearchBar!
     @IBOutlet weak var TableView: UITableView!
     @IBAction func RefreshChannels(_ sender: Any) {
+        ActivityWheel.CreateActivityNotBlocked(activityIndicator: activityIndicator,view: self.view);
+        self.SearchBar.isHidden = true
         Database.database().reference().observeSingleEvent(of: .value, with: {snapshot in
             DatabaseHousekeeping.dbSnapshot = snapshot
             self.channelDialogues.removeAll()
@@ -326,6 +335,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             self.channelDialogues = self.channelDialogues.sorted(by: { Double(($0.messages.last!.timeSent))! > Double(($1.messages.last!.timeSent))! })
             self.channelsTable.reloadData()
+            self.activityIndicator.stopAnimating();
+            self.SearchBar.isHidden = false
+
         })
     }
     
@@ -336,6 +348,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         SearchBar.delegate = self
+        ActivityWheel.CreateActivityNotBlocked(activityIndicator: activityIndicator,view: self.view);
+        SearchBar.isHidden = true
         TableView.keyboardDismissMode = .interactive
         TableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0);
     }
@@ -354,6 +368,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
             self.channelDialogues = self.channelDialogues.sorted(by: { Double(($0.messages.last!.timeSent))! > Double(($1.messages.last!.timeSent))! })
             self.channelsTable.reloadData()
+            self.activityIndicator.stopAnimating();
+            self.SearchBar.isHidden = false
         })
     }
     
@@ -385,6 +401,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false;
+        self.SearchBar.endEditing(true)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -441,19 +458,56 @@ class ChannelViewController: UIViewController, UITableViewDelegate, UITableViewD
             chCell.channelNameLabel.text = filtered[indexPath.row].name
             chCell.lastMessageLabel.text? = ""
             chCell.lastMessageLabel.text?.append(Messengee(userID:(filtered[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (filtered[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
-            chCell.lastMessageLabel.text?.append((filtered[indexPath.row].messages.last?.content)!+"\"")
+            
+            var subString = ""
+            if (((filtered[indexPath.row].messages.last?.content)!+"\"").count > 8) {
+                let index = ((filtered[indexPath.row].messages.last?.content)!+"\"").index(((filtered[indexPath.row].messages.last?.content)!+"\"").startIndex, offsetBy: 8)
+                let mySubstring = ((filtered[indexPath.row].messages.last?.content)!+"\"")[..<index]
+                subString = String(mySubstring)
+            }
+            if subString == "https://" {
+                chCell.lastMessageLabel.text?.append("Media\"")
+
+            }
+            else {
+                chCell.lastMessageLabel.text?.append((filtered[indexPath.row].messages.last?.content)!+"\"")
+            }
         }
         else {
             chCell.channelNameLabel.text = channelDialogues[indexPath.row].name
             chCell.lastMessageLabel.text? = ""
             chCell.lastMessageLabel.text?.append(Messengee(userID:(channelDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (channelDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
-            chCell.lastMessageLabel.text?.append((channelDialogues[indexPath.row].messages.last?.content)!+"\"")
+            
+            var subString = ""
+            if (((channelDialogues[indexPath.row].messages.last?.content)!+"\"").count > 29) {
+                let index = ((channelDialogues[indexPath.row].messages.last?.content)!+"\"").index(((channelDialogues[indexPath.row].messages.last?.content)!+"\"").startIndex, offsetBy: 29)
+                let mySubstring = ((channelDialogues[indexPath.row].messages.last?.content)!+"\"")[..<index]
+                subString = String(mySubstring)
+            }
+            if subString == "https://firebasestorage.googl" {
+                chCell.lastMessageLabel.text?.append("Media\"")
+            }
+            else {
+                chCell.lastMessageLabel.text?.append((channelDialogues[indexPath.row].messages.last?.content)!+"\"")
+            }
         }
+        if ChannelNotifications.UnreadIds.contains(self.channelDialogues[indexPath.row].id) {
+            chCell.lastMessageLabel.textColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
+            chCell.NewMessage.isHidden = false
+        }
+        else {
+            chCell.lastMessageLabel.textColor = .white
+            chCell.NewMessage.isHidden = true
+        }
+        
+        
         return chCell
     }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         SelectedChannel.chatName = channelDialogues[indexPath.row].name
+        TableView.deselectRow(at: indexPath, animated: true)
         performSegue(withIdentifier: "ChatViewSegue", sender: channelDialogues[indexPath.row])
     }
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
@@ -483,6 +537,7 @@ class ChannelDialogueCell: UITableViewCell {
     // --- IB Outlets --- //
     @IBOutlet weak var channelNameLabel: UILabel!
     @IBOutlet weak var lastMessageLabel: UILabel!
+    @IBOutlet weak var NewMessage: UIButton!
     
     
 }
@@ -512,10 +567,14 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     
     // --- View Did Load  --- //
-    
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView();
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        ActivityWheel.CreateActivityNotBlocked(activityIndicator: activityIndicator,view: self.view);
+        SearchBar.isHidden = true
         SearchBar.delegate = self
+        
         Database.database().reference().observeSingleEvent(of:.value, with: {snapshot in
             //Store Database in housekeeping struct
             DatabaseHousekeeping.dbSnapshot = snapshot
@@ -530,6 +589,8 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 self.initDirectDialogues()
                 self.directDialogues = self.directDialogues.sorted(by: { Double(($0.messages.last!.timeSent))! > Double(($1.messages.last!.timeSent))! })
                 self.directDialogueTable.reloadData()
+                self.activityIndicator.stopAnimating();
+                self.SearchBar.isHidden = false
             })
             
         })
@@ -573,6 +634,7 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchActive = false;
+        self.SearchBar.endEditing(true)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -628,6 +690,7 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     //-- Table of Direct Messaging Conversations --//
     
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if searchActive {
@@ -655,7 +718,19 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
             directDialogueCell.messengeeOtherLabel.text? = String(otherMessengees.dropLast(2))
             directDialogueCell.lastMessageLabel.text? = ""
             directDialogueCell.lastMessageLabel.text?.append(Messengee(userID:(filtered[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (filtered[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
-            directDialogueCell.lastMessageLabel.text?.append((filtered[indexPath.row].messages.last?.content)!+"\"")
+            
+            var subString = ""
+            if (((filtered[indexPath.row].messages.last?.content)!+"\"").count > 8) {
+                let index = ((filtered[indexPath.row].messages.last?.content)!+"\"").index(((filtered[indexPath.row].messages.last?.content)!+"\"").startIndex, offsetBy: 8)
+                let mySubstring = ((filtered[indexPath.row].messages.last?.content)!+"\"")[..<index]
+                subString = String(mySubstring)
+            }
+            if subString == "https://" {
+                 directDialogueCell.lastMessageLabel.text?.append("Media\"")
+            }
+            else {
+                directDialogueCell.lastMessageLabel.text?.append((filtered[indexPath.row].messages.last?.content)!+"\"")
+            }
             
         }
         else {
@@ -670,8 +745,36 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
             directDialogueCell.messengeeOtherLabel.text? = String(otherMessengees.dropLast(2))
             directDialogueCell.lastMessageLabel.text? = ""
             directDialogueCell.lastMessageLabel.text?.append(Messengee(userID:(directDialogues[indexPath.row].messages.last?.sentBy)!).firstName+" "+Messengee(userID: (directDialogues[indexPath.row].messages.last?.sentBy)!).lastName+": \"")
-            directDialogueCell.lastMessageLabel.text?.append((directDialogues[indexPath.row].messages.last?.content)!+"\"")
+            
+            var subString = ""
+            if (((directDialogues[indexPath.row].messages.last?.content)!+"\"").count > 29) {
+                let index = ((directDialogues[indexPath.row].messages.last?.content)!+"\"").index(((directDialogues[indexPath.row].messages.last?.content)!+"\"").startIndex, offsetBy: 29)
+                let mySubstring = ((directDialogues[indexPath.row].messages.last?.content)!+"\"")[..<index]
+                subString = String(mySubstring)
+            }
+            if subString == "https://firebasestorage.googl" {
+                directDialogueCell.lastMessageLabel.text?.append("Media\"")
+            }
+            else {
+                directDialogueCell.lastMessageLabel.text?.append((directDialogues[indexPath.row].messages.last?.content)!+"\"")
+            }
         }
+        
+        var unreadMessageExists = false
+        for messengee in directDialogues[indexPath.row].messengees {
+            if DMNotifications.UnreadIds.contains(messengee.userID) {
+                unreadMessageExists = true
+            }
+        }
+        if unreadMessageExists {
+            directDialogueCell.NewMessage.isHidden = false
+            directDialogueCell.lastMessageLabel.textColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
+        }
+        else {
+            directDialogueCell.NewMessage.isHidden = true
+            directDialogueCell.lastMessageLabel.textColor = .white
+        }
+        
         return directDialogueCell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
@@ -685,8 +788,26 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
             }
         }
         SelectedChannel.chatName = String(otherMessengees.dropLast(2))
-        
+        TableView.deselectRow(at: indexPath, animated: true)
+        removeNotifications(dialogue: directDialogues[indexPath.row])
         performSegue(withIdentifier: "ChatViewSegue", sender: directDialogues[indexPath.row])
+    }
+    
+    func removeNotifications(dialogue: DirectDialogue ) {
+        let users = dialogue.id.components(separatedBy: ", ")
+        var sender = ""
+        if LoggedIn.User["UserID"] as? String == users[0] {
+            sender = users[1]
+        }
+        else if LoggedIn.User["UserID"] as? String == users[1] {
+            sender = users[0]
+        }
+        
+        if DMNotifications.UnreadIds.contains(sender) {
+            let index = DMNotifications.UnreadIds.index(of: sender)
+            DMNotifications.UnreadIds.remove(at: index!)
+        }
+        
     }
     /*func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
      performSegue(withIdentifier: "ChatSettingsSegue", sender: directDialogues[indexPath.row])
@@ -698,6 +819,8 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ChatViewSegue" {
             (segue.destination as! ChatViewController).dialogue = sender as! DirectDialogue
+            
+            
         }
     }
 }
@@ -708,6 +831,7 @@ class DMViewController: UIViewController, UITableViewDelegate, UITableViewDataSo
 class DirectDialogueCell: UITableViewCell {
     @IBOutlet weak var messengeeOtherLabel: UILabel!
     @IBOutlet weak var lastMessageLabel: UILabel!
+    @IBOutlet weak var NewMessage: UIButton!
     
     
 }
@@ -717,7 +841,7 @@ class DirectDialogueCell: UITableViewCell {
 //  Messaging Interface
 //-----------------------------------------------------------------------------------------------------------
 
-class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate, UITextViewDelegate {
+class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDelegate, UITextViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // --- Chat View Controller Properties --- //
     
@@ -729,9 +853,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     @IBOutlet weak var messagesTable: UITableView!
     @IBOutlet weak var Layout: UIStackView!
-    @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var Toolbar: UIToolbar!
-    @IBOutlet weak var TextHeader: UITextField!
+    @IBOutlet weak var TextHeader: UIBarButtonItem!
     
     // --- View Did Load --- //
     
@@ -740,10 +863,10 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         self.view.addGestureRecognizer(longPressRecognizer)
         IQKeyboardManager.sharedManager().enable = false
-        TableView.allowsSelection = false
-        TableView.keyboardDismissMode = .interactive
-        TableView.separatorStyle = .none
-        messageInputField.frame = CGRect(x: 0, y: 5 , width: (self.view.frame.width - 80), height:30)
+        messagesTable.allowsSelection = false
+        messagesTable.keyboardDismissMode = .interactive
+        messagesTable.separatorStyle = .none
+        messageInputField.frame = CGRect(x: 48, y: 5 , width: (self.view.frame.width - 128), height:30)
         messageInputField.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1)
         messageInputField.layer.borderWidth = 0.5
         messageInputField.delegate = self
@@ -754,28 +877,58 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         //messagesTable.estimatedRowHeight = 85.0
         messagesTable.rowHeight = 100.0 //UITableViewAutomaticDimension
         messagesTable.reloadData()
-        scrollToBottom()
-        
+
         DatabaseHousekeeping.miHandle = Database.database().reference().observe(.value, with: { snapshot in
             DatabaseHousekeeping.dbSnapshot = snapshot
             let oldDialogueID = self.dialogue.id
             if self.dialogue.type == "DirectDialogues" {
                 self.dialogue = DirectDialogue(id: oldDialogueID)
+                let users = self.dialogue.id.components(separatedBy: ", ")
+                var sender = ""
+                if LoggedIn.User["UserID"] as? String == users[0] {
+                    sender = users[1]
+                }
+                else if LoggedIn.User["UserID"] as? String == users[1] {
+                    sender = users[0]
+                }
+
+                if DMNotifications.UnreadIds.contains(sender) {
+                    let index = DMNotifications.UnreadIds.index(of: sender)
+                    DMNotifications.UnreadIds.remove(at: index!)
+                }
             }else if self.dialogue.type == "ChannelDialogues" {
                 self.dialogue = ChannelDialogue(id:oldDialogueID)
+            
+                if ChannelNotifications.UnreadIds.contains(self.dialogue.id) {
+                    let index = ChannelNotifications.UnreadIds.index(of: self.dialogue.id)
+                    ChannelNotifications.UnreadIds.remove(at: index!)
+                }
             }
             self.messagesTable.reloadData()
             self.scrollToBottom()
 
         })
-        TextHeader.text = SelectedChannel.chatName
+        TextHeader.title = SelectedChannel.chatName
+        
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillHide, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: Notification.Name.UIKeyboardWillChangeFrame, object: nil)
-        
-        scrollToBottom()
     }
+    
+    // --- Function to scroll to end of the table --- //
+    
+    func scrollToBottom() -> Void {
+      DispatchQueue.main.async {
+        if self.dialogue.messages.count > 0 {
+            let indexPath = IndexPath(row: self.dialogue.messages.count-1, section: 0)
+            self.messagesTable.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        }
+    }
+
+    }
+    
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -787,12 +940,12 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
         
         if notification.name == Notification.Name.UIKeyboardWillHide {
-            TableView.contentInset = UIEdgeInsets.zero
+            messagesTable.contentInset = UIEdgeInsets.zero
         } else {
-            TableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
+            messagesTable.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height, right: 0)
         }
         
-        TableView.scrollIndicatorInsets = TableView.contentInset
+        messagesTable.scrollIndicatorInsets = messagesTable.contentInset
         
         scrollToBottom()
     }
@@ -810,6 +963,20 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         self.containerView.frame = CGRect(x:0, y:0, width: self.view.frame.width, height: 40)
         self.containerView.backgroundColor = UIColor(displayP3Red: 26/255, green: 26/255, blue: 26/255, alpha: 1)
         self.containerView.layer.borderWidth = 0.5
+        
+        let uploadImageView = UIImageView()
+        uploadImageView.image = UIImage(named: "Icons/upload_image.png")
+        uploadImageView.isUserInteractionEnabled = true
+        uploadImageView.translatesAutoresizingMaskIntoConstraints = false
+        uploadImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleUploadTap)))
+        self.containerView.addSubview(uploadImageView)
+        
+        uploadImageView.leftAnchor.constraint(equalTo: self.containerView.leftAnchor).isActive = true
+        uploadImageView.centerYAnchor.constraint(equalTo: self.containerView.centerYAnchor).isActive = true
+        uploadImageView.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        uploadImageView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+
+
         
         let sendButton = UIButton(type: .system)
         sendButton.setTitle("Post", for: .normal)
@@ -842,6 +1009,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         return self.containerView
     }()
     
+    
     override var inputAccessoryView: UIView? {
         get {
             return inputContainerView
@@ -852,7 +1020,55 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         return true
     }
     
+    func handleUploadTap() {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = true
+        imagePickerController.sourceType = .photoLibrary
+        present(imagePickerController, animated: true, completion: nil)
+    }
     
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        var selectedImage: UIImage?
+        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+            selectedImage = editedImage
+        }
+        else if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            selectedImage = originalImage
+        }
+        if let selectedImageFromPicker = selectedImage {
+            uploadSelectedImageToFirebase(image: selectedImageFromPicker)
+        }
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    private func uploadSelectedImageToFirebase(image: UIImage) {
+        self.messageInputField.becomeFirstResponder()
+        let randomId = UUID().uuidString
+        let userId = LoggedIn.User["UserID"] as! String
+        let refId = userId + "," + randomId
+        let storageRef = Storage.storage().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/ConvoPictures/" + refId)
+        
+        if let uploadData = UIImageJPEGRepresentation(image, 0.5){
+            let newMetadata = StorageMetadata()
+            newMetadata.contentType = "image/jpeg";
+            
+            storageRef.putData(uploadData, metadata: newMetadata, completion:{ (metadata, error) in
+                
+                if error != nil {
+                    GenericTools.Logger(data: "\n Error initializing block value: \(error!)")
+                }
+                if let imageURL = metadata?.downloadURL()?.absoluteString{
+                    self.sendImagegBTN(imageURL: imageURL)
+                }
+            })
+        }
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     func textViewDidChange(_ textView: UITextView) {
         let originalHeight = textView.frame.size.height
@@ -876,16 +1092,6 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     func textViewDidBeginEditing(_ textView: UITextView) {
         print(self.containerView.frame.origin.y)
-    }
-
-    
-    
-    // --- Function to scroll to end of the table --- //
-    
-    func scrollToBottom() -> Void {
-        numRowsInTable = messagesTable.numberOfRows(inSection: 0)
-        endOfTable.row = numRowsInTable-1
-        messagesTable.scrollToRow(at: endOfTable, at: .bottom, animated: false)
     }
     
     //--- IB Actions ---//
@@ -927,6 +1133,28 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         }
     }
     
+    func sendImagegBTN(imageURL: String) {
+        if Reachability.isConnectedToNetwork() {
+            if imageURL == "" || imageURL.isEmpty {
+                return
+            }
+            let messageToSend = Message(senderID: (LoggedIn.User["UserID"] as! String), content: imageURL)
+            if self.dialogue.type == "DirectDialogues" {
+                (self.dialogue as! DirectDialogue).sendMessage(message: messageToSend)
+            }
+            else if self.dialogue.type == "ChannelDialogues" {
+                (self.dialogue as! ChannelDialogue).sendMessage(message: messageToSend)
+            }
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "Internet Connection not available")
+            self.view.addSubview(error)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                error.isHidden = true
+            }
+        }
+    }
+    
     //--- Table of Messages in Direct Message or Channel ---//
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dialogue.messages.count
@@ -948,8 +1176,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         
         if longPressGestureRecognizer.state == UIGestureRecognizerState.began {
             
-            let touchPoint = longPressGestureRecognizer.location(in: self.TableView)
-            if let indexPath = self.TableView.indexPathForRow(at: touchPoint) {
+            let touchPoint = longPressGestureRecognizer.location(in: self.messagesTable)
+            if let indexPath = self.messagesTable.indexPathForRow(at: touchPoint) {
                 let alert = UIAlertController(title: dialogue.messages[indexPath.row].sentByName, message:"", preferredStyle: UIAlertControllerStyle.alert)
                 let timeSince = CreateDate.getTimeSince(epoch: Double(dialogue.messages[indexPath.row].timeSent)!)
                 alert.addAction(UIAlertAction(title: "Sent " + timeSince + " ago", style: UIAlertActionStyle.default, handler: nil))
@@ -966,6 +1194,57 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         }
     }
     
+    func imageTapped(_ sender: UITapGestureRecognizer) {
+        for view in sender.view!.subviews {
+            if let imageView = view as? UIImageView {
+                self.messageInputField.resignFirstResponder()
+                let newImageView = UIImageView(image: imageView.image)
+                newImageView.frame = UIScreen.main.bounds
+                newImageView.backgroundColor = .black
+                newImageView.contentMode = .scaleAspectFit
+                newImageView.isUserInteractionEnabled = true
+                let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+                newImageView.addGestureRecognizer(tap)
+                self.view.addSubview(newImageView)
+                self.navigationController?.isNavigationBarHidden = true
+                self.tabBarController?.tabBar.isHidden = true
+            }
+        }
+    }
+    
+    func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        self.messageInputField.becomeFirstResponder()
+        self.navigationController?.isNavigationBarHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
+    }
+    
+    func getImage(index: Int, url: String, completion: @escaping (Bool, UIImage) -> Void) {
+        Storage.storage().reference(forURL: url).getData(maxSize: 10000000) { (data, error) -> Void in
+            if error == nil {
+                if let pic = UIImage(data: data!) {
+                    pic.accessibilityIdentifier = String(index)
+                    if var array = ConvoImages.imagesForConversation[SelectedChannel.chatName] {
+                        array.append(pic)
+                        ConvoImages.imagesForConversation[SelectedChannel.chatName] = array
+                    }
+                    else {
+                        ConvoImages.imagesForConversation[SelectedChannel.chatName] = [pic]
+                    }
+                    completion(true, pic)
+                }
+            }
+            else {
+                let image = UIImage(named: "Icons/no_image.png")
+                completion(false, image!)
+            }
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        return true
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let messageCell = messagesTable.dequeueReusableCell(withIdentifier: "messageCell") as! MessageCell
         messageCell.message.becomeFirstResponder() //biggest patch in existance - done at 7:21am post all nighter -- should fix
@@ -974,7 +1253,7 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             messageCell.messageSender.textAlignment = .right
             messageCell.message.textAlignment = .right
             messageCell.message.textContainerInset = UIEdgeInsets(top: 10, left: 0.0, bottom: 10, right: 10)
-
+            
             messageCell.textbubble.layer.backgroundColor = UIColor(displayP3Red: 36/255, green: 91/255, blue: 155/255, alpha: 1).cgColor
             messageCell.message.backgroundColor = UIColor.clear
             messageCell.messageSender.isHidden = true
@@ -991,10 +1270,85 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
         messageCell.messageSender.text = dialogue.messages[indexPath.row].sentByName
         messageCell.message.text = dialogue.messages[indexPath.row].content
         
-        if messageCell.message.text == "Deleted Message*" {
-            messageCell.message.text = "This message has been removed"
-            messageCell.message.textColor = .red
+        var subString = ""
+        if (messageCell.message.text.count > 38) {
+            let index = messageCell.message.text.index(messageCell.message.text.startIndex, offsetBy: 38)
+            let mySubstring = messageCell.message.text[..<index]
+            subString = String(mySubstring)
         }
+//        else if (messageCell.message.text.count > 7) {
+//            let index = messageCell.message.text.index(messageCell.message.text.startIndex, offsetBy: 7)
+//            let mySubstring = messageCell.message.text[..<index]
+//            subString = String(mySubstring)
+//        }
+        if subString == "https://firebasestorage.googleapis.com" {
+            messageCell.addSubview(messageCell.textbubble)
+            messageCell.textbubble.frame.size.width = 175
+            messageCell.textbubble.frame.size.height = 250
+            messageCell.textbubble.addSubview(messageCell.imageSentView)
+
+            messageCell.imageSentView.leftAnchor.constraint(equalTo: messageCell.textbubble.leftAnchor).isActive = true
+            messageCell.imageSentView.topAnchor.constraint(equalTo: messageCell.textbubble.topAnchor).isActive = true
+            messageCell.imageSentView.widthAnchor.constraint(equalTo: messageCell.textbubble.widthAnchor).isActive = true
+            messageCell.imageSentView.heightAnchor.constraint(equalTo: messageCell.textbubble.heightAnchor).isActive = true
+            
+            if (LoggedIn.User["UserID"] as! String) == dialogue.messages[indexPath.row].sentBy {
+                messageCell.message.textAlignment = .left
+                messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y
+                messageCell.textbubble.frame = CGRect(x: UIScreen.main.bounds.width - 180, y: 0, width: 175, height: 250)
+                self.rowHeight = messageCell.textbubble.frame.size.height + 6
+            }
+            else {
+                messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y + messageCell.messageSender.frame.size.height + 1
+                messageCell.textbubble.addSubview(messageCell.messageSender)
+                messageCell.textbubble.frame = CGRect(x: 10, y: 0, width: 175, height: 250)
+                self.rowHeight = messageCell.textbubble.frame.size.height + 6
+                messageCell.messageSender.backgroundColor = .clear
+
+            }
+            var found = false
+            if let array = ConvoImages.imagesForConversation[SelectedChannel.chatName] {
+                for pic in array {
+                    let accessInt = Int(pic.accessibilityIdentifier!)
+                    if accessInt == indexPath.row {
+                        messageCell.imageSentView.image = pic
+                        found = true
+                    }
+                }
+            }
+            if(!found) {
+                getImage(index: indexPath.row, url: messageCell.message.text!){ response,pic in
+                    if response == true {
+                        messageCell.imageSentView.image = pic
+                    }
+                    else {
+
+                    }
+                }
+            }
+            messageCell.message.text = ""
+            messageCell.removeFromSuperview()
+            messageCell.textbubble.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:))))
+            
+        }
+//        else if subString == "https:/" || subString == "http://" {
+//            let linkAttributes = [
+//                NSLinkAttributeName: NSURL(string: messageCell.message.text!)!,
+//                NSForegroundColorAttributeName: UIColor.green
+//                ] as [String : Any]
+//            let attributedString = NSMutableAttributedString(string: messageCell.message.text!)
+//             attributedString.setAttributes(linkAttributes, range: NSMakeRange(0, messageCell.message.text.count))
+//            messageCell.message.delegate = self
+//            messageCell.message.attributedText = attributedString
+//        }
+        else {
+            messageCell.message.textColor = .white
+            messageCell.backgroundColor = UIColor(displayP3Red: 90, green: 90, blue: 90, alpha: 1)
+            messageCell.imageSentView.removeFromSuperview()
+            if messageCell.message.text == "Deleted Message*" {
+                messageCell.message.text = "This message has been removed"
+                messageCell.message.textColor = .red
+            }
         else {
             messageCell.message.textColor = .white
             messageCell.message.text = messageCell.message.text
@@ -1003,8 +1357,8 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
          GenericTools.FrameToFitTextView(View: messageCell.message)
          var newSize = messageCell.message.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         
-        if newSize.width > 200 {
-            let remainder = 200 - newSize.width
+        if newSize.width > 250 {
+            let remainder = 250 - newSize.width
             newSize.width += remainder
         }
         
@@ -1026,11 +1380,13 @@ class ChatViewController: UIViewController,UITableViewDataSource,UITableViewDele
             messageCell.message.frame.origin.y = messageCell.messageSender.frame.origin.y + messageCell.messageSender.frame.size.height + 1
             messageCell.textbubble.addSubview(messageCell.messageSender)
             messageCell.textbubble.frame = CGRect(x: 10, y: 0, width: messageCell.message.frame.size.width + 20, height: messageCell.message.frame.size.height + messageCell.messageSender.frame.size.height + 3)
-            if(80 > messageCell.message.frame.size.width) {
+            
+            if(100 > messageCell.message.frame.size.width) {
                 //Should be wrapping content of name and then accomodating that. but for now ill leave it as a maximum of 60
-                messageCell.textbubble.frame.size.width = 80
+                messageCell.textbubble.frame.size.width = 100
             }
 
+        }
         }
         return messageCell
     }
@@ -1044,6 +1400,15 @@ class MessageCell: UITableViewCell {
     @IBOutlet weak var messageSender: UILabel!
     @IBOutlet weak var message: UITextView!
     
+    let imageSentView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+        
+    }()
     let textbubble: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(displayP3Red: 90/255, green: 90/255, blue: 90/255, alpha: 1)
