@@ -62,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let sender = (body.components(separatedBy: ":"))[0]
                     let message = (body.components(separatedBy: ":"))[1]
                     let state: UIApplicationState = UIApplication.shared.applicationState
-                    if state == .active && UIApplication.shared.keyWindow?.currentViewController()! is ChatViewController {
+                    if state == .active && !(UIApplication.shared.keyWindow?.currentViewController()! is ChatViewController) {
                         let announcement = Announcement(title: sender, subtitle: message, image: UIImage(named: "Icons/Logo2.png"))
                         Whisper.show(shout: announcement, to: (UIApplication.shared.keyWindow?.currentViewController())!, completion: {
                         })
@@ -80,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let sender = (body.components(separatedBy: ":"))[0]
                     let message = (body.components(separatedBy: ":"))[1]
                     let state: UIApplicationState = UIApplication.shared.applicationState
-                    if state == .active && UIApplication.shared.keyWindow?.currentViewController()! is ChatViewController {
+                    if state == .active && !(UIApplication.shared.keyWindow?.currentViewController()! is ChatViewController) {
                         let announcement = Announcement(title: sender, subtitle: message, image: UIImage(named: "Icons/Logo2.png"))
                         Whisper.show(shout: announcement, to: (UIApplication.shared.keyWindow?.currentViewController())!, completion: {
                         })
