@@ -396,14 +396,40 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
         let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
         let indexPath = tbl.indexPath(for: cell)
-        GotItInternal(index: indexPath!.row)
+        if Postings.AllPosts![(indexPath?.row)!].GotIt.contains(LoggedIn.User["UserID"] as! String) {
+            DisplayGotIt(index: indexPath!.row)
+        }
+        else {
+            GotItInternal(index: indexPath!.row, indexPath: indexPath!)
+        }
     }
     
-    func GotItInternal(index: Int) {
-        if Reachability.isConnectedToNetwork() == true {
-        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String) + "/" + Postings.AllPosts![index].PostId + "/GotIt").updateChildValues([(LoggedIn.User["UserID"] as! String) : (LoggedIn.User["Username"] as! String)]){ error in
-            GenericTools.Logger(data: "\n Could not complete")
+    func DisplayGotIt(index: Int) {
+        let voters = Postings.AllPosts![index].GotIt
+        let alert = UIAlertController(title: "Got It", message: "", preferredStyle: .alert)
+        
+        if voters.count == 0 {
+            let action = UIAlertAction(title: "No one has read this yet", style: .default, handler: { (action) -> Void in
+            })
+            alert.addAction(action)
+        }
+        else {
+            for vote in voters {
+                let action = UIAlertAction(title: vote, style: .default, handler: { (action) -> Void in
+                })
+                alert.addAction(action)
             }
+        }
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func GotItInternal(index: Int, indexPath: IndexPath) {
+        if Reachability.isConnectedToNetwork() == true {
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String) + "/Forum/" + Postings.AllPosts![index].PostId + "/GotIt").updateChildValues([(LoggedIn.User["UserID"] as! String) : (LoggedIn.User["Username"] as! String)]){ error in
+            GenericTools.Logger(data: "\n Could not complete got it action")
+            }
+                let cell = self.TableView.cellForRow(at: indexPath) as? ForumCellTableViewCell
+            cell?.GotItBtn.setTitleColor(UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1), for: .normal)
         }
         else {
             let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
@@ -495,6 +521,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             GenericTools.FrameToFitTextView(View: cell.Post)
             cell.NumberOfComments.frame.origin.y = cell.Post.frame.origin.y + cell.Post.frame.size.height + 10
             cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
+            cell.GotItBtn.frame.origin.y = cell.NumberOfComments.frame.origin.y
+            cell.GotItBtn.frame.origin.x = cell.NumberOfComments.frame.origin.x + cell.NumberOfComments.frame.size.width + 6
             self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
         }
         cell.NumberOfComments.setTitle("\(Postings.AllPosts![indexPath.row].Comments.count) Comments", for: .normal)
@@ -502,10 +530,10 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         cell.GotItBtn.addTarget(self, action: #selector(GotIt(button:)), for: .touchUpInside)
         
         if Postings.AllPosts![indexPath.row].GotIt.contains(LoggedIn.User["UserID"] as! String) {
-            cell.GotItBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
+            cell.GotItBtn.setTitleColor(UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1), for: .normal)
         }
         else {
-            cell.GotItBtn.tintColor = UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
+            cell.GotItBtn.setTitleColor(UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1), for: .normal)
         }
         
         return cell
