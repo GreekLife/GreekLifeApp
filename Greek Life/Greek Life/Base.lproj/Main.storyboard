@@ -452,6 +452,14 @@
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bMz-v0-0bZ">
+                                                    <rect key="frame" x="151" y="430" width="71" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                    <state key="normal" title="Got it!">
+                                                        <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" red="0.18659642338752747" green="0.18676948547363281" blue="0.186623215675354" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
@@ -465,6 +473,7 @@
                                         <color key="backgroundColor" red="0.10827202349901199" green="0.1083889827132225" blue="0.10829015821218491" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <connections>
                                             <outlet property="DeleteButton" destination="F2R-rv-B6g" id="2Ur-eg-6gT"/>
+                                            <outlet property="GotItBtn" destination="bMz-v0-0bZ" id="y5b-8R-3G1"/>
                                             <outlet property="NumberOfComments" destination="D7F-uY-Ax1" id="FiJ-Lk-MaS"/>
                                             <outlet property="Post" destination="bwC-7B-Akm" id="VKC-E7-kWl"/>
                                             <outlet property="PostDate" destination="SOr-AS-YA3" id="MEv-x3-btv"/>

@@ -20,6 +20,7 @@ class ForumCellTableViewCell: UITableViewCell {
     @IBOutlet weak var PostDate: UILabel!
     @IBOutlet weak var NumberOfComments: UIButton!
     @IBOutlet weak var DeleteButton: UIButton!
+    @IBOutlet weak var GotItBtn: UIButton!
     
     
     override func awakeFromNib() {
@@ -79,13 +80,14 @@ class ForumPost: Hashable, Comparable {
     var PostTitle:String
     var User:String
     var Image: UIImage
+    var GotIt: [String]
     var Comments: [Int]
     var hashValue: Int {
         return self.uid
     }
     var Epoch:Double
     
-    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Int]){
+    init(uId: Int, PosterId: String, PostId:String, Post:String, Poster:String, PostDate:Double, PostTitle:String, User:String, Epoch:Double, Comments:[Int], GotIt:[String]){
         self.uid = uId;
         self.Post = Post;
         self.Poster = Poster;
@@ -96,6 +98,7 @@ class ForumPost: Hashable, Comparable {
         self.Epoch = Epoch;
         self.PostId = PostId;
         self.PosterId = PosterId;
+        self.GotIt = GotIt;
         self.Image = UIImage(named: "Icons/Placeholder.png")!
     }
 }
@@ -266,7 +269,13 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                                 newComment.append(x)
                                                             }
                                                         }
-                                                        let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment)
+                                                        var gotItArray: [String] = []
+                                                        if let gotIt = postDictionary["GotIt"] as? [String:AnyObject] {
+                                                            for person in gotIt {
+                                                                gotItArray.append(person.key)
+                                                            }
+                                                        }
+                                                        let newPost = ForumPost(uId: count, PosterId: userId, PostId: postId, Post: post, Poster: poster, PostDate: date, PostTitle: postTitle, User: user, Epoch: date, Comments: newComment, GotIt: gotItArray)
                                                         Posts.append(newPost);
                                                         count += 1
                                                     }
@@ -382,6 +391,27 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
     }
+    
+    @objc func GotIt(button: UIButton) {
+        let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
+        let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
+        let indexPath = tbl.indexPath(for: cell)
+        GotItInternal(index: indexPath!.row)
+    }
+    
+    func GotItInternal(index: Int) {
+        if Reachability.isConnectedToNetwork() == true {
+        Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String) + "/" + Postings.AllPosts![index].PostId + "/GotIt").updateChildValues([(LoggedIn.User["UserID"] as! String) : (LoggedIn.User["Username"] as! String)]){ error in
+            GenericTools.Logger(data: "\n Could not complete")
+            }
+        }
+        else {
+            let error = Banner.ErrorBanner(errorTitle: "No Internet Connection Available")
+            error.backgroundColor = UIColor.black.withAlphaComponent(1)
+            self.view.addSubview(error)
+            GenericTools.Logger(data: "\n You're not connected to the Internet")
+        }
+    }
 
     @objc func ViewComments(button: UIButton) {
         let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
@@ -437,6 +467,8 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
             GenericTools.FrameToFitTextView(View: cell.Post)
             cell.DeleteButton.frame.origin.y = cell.Post.frame.origin.y + cell.Post.frame.size.height + 10
             cell.NumberOfComments.frame.origin.y = cell.DeleteButton.frame.origin.y + cell.DeleteButton.frame.size.height + 10
+            cell.GotItBtn.frame.origin.y = cell.NumberOfComments.frame.origin.y
+            cell.GotItBtn.frame.origin.x = cell.NumberOfComments.frame.origin.x + cell.NumberOfComments.frame.size.width + 6
             cell.PostDate.frame.origin.y = cell.NumberOfComments.frame.origin.y
             self.rowHeight = cell.NumberOfComments.frame.origin.y + cell.NumberOfComments.frame.size.height + 15
         }
@@ -467,6 +499,15 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         cell.NumberOfComments.setTitle("\(Postings.AllPosts![indexPath.row].Comments.count) Comments", for: .normal)
         cell.NumberOfComments.addTarget(self, action: #selector(ViewComments(button:)), for: .touchUpInside)
+        cell.GotItBtn.addTarget(self, action: #selector(GotIt(button:)), for: .touchUpInside)
+        
+        if Postings.AllPosts![indexPath.row].GotIt.contains(LoggedIn.User["UserID"] as! String) {
+            cell.GotItBtn.tintColor = UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1)
+        }
+        else {
+            cell.GotItBtn.tintColor = UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
+        }
+        
         return cell
     }
     
