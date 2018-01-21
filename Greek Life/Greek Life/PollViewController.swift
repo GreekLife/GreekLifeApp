@@ -875,16 +875,26 @@ class PollVoting: UIViewController {
         if voters.count == 0 {
             let action = UIAlertAction(title: "No one has voted yet", style: .default, handler: { (action) -> Void in
             })
+            action.isEnabled = false
             alert.addAction(action)
         }
         else {
             for vote in voters {
                 let action = UIAlertAction(title: vote, style: .default, handler: { (action) -> Void in
                 })
+                action.isEnabled = false
                 alert.addAction(action)
             }
         }
-        present(alert, animated: true, completion: nil)
+        self.present(alert, animated: true) {
+            alert.view.superview?.isUserInteractionEnabled = true
+            alert.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.alertControllerBackgroundTapped)))
+        }
+    }
+    
+    func alertControllerBackgroundTapped()
+    {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func UpVoteOption(button: UIButton) {
