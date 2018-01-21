@@ -514,6 +514,9 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
                 let alert = UIAlertController(title: "Uncancelled", message: "Your event has been uncancelled", preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
+                CancelEvent.setTitle("Cancel this event?", for: .normal)
+                eventData["Cancelled"] = false
+
                 
             }
             else {
@@ -523,6 +526,8 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
                 let alert = UIAlertController(title: "Cancelled", message: "Your event has been cancelled", preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
+                CancelEvent.setTitle("Uncancel this event?", for: .normal)
+                eventData["Cancelled"] = true
             }
         }
         else {
@@ -532,6 +537,10 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
             let alert = UIAlertController(title: "Cancelled", message: "Your event has been cancelled", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
+            CancelEvent.setTitle("Uncancel this event?", for: .normal)
+            eventData["Cancelled"] = true
+
+
         }
         
     }
