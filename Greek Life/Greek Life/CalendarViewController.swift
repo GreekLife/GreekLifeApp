@@ -179,7 +179,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 if let eventList = snapshot.value as? [String:[String:Any]]
                 {
                     self.calendar.eventList = eventList
-                    print("we got the calendar boyyz")
                     self.reloadCalendar()
                 }
                 else{print("Can't find the calendar")}
@@ -190,7 +189,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 if let settings = snapshot.value as? [String:Any]
                 {
                     self.calendar.settings = settings
-                    print("we got the settings boyyz")
                 }
                 else{print("Can't find the calendar")}
             }){ (error) in
@@ -249,7 +247,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
         let indexPath = tbl.indexPath(for: cell)
         let eventKey = String(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[(indexPath?.section)!])[(indexPath?.row)!].key)
-        let confirmDeleteEvent = UIAlertController(title: "Delete Event", message: "Are you sure you want to delete this event \(String(describing: eventKey))?", preferredStyle: UIAlertControllerStyle.alert)
+        let confirmDeleteEvent = UIAlertController(title: "Delete Event", message: "Are you sure you want to delete this event?", preferredStyle: UIAlertControllerStyle.alert)
         confirmDeleteEvent.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in confirmDeleteEvent.dismiss(animated: true)}))
         confirmDeleteEvent.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(action) in
             self.dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+eventKey!).removeValue(){ (error) in
@@ -390,9 +388,25 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
             if self.canDeleteEvents {
                 eventCell.deleteBTN.alpha = 1
                 eventCell.deleteBTN.isEnabled = true
+                eventCell.deleteBTN.setTitle("Delete", for: .normal)
             }else{
-                eventCell.deleteBTN.alpha = 0
-                eventCell.deleteBTN.isEnabled = false
+                if let isCancelled =  Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["Cancelled"] as? Bool {
+                    if isCancelled {
+                        eventCell.deleteBTN.alpha = 1
+                        eventCell.deleteBTN.setTitle("Cancelled", for: .normal)
+                        eventCell.deleteBTN.isEnabled = false
+
+                    }
+                    else {
+                        eventCell.deleteBTN.alpha = 0
+                        eventCell.deleteBTN.isEnabled = false
+                    }
+                }
+                else {
+                    eventCell.deleteBTN.alpha = 0
+                    eventCell.deleteBTN.isEnabled = false
+                }
+                
             }
             
         }
@@ -469,6 +483,7 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
     var eventData:[String:Any] = [:]
     var calendar:theCalendar = theCalendar(monthViewing: 0, yearViewing: 0, eventList: [:], settings: [:], sectionedEventList: [:])
     
+    @IBOutlet weak var CancelEvent: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
@@ -489,6 +504,39 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
+    @IBAction func CancelEvent(_ sender: Any) {
+        if let cancelled = eventData["Cancelled"] as? Bool {
+            if cancelled {
+                Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/" + String(Int((eventData["date"] as? Double)!)) + "/Cancelled").setValue(false) {
+                    error in
+                    print("Couldnt uncancel event")
+                }
+                let alert = UIAlertController(title: "Uncancelled", message: "Your event has been uncancelled", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                
+            }
+            else {
+                Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/" + String(Int((eventData["date"] as? Double)!)) + "/Cancelled").setValue(true){ error in
+                    print("Couldnt cancel event")
+                }
+                let alert = UIAlertController(title: "Cancelled", message: "Your event has been cancelled", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
+        else {
+            Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/" + String(Int((eventData["date"] as? Double)!)) + "/Cancelled").setValue(true){ error in
+                print("Couldnt cancel event")
+            }
+            let alert = UIAlertController(title: "Cancelled", message: "Your event has been cancelled", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        
+    }
+    
+    
     @IBAction func backBTN(_ sender: Any)
     {
         presentingViewController?.dismiss(animated: true)
@@ -503,6 +551,17 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
                 attendingSwitch.isOn = true
             }
             }
+        }
+         if let cancelled = eventData["Cancelled"] as? Bool {
+            if cancelled {
+                CancelEvent.setTitle("Uncancel this event?", for: .normal)
+            }
+            else {
+                CancelEvent.setTitle("Cancel this event?", for: .normal)
+            }
+        }
+        if !(isEboard.member.contains(LoggedIn.User["Position"] as! String)) {
+            CancelEvent.isHidden = true
         }
         
         let date = Date.init(timeIntervalSince1970: eventData["date"] as! TimeInterval)
