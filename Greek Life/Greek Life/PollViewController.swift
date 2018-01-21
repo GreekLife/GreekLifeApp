@@ -820,6 +820,7 @@ class PollVoting: UIViewController {
                 tempView.text = PollViewed.Options[option]
                 GenericTools.FrameToFitTextView(View: tempView)
                 ExistingOptions[option].frame.size.height = tempView.frame.size.height + 50
+                ExistingOptions[option].titleLabel?.lineBreakMode = .byWordWrapping
                 ExistingOptions[option].setTitle(PollViewed.Options[option], for: .normal)
                 ExistingOptions[option].backgroundColor = UIColor(displayP3Red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
                 ExistingOptions[option].frame.origin.y = ExistingOptions[option - 1].frame.origin.y + ExistingOptions[option - 1].frame.size.height + 20
