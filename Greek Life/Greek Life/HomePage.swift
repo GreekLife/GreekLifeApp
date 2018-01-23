@@ -361,7 +361,7 @@ class HomePage: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! HomePageCell
         cell.news.text = self.NewsPosts[indexPath.row].Post
         GenericTools.FrameToFitTextView(View: cell.news)
-        self.newsHeight = cell.news.frame.origin.y + cell.news.frame.size.height
+        self.newsHeight = cell.news.frame.origin.y + cell.news.frame.size.height + 30
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
