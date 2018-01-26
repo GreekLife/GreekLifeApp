@@ -415,12 +415,28 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         else {
             for vote in voters {
-                let action = UIAlertAction(title: vote, style: .default, handler: { (action) -> Void in
+                var voterName = ""
+                for member in mMembers.MemberList {
+                    if member.id == vote {
+                        voterName = member.first + " " + member.last
+                    }
+                }
+                let action = UIAlertAction(title: voterName, style: .default, handler: { (action) -> Void in
                 })
+                action.isEnabled = false
                 alert.addAction(action)
             }
         }
-        present(alert, animated: true, completion: nil)
+        self.present(alert, animated: true) {
+            alert.view.superview?.isUserInteractionEnabled = true
+            alert.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.alertControllerBackgroundTapped)))
+        }
+        
+    }
+    
+    func alertControllerBackgroundTapped()
+    {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func GotItInternal(index: Int, indexPath: IndexPath) {
@@ -428,6 +444,7 @@ class ForumViewController: UIViewController, UITableViewDataSource, UITableViewD
         Database.database().reference().child((Configuration.Config["DatabaseNode"] as! String) + "/Forum/" + Postings.AllPosts![index].PostId + "/GotIt").updateChildValues([(LoggedIn.User["UserID"] as! String) : (LoggedIn.User["Username"] as! String)]){ error in
             GenericTools.Logger(data: "\n Could not complete got it action")
             }
+            Postings.AllPosts![index].GotIt.append((LoggedIn.User["UserID"] as! String))
                 let cell = self.TableView.cellForRow(at: indexPath) as? ForumCellTableViewCell
             cell?.GotItBtn.setTitleColor(UIColor(displayP3Red: 255/255, green: 223/255, blue: 0/255, alpha: 1), for: .normal)
         }
