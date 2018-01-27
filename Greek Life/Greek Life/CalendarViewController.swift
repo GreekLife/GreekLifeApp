@@ -246,15 +246,16 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         let cell = button.superview?.superviewOfClassType(UITableViewCell.self) as! UITableViewCell
         let tbl = cell.superviewOfClassType(UITableView.self) as! UITableView
         let indexPath = tbl.indexPath(for: cell)
-        let eventKey = String(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[(indexPath?.section)!])[(indexPath?.row)!].key)
+        let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
+        let eventDayID = sortedDayKeys[(indexPath?.section)!];
+        let eventIDs = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]!.keys).sorted(by: <)
+        let eventKey = eventIDs[(indexPath?.row)!]
         let confirmDeleteEvent = UIAlertController(title: "Delete Event", message: "Are you sure you want to delete this event?", preferredStyle: UIAlertControllerStyle.alert)
         confirmDeleteEvent.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {(action) in confirmDeleteEvent.dismiss(animated: true)}))
         confirmDeleteEvent.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(action) in
-            self.dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+eventKey!).removeValue(){ (error) in
-                
-            }
+            self.dataRef.child((Configuration.Config["DatabaseNode"] as! String)+"/Calendar/"+eventKey).removeValue()//{ (error) in          }
             confirmDeleteEvent.dismiss(animated: true)
-            self.calendar.eventList.removeValue(forKey: eventKey!)
+            self.calendar.eventList.removeValue(forKey: eventKey)
             self.reloadCalendar()
         }))
         self.present(confirmDeleteEvent, animated: true, completion: nil)
@@ -311,11 +312,9 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         //For Viewing an Event
         if segue.identifier == "displayEventViewSegue"
         {
-            var senderDict = sender as! [String:Int]
             self.reloadCalendar()
             let displayEventView = segue.destination as? DisplayEventViewController
-            let eventData:[String:Any] =
-                Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[senderDict["section"]!])[senderDict["row"]!].value
+            let eventData:[String:Any] = calendar.eventList[(sender as! String)]!
             displayEventView?.eventData = eventData
             displayEventView?.calendar = self.calendar
         }
@@ -369,7 +368,9 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if calendar.sectionedEventList[calendar.yearViewing]?[calendar.monthViewing] != nil {
-            return Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!)[section].value.count
+            let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
+            let eventDayID = sortedDayKeys[section];
+            return Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]!.keys).count //Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!)[section].value.count
         }else{
             return 0
         }
@@ -377,20 +378,24 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let eventCell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
+        let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
+        let eventDayID = sortedDayKeys[indexPath.section];
+        let eventIDs = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]!.keys).sorted(by: <)
+        let eventID = eventIDs[indexPath.row]
         
         if let eventCell = eventCell as? EventCell
         {
             eventCell.eventTitle.text =
-                Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["title"] as? String
+                calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]![eventID]!["title"] as? String
             eventCell.eventDateTime.text =
-                CreateDate.getCurrentDate(epoch: Double(Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["date"] as! Double))
+                CreateDate.getCurrentDate(epoch: Double(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]![eventID]!["date"] as! Double))
             eventCell.deleteBTN.addTarget(self, action: #selector(DeleteEventBTN(button:)), for: .touchUpInside )
             if self.canDeleteEvents {
                 eventCell.deleteBTN.alpha = 1
                 eventCell.deleteBTN.isEnabled = true
                 eventCell.deleteBTN.setTitle("Delete", for: .normal)
             }else{
-                if let isCancelled =  Array(Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.values)[indexPath.section])[indexPath.row].value["Cancelled"] as? Bool {
+                if let isCancelled =  calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]![eventID]!["Cancelled"] as? Bool {
                     if isCancelled {
                         eventCell.deleteBTN.alpha = 1
                         eventCell.deleteBTN.setTitle("Cancelled", for: .normal)
@@ -416,7 +421,11 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     //To view an event in the DisplayEventViewController
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        performSegue(withIdentifier: "displayEventViewSegue", sender: ["section":indexPath.section, "row":indexPath.row])
+        let sortedDayKeys = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]!.keys).sorted(by: <)
+        let eventDayID = sortedDayKeys[indexPath.section];
+        let eventIDs = Array(calendar.sectionedEventList[calendar.yearViewing]![calendar.monthViewing]![eventDayID]!.keys).sorted(by: <)
+        let eventID = eventIDs[indexPath.row]
+        performSegue(withIdentifier: "displayEventViewSegue", sender: eventID)
     }
     
     
@@ -456,11 +465,10 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
         let calView = (presentingViewController as! CalendarViewController)
         if (calView.calendar.eventList[String(Int(((eventData["date"] as! Double))))]!["attendees"] as? [String:String])?.keys != nil {
             let attendees = calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]!["attendees"] as! [String:String]
-            return attendees.count
+            return attendees.count-1
         }else{
             return 0
         }
-        
     }
     func getNameById(id: String) -> String {
         var name = ""
@@ -473,9 +481,10 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let calView = (presentingViewController as! CalendarViewController)
-        let attendees = calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]!["attendees"] as! [String:String]
+        var attendees = calView.calendar.eventList[String(Int((eventData["date"] as? Double)!))]!["attendees"] as! [String:String]
+        attendees.removeValue(forKey: LoggedIn.User["UserID"] as! String)
         let cell = UITableViewCell.init(style: .default, reuseIdentifier: "attendeeCell")
-        let name = getNameById(id: Array(attendees)[indexPath.row].value)
+        let name = getNameById(id: Array(attendees)[indexPath.row].key)
         cell.textLabel?.text = name
         return cell
     }
@@ -483,6 +492,7 @@ class DisplayEventViewController: UIViewController, UITableViewDelegate, UITable
     var eventData:[String:Any] = [:]
     var calendar:theCalendar = theCalendar(monthViewing: 0, yearViewing: 0, eventList: [:], settings: [:], sectionedEventList: [:])
     
+    @IBOutlet weak var attendeeTable: UITableView!
     @IBOutlet weak var CancelEvent: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!

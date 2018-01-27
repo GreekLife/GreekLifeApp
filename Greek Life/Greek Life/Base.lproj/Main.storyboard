@@ -3412,6 +3412,7 @@
                     </view>
                     <connections>
                         <outlet property="CancelEvent" destination="YEZ-2R-aYt" id="9kM-Pd-LC7"/>
+                        <outlet property="attendeeTable" destination="LEA-qX-DRX" id="Ul9-5b-7zW"/>
                         <outlet property="attendingSwitch" destination="rDW-Io-9yf" id="FTt-wv-Lym"/>
                         <outlet property="dateLabel" destination="YDH-tJ-gTy" id="3tg-1o-ANR"/>
                         <outlet property="descriptionField" destination="H3c-fI-3ao" id="lOv-ID-fVc"/>
